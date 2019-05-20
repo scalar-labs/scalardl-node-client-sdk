@@ -1,5 +1,5 @@
 const {
-  ClientServiceFactory,
+  ClientServiceBase,
   StatusCode,
 } = require('@scalar-labs/scalardl-javascript-sdk-base');
 
@@ -27,8 +27,7 @@ class ClientService {
     } else {
       ledgerClient = new LedgerClient(url, grpc.credentials.createInsecure());
     }
-    const factory = new ClientServiceFactory(ledgerClient, protobuf);
-    return factory.create(properties);
+    return new ClientServiceBase(ledgerClient, protobuf, properties);
   }
 }
 
