@@ -10,7 +10,7 @@ const grpc = require('grpc');
 /**
  * @class
  */
-class ClientService {
+class ClientService extends ClientServiceBase {
   /**
    * Constructor will inject dependencies to generate ClientService
    * @param {Object} properties
@@ -27,7 +27,8 @@ class ClientService {
     } else {
       ledgerClient = new LedgerClient(url, grpc.credentials.createInsecure());
     }
-    return new ClientServiceBase(ledgerClient, protobuf, properties);
+
+    super(ledgerClient, protobuf, properties);
   }
 }
 
