@@ -21,7 +21,7 @@ It provides following functions to request Scalar DL network.
 |registerCertificate|To register a client's certificate to a Scalar DL network|
 |registerContract|To register the contracts to the registered client of the Scalar DL network|
 |listContracts|To list all registered contracts of the client|
-|executeContract|To execute a registered contract of the client|
+|executeContract|To execute a client's registered contract|
 |validateLedger|To validate an asset on the Scalar DL network to determine if it has been tampered|
 
 Use the code snippet below to create a ClientService instance.
