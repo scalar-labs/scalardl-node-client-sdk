@@ -46,8 +46,9 @@ This is a properties example that a user `foo@example.com` would use to try to c
 }
 ```
 
+In what follows assume that we have a clientService instance.
+
 ### Register the certificate
-When you have a clientService instance.
 Use the `registerCertificate` function to register a certificate on the Scalar DL network.
 ```
 const response = await clientService.registerCertificate();
