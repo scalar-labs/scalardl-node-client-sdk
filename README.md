@@ -81,7 +81,7 @@ const result = JSON.parse(response.getResult());
 ```
 
 ### Validate an asset
-Use validateLedger function to validate an asset in the Scalar DL network.
+Use the `validateLedger` function to validate an asset in the Scalar DL network.
 ```
 const response = await clientService.validateLedger('assetId');
 const status = response.getStatus();
