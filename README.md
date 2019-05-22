@@ -4,7 +4,7 @@ This is a library for Node.js applications by which the applications can interac
 
 ## Install
 
-We can use any NPM package managers to install this library. For example, install with NPM:
+We can use any NPM package manager to install this library. For example, to install with NPM:
 ```
 npm install @scalar-labs/scalardl-node-client-sdk
 ```
