@@ -18,7 +18,7 @@ It provides following functions to request Scalar DL network.
 
 |Name|use|
 |----|---|
-|registerCertificate|To register a client's certificate to a Scalar DL network|
+|registerCertificate|To register a client's certificate on a Scalar DL network|
 |registerContract|To register the contracts to the registered client of the Scalar DL network|
 |listContracts|To list the client's registered contracts|
 |executeContract|To execute a client's registered contract|
