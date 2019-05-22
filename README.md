@@ -89,7 +89,7 @@ const message = response.getMessage();
 ```
 
 ### Status code
-Enumeration `StatusCode` enumerate all possible status in a Scalar DL response.
+Enumeration `StatusCode` enumerates all the possible status of a Scalar DL response.
 ```
 StatusCode = {
   OK: 200,
