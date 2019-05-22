@@ -31,7 +31,7 @@ const { ClientService } = require('@scalar-labs/scalardl-web-client-sdk');
 const clientService = new ClientService(clientProperties);
 ```
 
-The argument `clientProperties` object is mandatory for the constructor.
+The `clientProperties` argument is mandatory for the constructor.
 This is an properties example that a user `foo@example.com` tries to connect to the server `scalardl.example.com:50051` of the Scalar DL network.
 ```
 {
