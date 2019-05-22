@@ -57,7 +57,7 @@ const message = response.getMessage();
 Please refer to the [Status code](#status-code) section below for the details of status.
 
 ### Register contracts
-You can use registerContract function to register contracts.
+Use the `registerContract` function to register a contract.
 ```
 const response = await clientService.registerContract('contractId', 'com.example.contract.contractName', contractUint8Array, propertiesObject);
 const status = response.getStatus();
