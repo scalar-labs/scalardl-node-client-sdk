@@ -19,7 +19,7 @@ It provides following functions to request Scalar DL network.
 |Name|use|
 |----|---|
 |registerCertificate|To register a client's certificate on a Scalar DL network|
-|registerContract|To register the contracts to the registered client of the Scalar DL network|
+|registerContract|To register a contract (of a registered client) on the Scalar DL network|
 |listContracts|To list the client's registered contracts|
 |executeContract|To execute a client's registered contract|
 |validateLedger|To validate an asset on the Scalar DL network to determine if it has been tampered|
