@@ -1,0 +1,21 @@
+{
+  "name": "@scalar-labs/scalardl-node-client-sdk",
+  "version": "0.0.1",
+  "description": "The Node.js client SDK for Scalar DL",
+  "author": "Scalar, Inc.",
+  "main": "scalardl-node-client-sdk.js",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:scalar-labs/scalardl-node-client-sdk.git"
+  },
+  "dependencies": {
+    "@scalar-labs/scalardl-javascript-sdk-base": "^1.0.0",
+    "google-protobuf": "^3.6.1",
+    "grpc": "^1.16.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-google": "^0.12.0"
+  }
+}
