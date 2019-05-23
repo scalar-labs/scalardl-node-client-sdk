@@ -4,7 +4,7 @@
   "description": "The Node.js client SDK for Scalar DL",
   "author": "Scalar, Inc.",
   "main": "scalardl-node-client-sdk.js",
-  "license": "Apache-2.0",
+  "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
     "url": "git@github.com:scalar-labs/scalardl-node-client-sdk.git"
