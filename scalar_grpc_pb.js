@@ -4,6 +4,28 @@
 var grpc = require('grpc');
 var scalar_pb = require('./scalar_pb.js');
 
+function serialize_rpc_AssetProofs(arg) {
+  if (!(arg instanceof scalar_pb.AssetProofs)) {
+    throw new Error('Expected argument of type rpc.AssetProofs');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_rpc_AssetProofs(buffer_arg) {
+  return scalar_pb.AssetProofs.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_rpc_AssetReference(arg) {
+  if (!(arg instanceof scalar_pb.AssetReference)) {
+    throw new Error('Expected argument of type rpc.AssetReference');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_rpc_AssetReference(buffer_arg) {
+  return scalar_pb.AssetReference.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_rpc_CertificateRegistrationRequest(arg) {
   if (!(arg instanceof scalar_pb.CertificateRegistrationRequest)) {
     throw new Error('Expected argument of type rpc.CertificateRegistrationRequest');
@@ -59,6 +81,17 @@ function deserialize_rpc_ContractsListingRequest(buffer_arg) {
   return scalar_pb.ContractsListingRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_rpc_FunctionRegistrationRequest(arg) {
+  if (!(arg instanceof scalar_pb.FunctionRegistrationRequest)) {
+    throw new Error('Expected argument of type rpc.FunctionRegistrationRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_rpc_FunctionRegistrationRequest(buffer_arg) {
+  return scalar_pb.FunctionRegistrationRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_rpc_LedgerServiceResponse(arg) {
   if (!(arg instanceof scalar_pb.LedgerServiceResponse)) {
     throw new Error('Expected argument of type rpc.LedgerServiceResponse');
@@ -92,20 +125,20 @@ function deserialize_rpc_LedgerValidationResponse(buffer_arg) {
   return scalar_pb.LedgerValidationResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_rpc_ProofRegistryResponse(arg) {
+  if (!(arg instanceof scalar_pb.ProofRegistryResponse)) {
+    throw new Error('Expected argument of type rpc.ProofRegistryResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_rpc_ProofRegistryResponse(buffer_arg) {
+  return scalar_pb.ProofRegistryResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 
 // Ledger service definition.
 var LedgerService = exports.LedgerService = {
-  registerCert: {
-    path: '/rpc.Ledger/RegisterCert',
-    requestStream: false,
-    responseStream: false,
-    requestType: scalar_pb.CertificateRegistrationRequest,
-    responseType: scalar_pb.LedgerServiceResponse,
-    requestSerialize: serialize_rpc_CertificateRegistrationRequest,
-    requestDeserialize: deserialize_rpc_CertificateRegistrationRequest,
-    responseSerialize: serialize_rpc_LedgerServiceResponse,
-    responseDeserialize: deserialize_rpc_LedgerServiceResponse,
-  },
   registerContract: {
     path: '/rpc.Ledger/RegisterContract',
     requestStream: false,
@@ -153,3 +186,56 @@ var LedgerService = exports.LedgerService = {
 };
 
 exports.LedgerClient = grpc.makeGenericClientConstructor(LedgerService);
+var LedgerPrivilegedService = exports.LedgerPrivilegedService = {
+  registerCert: {
+    path: '/rpc.LedgerPrivileged/RegisterCert',
+    requestStream: false,
+    responseStream: false,
+    requestType: scalar_pb.CertificateRegistrationRequest,
+    responseType: scalar_pb.LedgerServiceResponse,
+    requestSerialize: serialize_rpc_CertificateRegistrationRequest,
+    requestDeserialize: deserialize_rpc_CertificateRegistrationRequest,
+    responseSerialize: serialize_rpc_LedgerServiceResponse,
+    responseDeserialize: deserialize_rpc_LedgerServiceResponse,
+  },
+  registerFunction: {
+    path: '/rpc.LedgerPrivileged/RegisterFunction',
+    requestStream: false,
+    responseStream: false,
+    requestType: scalar_pb.FunctionRegistrationRequest,
+    responseType: scalar_pb.LedgerServiceResponse,
+    requestSerialize: serialize_rpc_FunctionRegistrationRequest,
+    requestDeserialize: deserialize_rpc_FunctionRegistrationRequest,
+    responseSerialize: serialize_rpc_LedgerServiceResponse,
+    responseDeserialize: deserialize_rpc_LedgerServiceResponse,
+  },
+};
+
+exports.LedgerPrivilegedClient = grpc.makeGenericClientConstructor(LedgerPrivilegedService);
+// Proof registry service definition.
+var ProofRegistryService = exports.ProofRegistryService = {
+  store: {
+    path: '/rpc.ProofRegistry/Store',
+    requestStream: false,
+    responseStream: false,
+    requestType: scalar_pb.AssetProofs,
+    responseType: scalar_pb.ProofRegistryResponse,
+    requestSerialize: serialize_rpc_AssetProofs,
+    requestDeserialize: deserialize_rpc_AssetProofs,
+    responseSerialize: serialize_rpc_ProofRegistryResponse,
+    responseDeserialize: deserialize_rpc_ProofRegistryResponse,
+  },
+  retrieve: {
+    path: '/rpc.ProofRegistry/Retrieve',
+    requestStream: false,
+    responseStream: false,
+    requestType: scalar_pb.AssetReference,
+    responseType: scalar_pb.ProofRegistryResponse,
+    requestSerialize: serialize_rpc_AssetReference,
+    requestDeserialize: deserialize_rpc_AssetReference,
+    responseSerialize: serialize_rpc_ProofRegistryResponse,
+    responseDeserialize: deserialize_rpc_ProofRegistryResponse,
+  },
+};
+
+exports.ProofRegistryClient = grpc.makeGenericClientConstructor(ProofRegistryService);
