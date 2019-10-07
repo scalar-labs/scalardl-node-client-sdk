@@ -1,6 +1,6 @@
 {
   "name": "@scalar-labs/scalardl-node-client-sdk",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "The Node.js client SDK for Scalar DL",
   "author": "Scalar, Inc.",
   "main": "scalardl-node-client-sdk.js",
