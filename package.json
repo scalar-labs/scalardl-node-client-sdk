@@ -14,13 +14,8 @@
     "google-protobuf": "^3.6.1",
     "grpc": "^1.16.0"
   },
-  "scripts": {
-    "test": "mocha test/"
-  },
   "devDependencies": {
     "eslint": "^5.16.0",
-    "eslint-config-google": "^0.12.0",
-    "mocha": "^6.2.2",
-    "chai": "4.2.0"
+    "eslint-config-google": "^0.12.0"
   }
 }
