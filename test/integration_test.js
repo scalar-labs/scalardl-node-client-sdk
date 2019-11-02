@@ -24,7 +24,7 @@ describe('Integration test on ClientService', async () => {
   const mockedContractName = 'com.org1.contract.StateUpdater';
   const mockedFunctionName = 'com.org1.function.TestFunction';
   const mockedAssetId = 'mockedAssetId';
-  const mockedState = 2;
+  const mockedState = 1;
   const mockedArgument = {
     asset_id: mockedAssetId,
     state: mockedState,
