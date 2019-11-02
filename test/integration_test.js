@@ -18,67 +18,69 @@ const properties = {
 };
 let clientService;
 
-describe('Integration test on ClientService', () => {
-  const mockedFunctionId = 21341;
-  const mockedContractId = 'ListTypeContract';
-  const mockedAssertId = 13532;
-  const mockedName = 'com.scalar.am.contract.ListTypeContract';
-  const mockedArgument = {'mocked': 'argument'};
-  const mockedFunctionArgument = 'mockedFunctionArgument';
-  const mockedByteCode = new Uint8Array([1, 2, 3]);
-  // clientService = new ClientService(properties);
+describe('Integration test on ClientService', async () => {
+  const mockedFunctionId = 'TestFunction';
+  const mockedContractId = 'StateUpdater';
+  const mockedContractName = 'com.org1.contract.StateUpdater';
+  const mockedFunctionName = 'com.org1.function.TestFunction';
+  const mockedAssetId = 'mockedAssetId';
+  const mockedState = 1;
+  const mockedArgument = {
+    asset_id: mockedAssetId,
+    state: mockedState,
+  };
+  const property = {
+    asset_id: mockedAssetId,
+    state: mockedState,
+  };
+  const mockedByteContract = fs.readFileSync(
+      __dirname + '/StateUpdater.class');
+  const mockedByteFunction = fs.readFileSync(
+      __dirname + '/TestFunction.class');
   clientService = new ClientService(properties);
   describe('registerCertificate', () => {
     it('should works as expected', async () => {
-      const request = await clientService.registerCertificate();
-      console.log('requests: ', request);
-      assert.equal(request.getStatus(), 200);
-      assert.instanceOf(request, Function);
+      const response = await clientService.registerCertificate();
+      assert.equal(response.getStatus(), 200);
     });
   });
   describe('registerFunction', () => {
     it('should works as expected', async () => {
-      const request = await clientService.registerFunction(mockedFunctionId,
-          mockedName, mockedByteCode);
-      console.log(request);
-      assert.equal(request.getStatus(), 200);
-      assert.instanceOf(request, Function);
+      const response = await clientService.registerFunction(mockedFunctionId,
+          mockedFunctionName,
+          mockedByteFunction);
+      assert.equal(response.getStatus(), 200);
     });
   });
   describe('registerContract', () => {
     it('should works as expected', async () => {
-      const buffer = fs.readFileSync(__dirname + '/ListTypeContract.class');
-      const request = await clientService.registerContract(mockedContractId,
-          mockedName,
-          buffer, properties);
-      console.log(request);
-      assert.equal(request.getStatus(), 200);
-      assert.instanceOf(request, Function);
+      const response = await clientService.registerContract(mockedContractId,
+          mockedContractName,
+          mockedByteContract, property);
+      console.log(response);
+      assert.equal(response.getStatus(), 200);
     });
   });
-// describe('listContracts', () => {
-//   it('should works as expected', async () => {
-//     const request = await clientService.listContracts(mockedContractId);
-//     console.log(request);
-//     assert.equal(request.getStatus(), 200);
-//     assert.instanceOf(request, Function);
-//   });
-// });
-// describe('validateLedger', () => {
-//   it('should works as expected', async () => {
-//     const request = await clientService.validateLedger(mockedAssertId);
-//     assert.equal(request.getStatus(), 200);
-//     assert.instanceOf(request, Function);
-//   });
-// });
-// describe('executeContract', () => {
-//   it('should works as expected', async () => {
-//     const request = await clientService.executeContract(mockedContractId,
-//         mockedArgument, mockedFunctionArgument);
-//     console.log(request);
-//     assert.equal(request.getStatus(), 200);
-//     assert.instanceOf(request, Function);
-//   });
-// });
+  describe('listContracts', () => {
+    it('should works as expected', async () => {
+      const response = await clientService.listContracts(mockedContractId);
+      assert.equal(response.getStatus(), 200);
+    });
+  });
+  describe('validateLedger', () => {
+    it('should works as expected', async () => {
+      const response = await clientService.validateLedger(mockedAssetId);
+      console.log(response);
+      assert.equal(response.getStatus(), 200);
+    });
+  });
+  describe('executeContract', () => {
+    it('should works as expected', async () => {
+      const response = await clientService.executeContract(mockedContractId,
+          mockedArgument, property);
+      console.log(response);
+      assert.equal(response.getStatus(), 200);
+    });
+  });
 })
 ;
