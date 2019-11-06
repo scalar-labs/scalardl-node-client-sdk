@@ -25,9 +25,14 @@ describe('Integration test on ClientService', async () => {
   const mockedFunctionName = 'com.org1.function.TestFunction';
   const mockedAssetId = 'mockedAssetId';
   const mockedState = 1;
-  const mockedArgument = {
+  const mockedContractArgument = {
     asset_id: mockedAssetId,
     state: mockedState,
+  };
+  const mockedFunctionArgument = {
+    asset_id: mockedAssetId, // passed via contractArgument
+    state: mockedState,
+    _function_: mockedFunctionId,
   };
   const property = {
     asset_id: mockedAssetId,
@@ -67,11 +72,18 @@ describe('Integration test on ClientService', async () => {
     });
   });
   describe('executeContract', () => {
-    it('should works as expected', async () => {
-      const response = await clientService.executeContract(mockedContractId,
-          mockedArgument, property);
-      assert.equal(response.getStatus(), 200);
-    });
+    it('should works as expected when execute a registered Contract',
+        async () => {
+          const response = await clientService.executeContract(mockedContractId,
+              mockedContractArgument, property);
+          assert.equal(response.getStatus(), 200);
+        });
+    it('should works as expected when execute a registered Function',
+        async () => {
+          const response = await clientService.executeContract(
+              mockedContractId, mockedFunctionArgument, property);
+          assert.equal(response.getStatus(), 200);
+        });
   });
   describe('validateLedger', () => {
     it('should works as expected', async () => {
