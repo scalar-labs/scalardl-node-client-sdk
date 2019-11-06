@@ -26,7 +26,7 @@ jobs:
           username: moon004
           password: $DOCKERHUB_PASSWORD
         environment:
-          SCALAR_CASSANDRA_HOST: cassandra
+          SCALAR_CASSANDRA_HOST: 127.0.0.1
           MAX_HEAP_SIZE: 500m
           HEAP_NEWSIZE: 512m
 
