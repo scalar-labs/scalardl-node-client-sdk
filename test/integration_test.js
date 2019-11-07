@@ -30,11 +30,15 @@ describe('Integration test on ClientService', async () => {
     state: mockedState,
   };
   const mockedFunctionArgument = {
-    asset_id: mockedAssetId, // passed via contractArgument
+    asset_id: mockedAssetId,
     state: mockedState,
     _function_: mockedFunctionId,
   };
   const property = {
+    asset_id: mockedAssetId,
+    state: mockedState,
+  };
+  const functionArgument = {
     asset_id: mockedAssetId,
     state: mockedState,
   };
@@ -72,16 +76,16 @@ describe('Integration test on ClientService', async () => {
     });
   });
   describe('executeContract', () => {
-    it('should works as expected when execute a registered Contract',
+    it('should works as expected when executing a registered Contract',
         async () => {
           const response = await clientService.executeContract(mockedContractId,
-              mockedContractArgument, property);
+              mockedContractArgument, functionArgument);
           assert.equal(response.getStatus(), 200);
         });
-    it('should works as expected when execute a registered Function',
+    it('should works as expected when executing a registered Function',
         async () => {
           const response = await clientService.executeContract(
-              mockedContractId, mockedFunctionArgument, property);
+              mockedContractId, mockedFunctionArgument, functionArgument);
           assert.equal(response.getStatus(), 200);
         });
   });
