@@ -80,6 +80,9 @@ describe('Integration test on ClientService', async () => {
         async () => {
           const response = await clientService.executeContract(mockedContractId,
               mockedContractArgument, functionArgument);
+          const responseArgumentObj = JSON.parse(response.array[2]);
+          assert.equal(responseArgumentObj.asset_id, mockedAssetId);
+          assert.equal(responseArgumentObj.state, mockedState);
           assert.equal(response.getStatus(), 200);
         });
     it('should works as expected when executing a registered Function',
