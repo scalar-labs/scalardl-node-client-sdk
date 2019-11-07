@@ -17,16 +17,22 @@ public class StateUpdater extends Contract {
       // it should be thrown when a contract faces some non-recoverable error
       throw new ContractContextException("please set asset_id and state in the argument");
     }
+    if (!properties.isPresent()) {
+      throw new ContractContextException("please set a properties");
+    }
 
     String assetId = argument.getString("asset_id");
+    String propertiesValue = properties.get().getString("properties");
     int state = argument.getInt("state");
 
     Optional<Asset> asset = ledger.get(assetId);
+    JsonObject jsonObject = Json.createObjectBuilder().add("asset_id", assetId).add("state", state)
+        .add("properties", propertiesValue).build();
 
     if (!asset.isPresent() || asset.get().data().getInt("state") != state) {
       ledger.put(assetId, Json.createObjectBuilder().add("state", state).build());
     }
 
-    return argument;
+    return jsonObject;
   }
 }

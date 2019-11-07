@@ -35,8 +35,7 @@ describe('Integration test on ClientService', async () => {
     _function_: mockedFunctionId,
   };
   const property = {
-    asset_id: mockedAssetId,
-    state: mockedState,
+    properties: 'bar',
   };
   const functionArgument = {
     asset_id: mockedAssetId,
@@ -83,6 +82,7 @@ describe('Integration test on ClientService', async () => {
           const responseArgumentObj = JSON.parse(response.array[2]);
           assert.equal(responseArgumentObj.asset_id, mockedAssetId);
           assert.equal(responseArgumentObj.state, mockedState);
+          assert.equal(responseArgumentObj.properties, property.properties);
           assert.equal(response.getStatus(), 200);
         });
     it('should works as expected when executing a registered Function',
