@@ -4,8 +4,8 @@
 #
 version: 2
 jobs:
-  context: org-global
   build:
+  context: org-global
     branches:
       only:
         - master
