@@ -63,7 +63,7 @@ jobs:
 
       - run:
           name: Run cqlsh
-          command: cqlsh -f ./.circleci/create_schema.cql 127.0.0.1 9042
+          command: cat .circleci/create_schema.cql && cqlsh -f ./.circleci/create_schema.cql 127.0.0.1 9042
 
       - run:
           name: Wait for Scalardl
