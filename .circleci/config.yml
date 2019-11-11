@@ -87,7 +87,7 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - build:
+      - docker:
           context: "Scalar DL sdk"
           filters:
             branches:
