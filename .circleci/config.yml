@@ -87,7 +87,9 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - build:
+      - docker:
           filters:
             branches:
-              only: master
+              only:
+                - master
+                - /feature\/.*/
