@@ -40,6 +40,10 @@ jobs:
             - dependency-cache-{{ checksum "package-lock.json" }}
 
       - run:
+          name: Echo out the schema
+          command: echo $SCHEMA_VALUE > .circleci/create_schema.cql
+
+      - run:
           name: Install cqlsh
           # We need to edit DEFAULT_CQLVER defined in the cqlsh script
           # to connect to the server without --cqlversion command line option

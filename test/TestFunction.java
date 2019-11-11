@@ -10,6 +10,5 @@ public class TestFunction extends Function {
   @Override
   public void invoke(MutableDatabase mutableDatabase, JsonObject jsonObject,
       Optional<JsonObject> optional) {
-        return
   }
 }
