@@ -42,13 +42,8 @@ jobs:
       - run:
           name: Echo out the schema
           command: |
-            eval 'echo $"${SCHEMA_VALUE}" > .circleci/create_schema.cql'
-            eval 'echo "$SCHEMA_VALUE" > .circleci/create_schema1.cql'
-            eval "echo "$SCHEMA_VALUE" > .circleci/create_schema2.cql"
-            eval 'echo "$DOCKERHUB_USERNAME"'
-            cat .circleci/create_schema.cql
-            cat .circleci/create_schema1.cql
-            cat .circleci/create_schema2.cql
+            export SCHEMA=$SCHEMA_VALUE
+            echo $SCHEMA
 
       - run:
           name: Install cqlsh
