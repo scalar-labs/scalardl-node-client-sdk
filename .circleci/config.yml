@@ -41,7 +41,7 @@ jobs:
 
       - run:
           name: Echo out the schema
-          command: echo $SCHEMA_VALUE > .circleci/create_schema.cql
+          command: echo "$SCHEMA_VALUE" > .circleci/create_schema.cql
 
       - run:
           name: Install cqlsh
