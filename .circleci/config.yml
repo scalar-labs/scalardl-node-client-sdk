@@ -40,12 +40,6 @@ jobs:
             - dependency-cache-{{ checksum "package-lock.json" }}
 
       - run:
-          name: Echo out the schema
-          command: |
-            export SCHEMA=$SCHEMA_VALUE
-            echo $SCHEMA
-
-      - run:
           name: Install cqlsh
           # We need to edit DEFAULT_CQLVER defined in the cqlsh script
           # to connect to the server without --cqlversion command line option
@@ -61,8 +55,8 @@ jobs:
           command: dockerize -wait tcp://127.0.0.1:9042 -timeout 1m
 
       - run:
-          name: Run cqlsh
-          command: cat .circleci/create_schema.cql && cqlsh -f ./.circleci/create_schema.cql 127.0.0.1 9042
+          name: Install schema on Cassandra
+          command: cqlsh --execute "$SCHEMA_CONTENT" 127.0.0.1 9042
 
       - run:
           name: Wait for Scalardl
