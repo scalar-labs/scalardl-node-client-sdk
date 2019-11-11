@@ -4,6 +4,7 @@
 #
 version: 2
 jobs:
+  context: Scalar DL sdk
   build:
     branches:
       only:
