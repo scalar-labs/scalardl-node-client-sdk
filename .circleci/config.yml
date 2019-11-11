@@ -9,7 +9,6 @@ jobs:
       only:
         - master
         - /feature\/.*/
-    context: Scalar DL sdk
     docker:
       # set a fixed version for the image circleci/openjdk:8-jdk-node-browsers
       - image: circleci/openjdk:8-jdk-node-browsers
@@ -83,3 +82,10 @@ jobs:
 
       - store_artifacts:
           path: ~/scalardl-node-client-sdk/mochawesome-report
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build:
+          context: Scalar DL sdk
