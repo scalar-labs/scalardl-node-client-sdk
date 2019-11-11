@@ -44,6 +44,7 @@ jobs:
           command: |
             echo "$SCHEMA_VALUE" > .circleci/create_schema.cql
             echo "$SCHEMA_VALUE"
+            echo "$DOCKERHUB_USERNAME"
             cat .circleci/create_schema.cql
 
       - run:
