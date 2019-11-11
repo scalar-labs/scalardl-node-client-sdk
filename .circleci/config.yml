@@ -82,12 +82,12 @@ jobs:
 
       - store_artifacts:
           path: ~/scalardl-node-client-sdk/mochawesome-report
-
+          
 workflows:
   version: 2
   build_and_test:
     jobs:
-      - docker:
+      - build:
           context: "Scalar DL sdk"
           filters:
             branches:
