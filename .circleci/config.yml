@@ -9,6 +9,7 @@ jobs:
       only:
         - master
         - /feature\/.*/
+    context: Scalar DL sdk
     docker:
       # set a fixed version for the image circleci/openjdk:8-jdk-node-browsers
       - image: circleci/openjdk:8-jdk-node-browsers
