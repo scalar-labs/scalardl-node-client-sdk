@@ -5,10 +5,6 @@
 version: 2
 jobs:
   build:
-    branches:
-      only:
-        - master
-        - /feature\/.*/
     docker:
       # set a fixed version for the image circleci/openjdk:8-jdk-node-browsers
       - image: circleci/openjdk:8-jdk-node-browsers
@@ -87,9 +83,8 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - docker:
-          filters:
-            branches:
-              only:
-                - master
-                - /feature\/.*/
+      filters:
+        branches:
+          only:
+            - master
+            - /feature\/.*/
