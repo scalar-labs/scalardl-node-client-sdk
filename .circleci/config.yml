@@ -42,9 +42,8 @@ jobs:
       - run:
           name: Echo out the schema
           command: |
-            echo "$SCHEMA_VALUE" > .circleci/create_schema.cql
-            echo "$SCHEMA_VALUE"
-            echo "$DOCKERHUB_USERNAME"
+            eval 'echo "$SCHEMA_VALUE"' > .circleci/create_schema.cql
+            eval 'echo "$DOCKERHUB_USERNAME"'
             cat .circleci/create_schema.cql
 
       - run:
