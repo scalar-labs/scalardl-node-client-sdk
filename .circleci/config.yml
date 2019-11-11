@@ -88,4 +88,4 @@ workflows:
   build_and_test:
     jobs:
       - build:
-          context: org-global
+          context: "org-global"
