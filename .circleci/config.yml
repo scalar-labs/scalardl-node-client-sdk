@@ -4,7 +4,7 @@
 #
 version: 2
 jobs:
-  context: Scalar DL sdk
+  context: org-global
   build:
     branches:
       only:
@@ -83,10 +83,3 @@ jobs:
 
       - store_artifacts:
           path: ~/scalardl-node-client-sdk/mochawesome-report
-
-workflows:
-  version: 2
-  build_and_test:
-    jobs:
-      - build
-    context: Scalar DL sdk
