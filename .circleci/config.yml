@@ -83,6 +83,7 @@ workflows:
   build-deploy:
     jobs:
       - build:
+          context: "Scalar DL sdk"
           filters:
             branches:
               only:
