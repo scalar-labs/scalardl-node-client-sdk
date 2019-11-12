@@ -78,13 +78,13 @@ jobs:
 
       - store_artifacts:
           path: ~/scalardl-node-client-sdk/mochawesome-report
-
 workflows:
   version: 2
   build-deploy:
     jobs:
-      filters:
-        branches:
-          only:
-            - master
-            - /feature\/.*/
+      - build:
+          filters:
+            branches:
+              only:
+                - master
+                - /feature\/.*/
