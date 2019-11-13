@@ -15,8 +15,9 @@ In your CircleCI configuration files.
        password: <b>$DOCKERHUB_PASSWORD</b>
 </pre>
 
-We can also use it to store the content of a certain configuration file as well, for example :-
-The content of the secret files will be stored as a CircleCI environment variable, multiline configuration content will have to be parsed into a single string. For example :-
+We can also use it to store the content of a certain configuration file as well.
+
+The content of the secret files will be stored as a CircleCI environment variable, multiline configuration content will have to be parsed into a single string. For example:
 ```
 {
       "name": "@scalar-labs/ist-web-client-sdk",
