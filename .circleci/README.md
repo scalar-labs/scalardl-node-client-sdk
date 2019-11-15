@@ -35,3 +35,29 @@ The raw content above has to be formatted as :-
 ```
 
 **Beware**: If environment variable is favoured when for keeping the schema file, then we would need to update the environment variable to reflect the latest schema file. But keep in mind that, it always depends on the command input required format.
+
+
+### 2. Setting Up Context
+
+Context is known as the variables that is to be shared across different project of the same organization, for example your docker hub id and password, encryption credential keys and etc...
+
+[Click here](https://circleci.com/gh/organizations/scalar-labs/settings#contexts) for setting up the context of your organization, normally this would be your docker hub username and password, and in the circleci configuration file, it would look like so : -
+
+<pre>
+	- store_artifacts:
+	    path: ~/scalardl-web-client-sdk/test/test-reports      	     <i>no newline after this line</i>
+Workflows:
+    version: 2
+    build-deploy:   
+      jobs:
+        - build:
+            context: "<b>Context name here</b>"
+	 filters:
+	    branches:
+	        only:
+            - master
+            - /feature\/.*/
+</pre>
+
+Here is the full sample file.
+<b>Attention</b>: There is no newline between the main build jobs and Workflows, and the context value has to be string, or else an unrelated error message will be thrown by the CircleCI logs.
