@@ -41,7 +41,10 @@ The raw content above has to be formatted as :-
 
 Context is known as the variables that is to be shared across different project of the same organization, for example your docker hub id and password, encryption credential keys and etc...
 
-[Click here](https://circleci.com/gh/organizations/scalar-labs/settings#contexts) for setting up the context of your organization, normally this would be your docker hub username and password, and in the circleci configuration file, it would look like so : -
+[Click here](https://circleci.com/gh/organizations/scalar-labs/settings#contexts) for setting up the context of your organization, normally this would be your docker hub username and password,
+the variables name should be $DOCKERHUB_USERNAME, $DOCKERHUB_PASSWORD, as that's what we currently used in the configuration.
+
+The configuration file would look like so :-
 
 <pre>
 	- store_artifacts:
@@ -59,5 +62,5 @@ Workflows:
             - /feature\/.*/
 </pre>
 
-Here is the full sample file.
+[Here](https://github.com/scalarindetail/scalardl-node-client-sdk/blob/feature/integration_test/.circleci/config.yml) is the full sample file.
 <b>Attention</b>: There is no newline between the main build jobs and Workflows, and the context value has to be string, or else an unrelated error message will be thrown by the CircleCI logs.
