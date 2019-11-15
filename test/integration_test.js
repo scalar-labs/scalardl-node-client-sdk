@@ -19,7 +19,11 @@ const properties = {
 let clientService;
 
 describe('Integration test on ClientService', async () => {
-  const mockedFunctionId = 'TestFunction';
+  const mockedByteContract = fs.readFileSync(
+      __dirname + '/StateUpdater.class');
+  const mockedByteFunction = fs.readFileSync(
+      __dirname + '/TestFunction.class');
+  const mockedFunctionId = 'TestFunctions';
   const mockedContractId = `StateUpdater${Date.now()}`;
   const mockedContractName = 'com.org1.contract.StateUpdater';
   const mockedFunctionName = 'com.org1.function.TestFunction';
@@ -30,21 +34,18 @@ describe('Integration test on ClientService', async () => {
     state: mockedState,
   };
   const mockedFunctionArgument = {
+    a: 'contractArgument A',
     asset_id: mockedAssetId,
     state: mockedState,
-    _function_: mockedFunctionId,
+    _function_: mockedByteFunction,
   };
   const property = {
     properties: 'bar',
   };
   const functionArgument = {
-    asset_id: mockedAssetId,
-    state: mockedState,
+    foo: 'bar',
+    function_id: mockedFunctionId,
   };
-  const mockedByteContract = fs.readFileSync(
-      __dirname + '/StateUpdater.class');
-  const mockedByteFunction = fs.readFileSync(
-      __dirname + '/TestFunction.class');
   clientService = new ClientService(properties);
   describe('registerCertificate', () => {
     it('should works as expected', async () => {
@@ -87,8 +88,13 @@ describe('Integration test on ClientService', async () => {
         });
     it('should works as expected when executing a registered Function',
         async () => {
+          // "a":"b" pass via contractArgument,
+          // {"foo":"bar"} pass via functionArgument
+          // executeContract(ContractA, {"a":"b", "_function_": "FunctionA"},
+          // {"foo":"bar"})
           const response = await clientService.executeContract(
               mockedContractId, mockedFunctionArgument, functionArgument);
+          console.log(response);
           assert.equal(response.getStatus(), 200);
         });
   });
