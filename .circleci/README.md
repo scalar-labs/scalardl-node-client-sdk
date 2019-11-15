@@ -34,7 +34,7 @@ The raw content above has to be formatted as :-
 {\n      \"name\": \"@scalar-labs/ist-web-client-sdk\",\n      \"description\": \"Web SDK for Information Banking Solution Template\",\n      \"author\": \"Scalar, Inc.\",\n      \"dependencies\": {\n        \"axios\": \"0.19.0\",\n      }\n}
 ```
 
-**Beware**: If environment variable is favoured when for keeping the schema file, then we would need to update the environment variable to reflect the latest schema file. But keep in mind that, it always depends on the command input required format.
+**Attention**: If environment variable is favoured when for keeping the schema file, then we would need to update the environment variable to reflect the latest schema file. But keep in mind that, it always depends on the input required format.
 
 
 ### 2. Setting Up Context
@@ -42,7 +42,7 @@ The raw content above has to be formatted as :-
 Context is known as the variables that is to be shared across different project of the same organization, for example your docker hub id and password, encryption credential keys and etc...
 
 [Click here](https://circleci.com/gh/organizations/scalar-labs/settings#contexts) for setting up the context of your organization, normally this would be your docker hub username and password,
-the variables name should be $DOCKERHUB_USERNAME, $DOCKERHUB_PASSWORD, as that's what we currently used in the configuration.
+the variables name should be **$DOCKERHUB_USERNAME**, **$DOCKERHUB_PASSWORD**, as that's what we currently used in the configuration.
 
 The configuration file would look like so :-
 
