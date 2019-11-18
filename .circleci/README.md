@@ -16,7 +16,7 @@ In the [Environment Variables](https://circleci.com/blog/new-on-circleci-import-
 </pre>
 
 ### 2. Trigger CircleCi integration test
-To trigger the integration test on CircleCi, name your branch which fulfil the follow regex :-
+To trigger the integration test on CircleCi, name your branch which fulfil the following regex :-
 <pre>
     <b>/feature\/.*/</b>
 </pre>
