@@ -30,22 +30,19 @@ describe('Integration test on ClientService', async () => {
   const mockedAssetId = 'mockedAssetId';
   const mockedState = 1;
   const mockedContractArgument = {
-    'asset_id': mockedAssetId,
-    'state': mockedState,
-    '_functions_': [mockedFunctionId],
-  };
-  const mockedFunctionArgument = {
-    a: 'contractArgument A',
     asset_id: mockedAssetId,
     state: mockedState,
-    _function_: mockedByteFunction,
   };
-  const property = {
+  const mockedFunctionArgument = {
+    asset_id: mockedAssetId,
+    state: mockedState,
+    _functions_: [mockedFunctionId],
+  };
+  const contractProperty = {
     properties: 'bar',
   };
   const functionArgument = {
     foo: 'bar',
-    function_id: mockedFunctionId,
   };
   clientService = new ClientService(properties);
   describe('registerCertificate', () => {
@@ -66,7 +63,7 @@ describe('Integration test on ClientService', async () => {
     it('should works as expected', async () => {
       const response = await clientService.registerContract(mockedContractId,
           mockedContractName,
-          mockedByteContract, property);
+          mockedByteContract, contractProperty);
       assert.equal(response.getStatus(), 200);
     });
   });
@@ -80,23 +77,24 @@ describe('Integration test on ClientService', async () => {
     it('should works as expected when executing a registered Contract',
         async () => {
           const response = await clientService.executeContract(mockedContractId,
-              mockedContractArgument, functionArgument);
+              mockedContractArgument, contractProperty);
           const responseArgumentObj = JSON.parse(response.array[2]);
           assert.equal(responseArgumentObj.asset_id, mockedAssetId);
           assert.equal(responseArgumentObj.state, mockedState);
-          assert.equal(responseArgumentObj.properties, property.properties);
+          assert.equal(responseArgumentObj.properties,
+              contractProperty.properties);
           assert.equal(response.getStatus(), 200);
         });
     it('should works as expected when executing a registered Function',
         async () => {
-          // "a":"b" pass via contractArgument,
-          // {"foo":"bar"} pass via functionArgument
-          // executeContract(ContractA, {"a":"b", "_function_": "FunctionA"},
-          // {"foo":"bar"})
           const response = await clientService.executeContract(
               mockedContractId, mockedFunctionArgument, functionArgument);
-          console.log(response);
-          assert.equal(response.getStatus(), 200);
+          const responseArgumentObj = JSON.parse(response.array[1]);
+          assert.equal(responseArgumentObj.asset_id, mockedAssetId);
+          assert.equal(responseArgumentObj.state, mockedState);
+          assert.equal(responseArgumentObj.foo,
+              functionArgument.foo);
+          assert.equal(response.getStatus(), 502);
         });
   });
   describe('validateLedger', () => {
