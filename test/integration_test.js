@@ -23,15 +23,16 @@ describe('Integration test on ClientService', async () => {
       __dirname + '/StateUpdater.class');
   const mockedByteFunction = fs.readFileSync(
       __dirname + '/TestFunction.class');
-  const mockedFunctionId = 'TestFunctions';
+  const mockedFunctionId = `TestFunctions${Date.now()}`;
   const mockedContractId = `StateUpdater${Date.now()}`;
   const mockedContractName = 'com.org1.contract.StateUpdater';
   const mockedFunctionName = 'com.org1.function.TestFunction';
   const mockedAssetId = 'mockedAssetId';
   const mockedState = 1;
   const mockedContractArgument = {
-    asset_id: mockedAssetId,
-    state: mockedState,
+    'asset_id': mockedAssetId,
+    'state': mockedState,
+    '_functions_': [mockedFunctionId],
   };
   const mockedFunctionArgument = {
     a: 'contractArgument A',
