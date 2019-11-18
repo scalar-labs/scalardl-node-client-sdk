@@ -2,8 +2,8 @@
 
 ### 1. Environment Variables
 
-Set environment variable on CircleCi by following [this guide](https://circleci.com/blog/new-on-circleci-import-project-environment-variables/).
-The CircleCi environment variables used in this project are:-
+Set environment variables on CircleCi by following [this guide](https://circleci.com/blog/new-on-circleci-import-project-environment-variables/).
+The CircleCi environment variables used in this project are:
 
 In the [Context](https://circleci.com/gh/organizations/scalar-labs/settings#contexts). Current context name is `scalar`.
 <pre>
@@ -16,7 +16,7 @@ In the [Environment Variables](https://circleci.com/blog/new-on-circleci-import-
 </pre>
 
 ### 2. Trigger CircleCi integration test
-To trigger the integration test on CircleCi, name your branch which fulfil the following regex :-
+To trigger the integration test on CircleCi, name your branch in accordance with the following regex :
 <pre>
     <b>/feature\/.*/</b>
 </pre>
