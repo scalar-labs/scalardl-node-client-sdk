@@ -13,7 +13,8 @@ public class TestFunction extends Function {
   @Override
   public void invoke(MutableDatabase database, JsonObject contractArgument,
       Optional<JsonObject> functionArgument) {
-    Put put = (new Put(new Key(new TextValue("column_a", "bar")))).forNamespace("foo")
+    String mockedId = contractArgument.getString("asset_id");
+    Put put = (new Put(new Key(new TextValue("column_a", mockedId)))).forNamespace("foo")
         .forTable("bar");
     database.put(put);
   }
