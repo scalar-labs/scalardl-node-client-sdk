@@ -36,13 +36,9 @@ describe('Integration test on ClientService', async () => {
   const mockedFunctionArgument = {
     asset_id: mockedAssetId,
     state: mockedState,
-    _functions_: [mockedFunctionId],
   };
   const contractProperty = {
     properties: 'bar',
-  };
-  const functionArgument = {
-    foo: 'bar',
   };
   clientService = new ClientService(properties);
   describe('registerCertificate', () => {
@@ -77,7 +73,7 @@ describe('Integration test on ClientService', async () => {
     it('should works as expected when executing a registered Contract',
         async () => {
           const response = await clientService.executeContract(mockedContractId,
-              mockedContractArgument, contractProperty);
+              mockedContractArgument, {});
           const responseArgumentObj = JSON.parse(response.array[2]);
           assert.equal(responseArgumentObj.asset_id, mockedAssetId);
           assert.equal(responseArgumentObj.state, mockedState);
@@ -87,14 +83,19 @@ describe('Integration test on ClientService', async () => {
         });
     it('should works as expected when executing a registered Function',
         async () => {
+          const contractArgumentWithFunction = {
+            asset_id: mockedAssetId,
+            state: Date.now(),
+            _functions_: [mockedFunctionId],
+          };
+          console.log(contractArgumentWithFunction);
           const response = await clientService.executeContract(
-              mockedContractId, mockedFunctionArgument, functionArgument);
-          const responseArgumentObj = JSON.parse(response.array[1]);
-          assert.equal(responseArgumentObj.asset_id, mockedAssetId);
-          assert.equal(responseArgumentObj.state, mockedState);
-          assert.equal(responseArgumentObj.foo,
-              functionArgument.foo);
-          assert.equal(response.getStatus(), 502);
+              mockedContractId,
+              contractArgumentWithFunction,
+              mockedFunctionArgument
+          );
+          assert.equal(response.getStatus(), 200);
+          // TODO check C*
         });
   });
   describe('validateLedger', () => {
