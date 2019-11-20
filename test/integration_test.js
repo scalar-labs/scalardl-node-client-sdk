@@ -6,7 +6,6 @@ const fs = require('fs');
 const cassandra = require('cassandra-driver');
 
 const assert = require('assert');
-const chai = require('chai');
 
 const properties = {
   'scalar.ledger.client.server_host': 'localhost',
@@ -73,12 +72,12 @@ describe('Integration test on ClientService', async () => {
         async () => {
           const response = await clientService.executeContract(mockedContractId,
               mockedContractArgument, {});
+          assert.equal(response.getStatus(), 200);
           const responseArgumentObj = JSON.parse(response.array[2]);
           assert.equal(responseArgumentObj.asset_id, mockedAssetId);
           assert.equal(responseArgumentObj.state, mockedState);
           assert.equal(responseArgumentObj.properties,
               contractProperty.properties);
-          assert.equal(response.getStatus(), 200);
         });
     const mockedFunctionArgument = {
       asset_id: mockedAssetId,
@@ -97,17 +96,16 @@ describe('Integration test on ClientService', async () => {
               mockedFunctionArgument,
           );
           assert.equal(response.getStatus(), 200);
+          cassandraClient = new cassandra.Client({
+            contactPoints: ['127.0.0.1:9042'],
+            localDataCenter: 'datacenter1',
+          });
+          const cassandraRespond = await cassandraClient.execute(
+              `SELECT * FROM foo.bar WHERE column_a='${mockedAssetId}';`);
+          assert.equal(cassandraRespond.rows[0].column_a,
+              contractArgumentWithFunction.asset_id);
+          await cassandraClient.shutdown();
         });
-    it('should return a proper value on cassandra query', async () => {
-      cassandraClient = new cassandra.Client({
-        contactPoints: ['127.0.0.1:9042'],
-        localDataCenter: 'datacenter1',
-      });
-      const cassandraRespond = await cassandraClient.execute(
-          'SELECT * FROM foo.bar');
-      chai.expect(cassandraRespond.rows[0].column_a).to.be.a('string');
-      await cassandraClient.shutdown();
-    });
   });
   describe('validateLedger', () => {
     it('should works as expected', async () => {
