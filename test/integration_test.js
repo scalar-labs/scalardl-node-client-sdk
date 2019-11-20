@@ -100,9 +100,9 @@ describe('Integration test on ClientService', async () => {
             contactPoints: ['127.0.0.1:9042'],
             localDataCenter: 'datacenter1',
           });
-          const cassandraRespond = await cassandraClient.execute(
+          const cassandraResponse = await cassandraClient.execute(
               `SELECT * FROM foo.bar WHERE column_a='${mockedAssetId}';`);
-          assert.equal(cassandraRespond.rows[0].column_a,
+          assert.equal(cassandraResponse.rows[0].column_a,
               contractArgumentWithFunction.asset_id);
           await cassandraClient.shutdown();
         });
