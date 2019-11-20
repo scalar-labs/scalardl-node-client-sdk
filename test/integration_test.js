@@ -106,6 +106,7 @@ describe('Integration test on ClientService', async () => {
       const cassandraRespond = await cassandraClient.execute(
           'SELECT * FROM foo.bar');
       chai.expect(cassandraRespond.rows[0].column_a).to.be.a('string');
+      await cassandraClient.shutdown();
     });
   });
   describe('validateLedger', () => {
