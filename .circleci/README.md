@@ -1,21 +1,24 @@
-## CircleCI Project Maintenance Guideline
+## Setting up CircleCI for Scalar DL Node/Web client SDK
 
 ### 1. Environment Variables
 
 Set environment variables on CircleCi by following [this guide](https://circleci.com/blog/new-on-circleci-import-project-environment-variables/).
-The CircleCi environment variables used in this project are:
+Please set environment variables in CircleCi as follows.
 
-In the [Context](https://circleci.com/gh/organizations/scalar-labs/settings#contexts). Current context name is `scalar`.
+1. Set environment variable in the [Context](https://circleci.com/gh/organizations/scalar-labs/settings#contexts) in `scalar`.
 <pre>
     <b>$DOCKERHUB_USERNAME</b>
     <b>$DOCKERHUB_PASSWORD</b>
 </pre>
-In the [Environment Variables](https://circleci.com/blog/new-on-circleci-import-project-environment-variables/)
+Make sure your DockerHub account has been added by Scalar so that you have the permission to pull scalar-dl image.
+
+2. Set in the [Environment Variables](https://circleci.com/blog/new-on-circleci-import-project-environment-variables/) in the project. Click on `Add Variable` instead of `Import Variable(s)`
 <pre>
     <b>$SCHEMA_CONTENT</b>
 </pre>
+[SCHEMA_CONTENT](https://github.com/scalar-labs/scalardl-node-client-sdk/blob/e119dd687c1c0ed5ee3a3b3d8a945aea70176011/.circleci/config.yml#L55) will be the schema commands that will be executed by `cqlsh`. Here is a [sample schema](https://github.com/pmcfadin/killrvideo-sample-schema/blob/master/killrvideo-schema.cql). 
 
-### 2. Trigger CircleCi integration test
+### 2. Trigger integration test
 To trigger the integration test on CircleCi, name your branch in accordance with the following regex :
 <pre>
     <b>/feature\/.*/</b>
