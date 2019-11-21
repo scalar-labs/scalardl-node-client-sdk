@@ -66,8 +66,16 @@ const status = response.getStatus();
 const message = response.getMessage();
 ```
 
+### Register functions
+Use the `registerFunction` function to register a function.
+```
+const response = await clientService.registerFunction('functionId, 'com.example.function.functionName', functionUint8Array);
+const status = response.getStatus();
+const message = response.getMessage();
+```
+
 ### List registered contracts
-Use listContracts function to list all registered contracts.
+Use `listContracts` function to list all registered contracts.
 ```
 const response = await clientService.listContracts();
 const message = response.getMessage();
@@ -75,12 +83,19 @@ const contracts = JSON.parse(message);
 ```
 
 ### Execute a contract
-Use executeContract function to execute a registered contract.
+Use `executeContract` function to execute a registered contract.
 ```
 const response = await clientService.executeContract('contractId', argumentObject);
 const status = response.getStatus();
 const result = JSON.parse(response.getResult());
 ```
+
+### Execute a function
+Use `executeContract` function to execute a registered function.
+```
+const response = await clientService.executeContract('contractId', { 'arg1': 'a', '_functions_': [functionId] }, { 'arg2': 'b' });
+```
+`{ 'arg1': 'a', ` will be passed via [contractArgument](https://github.com/scalarindetail/scalardl-node-client-sdk/blob/3e531b4c62fb14702a873b07f44cb37212f04be4/test/TestFunction.java#L14), while `{ 'arg2': 'b' }` will be passed via [functionArgument](https://github.com/scalarindetail/scalardl-node-client-sdk/blob/3e531b4c62fb14702a873b07f44cb37212f04be4/test/TestFunction.java#L15).
 
 ### Validate an asset
 Use the `validateLedger` function to validate an asset in the Scalar DL network.
