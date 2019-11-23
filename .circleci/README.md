@@ -5,7 +5,7 @@
 Set environment variables on CircleCi by following [this guide](https://circleci.com/blog/new-on-circleci-import-project-environment-variables/).
 Please set environment variables in CircleCi as follows.
 
-1. Set the environment variable in the [Context](https://circleci.com/gh/organizations/scalar-labs/settings#contexts) with the name `scalar`.
+1. Set the environment variables in the [Context](https://circleci.com/gh/organizations/scalar-labs/settings#contexts) with the name `scalar`.
 <pre>
     <b>$DOCKERHUB_USERNAME</b>
     <b>$DOCKERHUB_PASSWORD</b>
