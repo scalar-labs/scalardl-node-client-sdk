@@ -83,15 +83,13 @@ const contracts = JSON.parse(message);
 ```
 
 ### Execute a contract
-Use `executeContract` function to execute a registered contract.
+Use `executeContract` function to execute a registered contract. It will also execute a function if `_functions_` is given in the argument.
 ```
 const response = await clientService.executeContract('contractId', argumentObject);
 const status = response.getStatus();
 const result = JSON.parse(response.getResult());
 ```
 
-### Execute a function
-Use `executeContract` function to execute a registered function.
 ```
 const response = await clientService.executeContract('contractId', { 'arg1': 'a', '_functions_': [functionId] }, { 'arg2': 'b' });
 ```
