@@ -2,9 +2,7 @@ const {
   ClientService,
 } = require('../scalardl-node-client-sdk');
 const fs = require('fs');
-
 const cassandra = require('cassandra-driver');
-
 const assert = require('assert');
 
 const properties = {
@@ -20,6 +18,7 @@ const properties = {
 };
 let clientService;
 let cassandraClient;
+
 describe('Integration test on ClientService', async () => {
   const mockedByteContract = fs.readFileSync(
       __dirname + '/StateUpdater.class');
@@ -113,5 +112,4 @@ describe('Integration test on ClientService', async () => {
       assert.equal(response.getStatus(), 200);
     });
   });
-})
-;
+});
