@@ -39,13 +39,13 @@ describe('Integration test on ClientService', async () => {
   };
   clientService = new ClientService(properties);
   describe('registerCertificate', () => {
-    it('should works as expected', async () => {
+    it('should return 200 when correct inputs are specified', async () => {
       const response = await clientService.registerCertificate();
       assert.equal(response.getStatus(), 200);
     });
   });
   describe('registerFunction', () => {
-    it('should works as expected', async () => {
+    it('should return 200 when correct parameters are specified', async () => {
       const response = await clientService.registerFunction(mockedFunctionId,
           mockedFunctionName,
           mockedByteFunction);
@@ -53,7 +53,7 @@ describe('Integration test on ClientService', async () => {
     });
   });
   describe('registerContract', () => {
-    it('should works as expected', async () => {
+    it('should return 200 when correct parameters are specified', async () => {
       const response = await clientService.registerContract(mockedContractId,
           mockedContractName,
           mockedByteContract, contractProperty);
@@ -61,13 +61,13 @@ describe('Integration test on ClientService', async () => {
     });
   });
   describe('listContracts', () => {
-    it('should works as expected', async () => {
+    it('should return 200 when correct contract id is specified', async () => {
       const response = await clientService.listContracts(mockedContractId);
       assert.equal(response.getStatus(), 200);
     });
   });
   describe('executeContract', () => {
-    it('should works as expected when executing a registered Contract',
+    it('should return proper object and 200 when correct parameters are specified',
         async () => {
           const response = await clientService.executeContract(mockedContractId,
               mockedContractArgument, {});
@@ -82,7 +82,7 @@ describe('Integration test on ClientService', async () => {
       asset_id: mockedAssetId,
       state: mockedState,
     };
-    it('should works as expected when executing a registered Function',
+    it('should return 200 and cassandra query should return proper object when correct parameters are specified',
         async () => {
           const contractArgumentWithFunction = {
             asset_id: mockedAssetId,
@@ -107,7 +107,7 @@ describe('Integration test on ClientService', async () => {
         });
   });
   describe('validateLedger', () => {
-    it('should works as expected', async () => {
+    it('should return 200 when correct asset id is specified', async () => {
       const response = await clientService.validateLedger(mockedAssetId);
       assert.equal(response.getStatus(), 200);
     });
