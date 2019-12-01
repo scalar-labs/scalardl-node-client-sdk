@@ -17,7 +17,7 @@ Set the [Environment Variables](https://circleci.com/blog/new-on-circleci-import
     <b>$SCHEMA_CONTENT</b>
 </pre>
 [SCHEMA_CONTENT](https://github.com/scalar-labs/scalardl-node-client-sdk/blob/e119dd687c1c0ed5ee3a3b3d8a945aea70176011/.circleci/config.yml#L55) will be the schema that will be applied by `cqlsh`, and it should be a serialized string of [this](https://github.com/scalar-labs/scalar/blob/master/ledger/scripts/create_schema.cql).
-To get the serialized string, remove comments in the file and `do cat schema.cql | tr -d '\n'`.
+To get the serialized string, remove comments in the file and do `cat schema.cql | tr -d '\n'`.
 
 ### Trigger integration test
 To trigger the integration test on CircleCi, name your branch in accordance with the following regex :

@@ -45,7 +45,7 @@ describe('Integration test on ClientService', async () => {
     });
   });
   describe('registerFunction', () => {
-    it('should return 200 when correct parameters are specified', async () => {
+    it('should return 200 when correct inputs are specified', async () => {
       const response = await clientService.registerFunction(mockedFunctionId,
           mockedFunctionName,
           mockedByteFunction);
@@ -53,7 +53,7 @@ describe('Integration test on ClientService', async () => {
     });
   });
   describe('registerContract', () => {
-    it('should return 200 when correct parameters are specified', async () => {
+    it('should return 200 when correct inputs are specified', async () => {
       const response = await clientService.registerContract(mockedContractId,
           mockedContractName,
           mockedByteContract, contractProperty);
@@ -67,7 +67,7 @@ describe('Integration test on ClientService', async () => {
     });
   });
   describe('executeContract', () => {
-    it('should return proper object and 200 when correct parameters are specified',
+    it('should return proper object and 200 when correct inputs are specified',
         async () => {
           const response = await clientService.executeContract(mockedContractId,
               mockedContractArgument, {});
@@ -82,7 +82,7 @@ describe('Integration test on ClientService', async () => {
       asset_id: mockedAssetId,
       state: mockedState,
     };
-    it('should return 200 and cassandra query should return proper object when correct parameters are specified',
+    it('should return 200 and cassandra query should return proper object when correct inputs are specified',
         async () => {
           const contractArgumentWithFunction = {
             asset_id: mockedAssetId,
