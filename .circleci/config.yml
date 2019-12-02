@@ -55,6 +55,10 @@ jobs:
           command: cqlsh --execute "$SCHEMA_CONTENT" 127.0.0.1 9042
 
       - run:
+          name: Install schema for Udf purpose on Cassandra
+          command: cqlsh -f .circleci/udf_schema.cql 127.0.0.1 9042
+
+      - run:
           name: Wait for Scalardl
           command: dockerize -wait tcp://127.0.0.1:50051 -timeout 1m
 

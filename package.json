@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@scalar-labs/scalardl-javascript-sdk-base": "2.0.1",
+    "cassandra-driver": "4.3.1",
     "google-protobuf": "^3.6.1",
     "grpc": "^1.16.0"
   },

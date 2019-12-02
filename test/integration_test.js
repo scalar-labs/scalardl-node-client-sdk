@@ -2,7 +2,7 @@ const {
   ClientService,
 } = require('../scalardl-node-client-sdk');
 const fs = require('fs');
-
+const cassandra = require('cassandra-driver');
 const assert = require('assert');
 
 const properties = {
@@ -17,43 +17,35 @@ const properties = {
   'scalar.ledger.client.tls.ca_root_cert': '-----BEGIN CERTIFICATE-----\nMIIE/jCCAuagAwIBAgIJAJO8tpVEEORLMA0GCSqGSIb3DQEBCwUAMBQxEjAQBgNV\nBAMMCWxvY2FsaG9zdDAeFw0xOTAzMTMxMDUyMTFaFw0yMDAzMTIxMDUyMTFaMBQx\nEjAQBgNVBAMMCWxvY2FsaG9zdDCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoC\nggIBAKFeFSrXRh5jA+OodMPw0XFO4sd4G9wYERlxgCjDmd9eC+loLpjGwRwwO7os\n/+rhW+Cg/NGhNn64xCmS/JtZf91SBD1QfQ4wk4094sAUIHsztaWtZTATl6aIy0BN\n21A0ueFgVQGehwO1FdRKtS7X+45YV2vMMK/UQ69VSCwY82olBRgWp45TXLUmWVgC\nUAJkE/V2Ch8WLyKpCggtaxYmn8YfzA1X20QDK1b2IW4YPDcPapQLtU6wqIjrXX1E\nw992GgfERm//I14QEyu+qIPafsniDGYxiR6HK8nqeR70QcGHt+Qql24xyjwWHEA/\n43pn3jjrNVRhiVAD8tkVyRmfWjIngksRHPwEh3jG34gshOi9xAaID+mx2AWhThsk\nXbuqSxHckPlvgWHugZmFOwKZAgU5/gpnWR7oHPOSYffhGwmc/+SK/SQ4UDeTFI2c\n40Xw22P8CWbIq4gKi66kSvuFbLSeKQIRMJd50hf7kw3SqnkqEaeRXy5jBovut7CU\nnwcgGPceYmWhKxhkg5urzk+CQZENf+9+pVvArOQemn9bMuaBPwtwXE42+fktQpQ2\nPG3k7ryVL5R0jhuVNXf9ioU2z1ONQ2IdsuFtCKnozfVBAhy9bPfm120rTV/UBOCD\nzcmfRnv081lG9BN/KtZBo7hfFH/ZD2542yVRvibRIIdPWIkTAgMBAAGjUzBRMB0G\nA1UdDgQWBBQ61fQAtAgd7sM/NDtIX4D8GSA/8DAfBgNVHSMEGDAWgBQ61fQAtAgd\n7sM/NDtIX4D8GSA/8DAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IC\nAQCaYh1bxlj9Impoq3rmFHl5/9Fb2o2H2Ne8VjTHb8eSoHuLwXdWzKnw6UhiCaN4\nEZgrsqq1L2Tc8Y+eqT4gz3uDLc5Cj29HHC/suZezIo3lgyZ/A6stYQXE5Gy8e+to\nQhmf4u8RMZ8zt6i355un6mTJxJq7JxoVqpECf5tg6pMdOUzbcKLTmN6i50jH/PSO\nNQsJhiSJg3caNdWviob+UwEuUineMF/X08dB3gphZ7kmfDeRjmONALMXS1uvPwk2\n3s8S45LmxETx+tcJSvckKRC9JaQf6dgHfKAWHpkIqvLKyqy9Dmvg2RSJi3kI9oaj\ndm64zc6CAsqVaPvoMfWIN7JZq9jvzc8msGiilfhiYoc+M3jvnmM81FuGbAw7Utq4\nuuHtpCcpbxRMChD4WdlrPeBONyBKp+RRWTGfBY1GW5aGWVp/cbcpIc2RSgnZcrxb\n6ef2iTMtUjRd76JlkobTyvgo0GKdLgnr8c711I2YNp+TabKIKZOEvw2X+oGbfxBN\n1WvRB5YJo2rzwZj0fSvN9IwT9TGxSZIo5zcaQuwLEmDZBJShgXN5Ya71Vag1AP2i\nmOwUJRvfTVPWg+wtF2JQwaPpK0+Kb7oCq9tl3PUW40FRgqWV1Tgp6Co/U1W/1BU6\n02Vmic/M/HmRMwWuX1PyVOVr8Mjyj+OMF1JsmdR5eL5Mtg==\n-----END CERTIFICATE-----\n',
 };
 let clientService;
+let cassandraClient;
 
 describe('Integration test on ClientService', async () => {
-  const mockedFunctionId = 'TestFunction';
+  const mockedByteContract = fs.readFileSync(
+      __dirname + '/StateUpdater.class');
+  const mockedByteFunction = fs.readFileSync(
+      __dirname + '/TestFunction.class');
+  const mockedFunctionId = `TestFunctions${Date.now()}`;
   const mockedContractId = `StateUpdater${Date.now()}`;
   const mockedContractName = 'com.org1.contract.StateUpdater';
   const mockedFunctionName = 'com.org1.function.TestFunction';
-  const mockedAssetId = 'mockedAssetId';
+  const mockedAssetId = `mockedAssetId${Date.now()}`;
   const mockedState = 1;
   const mockedContractArgument = {
     asset_id: mockedAssetId,
     state: mockedState,
   };
-  const mockedFunctionArgument = {
-    asset_id: mockedAssetId,
-    state: mockedState,
-    _function_: mockedFunctionId,
-  };
-  const property = {
+  const contractProperty = {
     properties: 'bar',
   };
-  const functionArgument = {
-    asset_id: mockedAssetId,
-    state: mockedState,
-  };
-  const mockedByteContract = fs.readFileSync(
-      __dirname + '/StateUpdater.class');
-  const mockedByteFunction = fs.readFileSync(
-      __dirname + '/TestFunction.class');
   clientService = new ClientService(properties);
   describe('registerCertificate', () => {
-    it('should works as expected', async () => {
+    it('should return 200 when correct inputs are specified', async () => {
       const response = await clientService.registerCertificate();
       assert.equal(response.getStatus(), 200);
     });
   });
   describe('registerFunction', () => {
-    it('should works as expected', async () => {
+    it('should return 200 when correct inputs are specified', async () => {
       const response = await clientService.registerFunction(mockedFunctionId,
           mockedFunctionName,
           mockedByteFunction);
@@ -61,42 +53,63 @@ describe('Integration test on ClientService', async () => {
     });
   });
   describe('registerContract', () => {
-    it('should works as expected', async () => {
+    it('should return 200 when correct inputs are specified', async () => {
       const response = await clientService.registerContract(mockedContractId,
           mockedContractName,
-          mockedByteContract, property);
+          mockedByteContract, contractProperty);
       assert.equal(response.getStatus(), 200);
     });
   });
   describe('listContracts', () => {
-    it('should works as expected', async () => {
+    it('should return 200 when correct contract id is specified', async () => {
       const response = await clientService.listContracts(mockedContractId);
       assert.equal(response.getStatus(), 200);
     });
   });
   describe('executeContract', () => {
-    it('should works as expected when executing a registered Contract',
+    it('should return proper object and 200 when correct inputs are specified',
         async () => {
           const response = await clientService.executeContract(mockedContractId,
-              mockedContractArgument, functionArgument);
+              mockedContractArgument, {});
+          assert.equal(response.getStatus(), 200);
           const responseArgumentObj = JSON.parse(response.array[2]);
           assert.equal(responseArgumentObj.asset_id, mockedAssetId);
           assert.equal(responseArgumentObj.state, mockedState);
-          assert.equal(responseArgumentObj.properties, property.properties);
-          assert.equal(response.getStatus(), 200);
+          assert.equal(responseArgumentObj.properties,
+              contractProperty.properties);
         });
-    it('should works as expected when executing a registered Function',
+    const mockedFunctionArgument = {
+      asset_id: mockedAssetId,
+      state: mockedState,
+    };
+    it('should return 200 and cassandra query should return proper object when correct inputs are specified',
         async () => {
+          const contractArgumentWithFunction = {
+            asset_id: mockedAssetId,
+            state: Date.now(),
+            _functions_: [mockedFunctionId],
+          };
           const response = await clientService.executeContract(
-              mockedContractId, mockedFunctionArgument, functionArgument);
+              mockedContractId,
+              contractArgumentWithFunction,
+              mockedFunctionArgument,
+          );
           assert.equal(response.getStatus(), 200);
+          cassandraClient = new cassandra.Client({
+            contactPoints: ['127.0.0.1:9042'],
+            localDataCenter: 'datacenter1',
+          });
+          const cassandraResponse = await cassandraClient.execute(
+              `SELECT * FROM foo.bar WHERE column_a='${mockedAssetId}';`);
+          assert.equal(cassandraResponse.rows[0].column_a,
+              contractArgumentWithFunction.asset_id);
+          await cassandraClient.shutdown();
         });
   });
   describe('validateLedger', () => {
-    it('should works as expected', async () => {
+    it('should return 200 when correct asset id is specified', async () => {
       const response = await clientService.validateLedger(mockedAssetId);
       assert.equal(response.getStatus(), 200);
     });
   });
-})
-;
+});
