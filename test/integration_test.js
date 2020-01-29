@@ -20,11 +20,7 @@ let clientService;
 let cassandraClient;
 
 describe('Integration test on ClientService', async () => {
-  const mockedByteContract = fs.readFileSync(
-      __dirname + '/StateUpdater.class');
-  const mockedByteFunction = fs.readFileSync(
-      __dirname + '/TestFunction.class');
-  const mockedFunctionId = `TestFunctions${Date.now()}`;
+  const mockedFunctionId = 'TestFunction';
   const mockedContractId = `StateUpdater${Date.now()}`;
   const mockedContractName = 'com.org1.contract.StateUpdater';
   const mockedFunctionName = 'com.org1.function.TestFunction';
@@ -37,64 +33,71 @@ describe('Integration test on ClientService', async () => {
   const contractProperty = {
     properties: 'bar',
   };
+  const mockedByteContract = fs.readFileSync(
+    __dirname + '/StateUpdater.class');
+  const mockedByteFunction = fs.readFileSync(
+    __dirname + '/TestFunction.class');
+
   clientService = new ClientService(properties);
   describe('registerCertificate', () => {
-    it('should return 200 when correct inputs are specified', async () => {
+    it('should be successful', async () => {
       const response = await clientService.registerCertificate();
-      assert.equal(response.getStatus(), 200);
+      assert.deepEqual(response, {});
     });
   });
   describe('registerFunction', () => {
-    it('should return 200 when correct inputs are specified', async () => {
+    it('should be successful', async () => {
       const response = await clientService.registerFunction(mockedFunctionId,
           mockedFunctionName,
           mockedByteFunction);
-      assert.equal(response.getStatus(), 200);
+      assert.deepEqual(response, {});
     });
   });
   describe('registerContract', () => {
-    it('should return 200 when correct inputs are specified', async () => {
+    it('should be successful', async () => {
       const response = await clientService.registerContract(mockedContractId,
           mockedContractName,
           mockedByteContract, contractProperty);
-      assert.equal(response.getStatus(), 200);
+      assert.deepEqual(response, {});
     });
   });
   describe('listContracts', () => {
-    it('should return 200 when correct contract id is specified', async () => {
-      const response = await clientService.listContracts(mockedContractId);
-      assert.equal(response.getStatus(), 200);
+    it('should return contract metadata when the correct contract id is specified', async () => {
+      const response = await clientService.listContracts();
+      assert.ok(response.hasOwnProperty(mockedContractId));
     });
   });
   describe('executeContract', () => {
-    it('should return proper object and 200 when correct inputs are specified',
+    it('should work as expected when executing a registered contract',
         async () => {
-          const response = await clientService.executeContract(mockedContractId,
+          const response = await clientService.executeContract(
+              mockedContractId,
               mockedContractArgument, {});
-          assert.equal(response.getStatus(), 200);
-          const responseArgumentObj = JSON.parse(response.array[2]);
-          assert.equal(responseArgumentObj.asset_id, mockedAssetId);
-          assert.equal(responseArgumentObj.state, mockedState);
-          assert.equal(responseArgumentObj.properties,
+
+          const contractResult = response.result;
+          assert.equal(contractResult.asset_id, mockedAssetId);
+          assert.equal(contractResult.state, mockedState);
+          assert.equal(contractResult.properties,
               contractProperty.properties);
         });
-    const mockedFunctionArgument = {
-      asset_id: mockedAssetId,
-      state: mockedState,
-    };
-    it('should return 200 and cassandra query should return proper object when correct inputs are specified',
+
+    it('should execute the function properly and cassandra query should return proper object when correct inputs are specified',
         async () => {
           const contractArgumentWithFunction = {
             asset_id: mockedAssetId,
             state: Date.now(),
             _functions_: [mockedFunctionId],
           };
+          const mockedFunctionArgument = {
+            asset_id: mockedAssetId,
+            state: mockedState,
+          };
           const response = await clientService.executeContract(
               mockedContractId,
               contractArgumentWithFunction,
               mockedFunctionArgument,
           );
-          assert.equal(response.getStatus(), 200);
+          assert.equal(response.result.state, contractArgumentWithFunction.state);
           cassandraClient = new cassandra.Client({
             contactPoints: ['127.0.0.1:9042'],
             localDataCenter: 'datacenter1',
@@ -109,7 +112,7 @@ describe('Integration test on ClientService', async () => {
   describe('validateLedger', () => {
     it('should return 200 when correct asset id is specified', async () => {
       const response = await clientService.validateLedger(mockedAssetId);
-      assert.equal(response.getStatus(), 200);
+      assert.equal(response.statusCode, 200);
     });
   });
 });
