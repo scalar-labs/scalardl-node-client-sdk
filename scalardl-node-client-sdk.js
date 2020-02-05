@@ -16,10 +16,12 @@ class ClientService extends ClientServiceBase {
    * @param {Object} properties
    */
   constructor(properties) {
-    const ledgerClientUrl = `${properties['scalar.ledger.client.server_host']}:` +
-        `${properties['scalar.ledger.client.server_port']}`;
-    const ledgerPrivilegedClientUrl = `${properties['scalar.ledger.client.server_host']}:` +
-        `${properties['scalar.ledger.client.server_privileged_port']}`;
+    const ledgerClientUrl =
+      `${properties['scalar.ledger.client.server_host']}:` +
+      `${properties['scalar.ledger.client.server_port']}`;
+    const ledgerPrivilegedClientUrl =
+      `${properties['scalar.ledger.client.server_host']}:` +
+      `${properties['scalar.ledger.client.server_privileged_port']}`;
     const ca = properties['scalar.ledger.client.tls.ca_root_cert'];
     const tlsEnabled = properties['scalar.ledger.client.tls.enabled'];
     let ledgerClient;
