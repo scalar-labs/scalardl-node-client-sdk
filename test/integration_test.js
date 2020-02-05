@@ -93,7 +93,7 @@ describe('Integration test on ClientService', async () => {
   describe('registerCertificate', () => {
     it('should be successful', async () => {
       const response = await clientService.registerCertificate();
-      assert.deepEqual(response, {});
+      assert.deepEqual(response, undefined);
     });
   });
   describe('registerFunction', () => {
@@ -101,7 +101,7 @@ describe('Integration test on ClientService', async () => {
       const response = await clientService.registerFunction(mockedFunctionId,
           mockedFunctionName,
           mockedByteFunction);
-      assert.deepEqual(response, {});
+      assert.deepEqual(response, undefined);
     });
   });
   describe('registerContract', () => {
@@ -109,7 +109,7 @@ describe('Integration test on ClientService', async () => {
       const response = await clientService.registerContract(mockedContractId,
           mockedContractName,
           mockedByteContract, contractProperty);
-      assert.deepEqual(response, {});
+      assert.deepEqual(response, undefined);
     });
   });
   describe('listContracts', () => {
