@@ -24,7 +24,7 @@ It provides following functions to request Scalar DL network.
 |executeContract|To execute a client's registered contract|
 |validateLedger|To validate an asset on the Scalar DL network to determine if it has been tampered|
 
-If an error occurs when executing one of the above method, a `ClientError` will be thrown. The
+If an error occurs when executing one of the above methods, a `ClientError` will be thrown. The
 `ClientError.code` attributes provides additional context. Please refer to the [Runtime error](#runtime-error) section below for the status code signification.
 
 Use the code snippet below to create a ClientService instance.
