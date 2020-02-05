@@ -38,15 +38,17 @@ The `clientProperties` argument is mandatory for the constructor.
 This is a properties example that a user `foo@example.com` would use to try to connect to the server `scalardl.example.com:50051` of the Scalar DL network.
 ```javascript
 {
-    'scalar.ledger.client.server_host': 'scalardl.example.com',
-    'scalar.ledger.client.server_port': 50051,
-    'scalar.ledger.client.server_privileged_port': 50052,
-    'scalar.ledger.client.cert_holder_id': 'foo@example.com',
-    'scalar.ledger.client.private_key_pem': "-----BEGIN EC PRIVATE KEY-----\nMHc...",
-    'scalar.ledger.client.cert_pem': "-----BEGIN CERTIFICATE-----\nMIICjTCCAj...n",
-    'scalar.ledger.client.cert_version': 1,
-    'scalar.ledger.client.tls.enabled': false,
-    'scalar.ledger.client.tls.ca_root_cert': '// not used here',
+    'scalar.dl.client.server.host': 'scalardl.example.com',
+    'scalar.dl.client.server.port': 50051,
+    'scalar.dl.client.server.privileged_port': 50052,
+    'scalar.dl.client.cert_holder_id': 'foo@example.com',
+    'scalar.dl.client.private_key_pem': "-----BEGIN EC PRIVATE KEY-----\nMHc...",
+    'scalar.dl.client.cert_pem': "-----BEGIN CERTIFICATE-----\nMIICjTCCAj...\n",
+    'scalar.dl.client.cert_version': 1,
+    'scalar.dl.client.tls.enabled': false,
+    'scalar.dl.client.tls.ca_root_cert_pem': '-----BEGIN CERTIFICATE-----\n...\n',
+    'scalar.dl.client.authorization.credential': '...',
+    'scalar.dl.client.proxy.server': '...',
 }
 ```
 

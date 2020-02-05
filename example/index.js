@@ -6,19 +6,19 @@ const path = require('path');
 
 (async () => {
   const properties = {
-    'scalar.ledger.client.server_host': 'localhost',
-    'scalar.ledger.client.server_port': 50051,
-    'scalar.ledger.client.server_privileged_port': 50052,
-    'scalar.ledger.client.cert_holder_id': `${Date.now()}`,
-    'scalar.ledger.client.cert_version': 1,
-    'scalar.ledger.client.tls.enabled': false,
+    'scalar.dl.client.server.host': 'localhost',
+    'scalar.dl.client.server.port': 50051,
+    'scalar.dl.client.server.privileged_port': 50052,
+    'scalar.dl.client.cert_holder_id': `foo@${Date.now()}`,
+    'scalar.dl.client.cert_version': 1,
+    'scalar.dl.client.tls.enabled': false,
 
-    'scalar.ledger.client.private_key_pem': '-----BEGIN EC PRIVATE KEY-----\n' +
+    'scalar.dl.client.private_key_pem': '-----BEGIN EC PRIVATE KEY-----\n' +
     'MHcCAQEEICcJGMEw3dyXUGFu/5a36HqY0ynZi9gLUfKgYWMYgr/IoAoGCCqGSM49\n' +
     'AwEHoUQDQgAEBGuhqumyh7BVNqcNKAQQipDGooUpURve2dO66pQCgjtSfu7lJV20\n' +
     'XYWdrgo0Y3eXEhvK0lsURO9N0nrPiQWT4A==\n-----END EC PRIVATE KEY-----\n',
 
-    'scalar.ledger.client.cert_pem': '-----BEGIN CERTIFICATE-----\n' +
+    'scalar.dl.client.cert_pem': '-----BEGIN CERTIFICATE-----\n' +
     'MIICizCCAjKgAwIBAgIUMEUDTdWsQpftFkqs6bCd6U++4nEwCgYIKoZIzj0EAwIw\n' +
     'bzELMAkGA1UEBhMCSlAxDjAMBgNVBAgTBVRva3lvMQ4wDAYDVQQHEwVUb2t5bzEf\n' +
     'MB0GA1UEChMWU2FtcGxlIEludGVybWVkaWF0ZSBDQTEfMB0GA1UEAxMWU2FtcGxl\n' +
@@ -34,8 +34,7 @@ const path = require('path');
     'SM49BAMCA0cAMEQCIC/Bo4oNU6yHFLJeme5ApxoNdyu3rWyiqWPxJmJAr9L0AiBl\n' +
     'Gc/v+yh4dHIDhCrimajTQAYOG9n0kajULI70Gg7TNw==\n-----END CERTIFICATE-----\n',
 
-
-    'scalar.ledger.client.tls.ca_root_cert': '-----BEGIN CERTIFICATE-----\n' +
+    'scalar.dl.client.tls.ca_root_cert_pem': '-----BEGIN CERTIFICATE-----\n' +
     'MIIE/jCCAuagAwIBAgIJAJO8tpVEEORLMA0GCSqGSIb3DQEBCwUAMBQxEjAQBgNV\n' +
     'BAMMCWxvY2FsaG9zdDAeFw0xOTAzMTMxMDUyMTFaFw0yMDAzMTIxMDUyMTFaMBQx\n' +
     'EjAQBgNVBAMMCWxvY2FsaG9zdDCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoC\n' +
