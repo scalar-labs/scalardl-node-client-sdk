@@ -152,7 +152,7 @@ describe('Integration test on ClientService', async () => {
           mockedFunctionArgument,
       );
       assert.equal(
-          response.result.state,
+          response.getResult().state,
           contractArgumentWithFunction.state,
       );
       cassandraClient = new cassandra.Client({
@@ -169,7 +169,7 @@ describe('Integration test on ClientService', async () => {
   describe('validateLedger', () => {
     it('should return 200 when correct asset id is specified', async () => {
       const response = await clientService.validateLedger(mockedAssetId);
-      assert.equal(response.statusCode, 200);
+      assert.equal(response.getCode(), 200);
     });
   });
 });
