@@ -103,6 +103,10 @@ const path = require('path');
         },
     );
     console.log(r);
+
+    console.log('Validate ledger');
+    r = await clientService.validateLedger('foo');
+    console.log(r);
   } catch (e) {
     console.log(`${e.code} ${e.message}`);
   }
