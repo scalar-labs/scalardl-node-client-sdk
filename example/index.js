@@ -81,7 +81,7 @@ const path = require('path');
         )
     );
     const contractId =
-      `${properties['scalar.ledger.client.cert_holder_id']}_StateUpdater`;
+      `${properties['scalar.dl.client.cert_holder_id']}_StateUpdater`;
     await clientService.registerContract(
         contractId,
         'com.org1.contract.StateUpdater',
