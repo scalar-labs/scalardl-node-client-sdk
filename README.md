@@ -30,7 +30,7 @@ If an error occurs when executing one of the above methods, a `ClientError` will
 Use the code snippet below to create a ClientService instance.
 
 ```javascript
-const { ClientService } = require('@scalar-labs/scalardl-web-client-sdk');
+const { ClientService } = require('@scalar-labs/scalardl-node-client-sdk');
 const clientService = new ClientService(clientProperties);
 ```
 
@@ -82,8 +82,8 @@ const constracts = await clientService.listContracts();
 Use `executeContract` function to execute a registered contract. It will also execute a function if `_functions_` is given in the argument.
 ```javascript
 const response = await clientService.executeContract('contractId', argumentObject);
-const executionResult = response.result;
-const proofsList = response.proofsList;
+const executionResult = response.getResult();
+const proofsList = response.getProofs();
 ```
 
 ```javascript
@@ -95,8 +95,8 @@ const response = await clientService.executeContract('contractId', { 'arg1': 'a'
 Use the `validateLedger` function to validate an asset in the Scalar DL network.
 ```javascript
 const response = await clientService.validateLedger('assetId');
-const status = response.statusCode;
-const proof = response.proof;
+const statusCode = response.getCode();
+const proof = response.getProof();
 ```
 ### Runtime error
 Error thrown by the client present a status code.
