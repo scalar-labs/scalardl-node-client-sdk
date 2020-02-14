@@ -17,7 +17,7 @@ jobs:
           MAX_HEAP_SIZE: 1300m
           HEAP_NEWSIZE: 512m
 
-      - image: scalarlabs/scalar-ledger:1.3.1
+      - image: scalarlabs/scalar-ledger:2.0.2
         auth:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
@@ -55,8 +55,8 @@ jobs:
           command: cqlsh --execute "$SCHEMA_CONTENT" 127.0.0.1 9042
 
       - run:
-          name: Install schema for Udf purpose on Cassandra
-          command: cqlsh -f .circleci/udf_schema.cql 127.0.0.1 9042
+          name: Install schema for function purpose on Cassandra
+          command: cqlsh -f .circleci/function_schema.cql 127.0.0.1 9042
 
       - run:
           name: Wait for Scalardl
@@ -88,8 +88,3 @@ workflows:
     jobs:
       - build:
           context: "scalar"
-          filters:
-            branches:
-              only:
-                - master
-                - /feature\/.*/
