@@ -17,32 +17,83 @@ class ClientService extends ClientServiceBase {
    */
   constructor(properties) {
     const ledgerClientUrl =
-      `${properties['scalar.dl.client.server.host']}:` +
-      `${properties['scalar.dl.client.server.port']}`;
+        `${properties['scalar.dl.client.server.host']}:` +
+        `${properties['scalar.dl.client.server.port']}`;
     const ledgerPrivilegedClientUrl =
-      `${properties['scalar.dl.client.server.host']}:` +
-      `${properties['scalar.dl.client.server.privileged_port']}`;
+        `${properties['scalar.dl.client.server.host']}:` +
+        `${properties['scalar.dl.client.server.privileged_port']}`;
     const ca = properties['scalar.dl.client.tls.ca_root_cert_pem'];
     const tlsEnabled = properties['scalar.dl.client.tls.enabled'];
-    let ledgerClient;
-    let ledgerPrivilegedClient;
+    let serviceLedgerClient;
+    let serviceLedgerPrivilegedClient;
     if (tlsEnabled) {
-      ledgerClient = new LedgerClient(ledgerClientUrl,
+      serviceLedgerClient = new LedgerClient(ledgerClientUrl,
           grpc.credentials.createSsl(Buffer.from(ca, 'utf8')));
-      ledgerPrivilegedClient = new LedgerPrivilegedClient(ledgerClientUrl,
+      serviceLedgerPrivilegedClient = new LedgerPrivilegedClient(ledgerClientUrl,
           grpc.credentials.createSsl(Buffer.from(ca, 'utf8')));
     } else {
-      ledgerClient = new LedgerClient(ledgerClientUrl,
+      serviceLedgerClient = new LedgerClient(ledgerClientUrl,
           grpc.credentials.createInsecure());
-      ledgerPrivilegedClient = new LedgerPrivilegedClient(
+      serviceLedgerPrivilegedClient = new LedgerPrivilegedClient(
           ledgerPrivilegedClientUrl,
           grpc.credentials.createInsecure());
     }
     const services = {
-      'ledgerClient': ledgerClient,
-      'ledgerPrivileged': ledgerPrivilegedClient,
+      'ledgerClient': serviceLedgerClient,
+      'ledgerPrivileged': serviceLedgerPrivilegedClient,
     };
     super(services, protobuf, properties);
+
+    this.ledgerClient = serviceLedgerClient;
+    this.ledgerPrivilegedClient = serviceLedgerPrivilegedClient;
+  }
+
+  /**
+   * @param {Uint8Array} serializedBinary
+   */
+  registerCertificate(serializedBinary) {
+    const request = this.ledgerPrivilegedClient.registerCert.requestDeserialize(serializedBinary);
+    this.ledgerPrivilegedClient.registerCert(request);
+  }
+
+  /**
+   * @param {Uint8Array} serializedBinary
+   */
+  registerFunction(serializedBinary) {
+    const request = this.ledgerPrivilegedClient.registerFunction.requestDeserialize(serializedBinary);
+    this.ledgerPrivilegedClient.registerFunction(request);
+  }
+
+  /**
+   * @param {Uint8Array} serializedBinary
+   */
+  registerContract(serializedBinary) {
+    const request = this.ledgerClient.registerContract.requestDeserialize(serializedBinary);
+    this.ledgerClient.registerContract(request);
+  }
+
+  /**
+   * @param {Uint8Array} serializedBinary
+   */
+  listContracts(serializedBinary) {
+    const request = this.ledgerClient.listContracts.requestDeserialize(serializedBinary);
+    this.ledgerClient.listContracts(request);
+  }
+
+  /**
+   * @param {Uint8Array} serializedBinary
+   */
+  validateLedger(serializedBinary) {
+    const request = this.ledgerClient.validateLedger.requestDeserialize(serializedBinary);
+    this.ledgerClient.validateLedger(request);
+  }
+
+  /**
+   * @param {Uint8Array} serializedBinary
+   */
+  executeContract(serializedBinary) {
+    const request = this.ledgerClient.exec.requestDeserialize(serializedBinary);
+    this.ledgerClient.executeContract(request);
   }
 }
 
