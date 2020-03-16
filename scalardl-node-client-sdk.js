@@ -24,28 +24,32 @@ class ClientService extends ClientServiceBase {
         `${properties['scalar.dl.client.server.privileged_port']}`;
     const ca = properties['scalar.dl.client.tls.ca_root_cert_pem'];
     const tlsEnabled = properties['scalar.dl.client.tls.enabled'];
-    let serviceLedgerClient;
-    let serviceLedgerPrivilegedClient;
+    let ledgerClient;
+    let ledgerPrivilegedClient;
     if (tlsEnabled) {
-      serviceLedgerClient = new LedgerClient(ledgerClientUrl,
-          grpc.credentials.createSsl(Buffer.from(ca, 'utf8')));
-      serviceLedgerPrivilegedClient = new LedgerPrivilegedClient(ledgerClientUrl,
-          grpc.credentials.createSsl(Buffer.from(ca, 'utf8')));
+      ledgerClient = new LedgerClient(
+          ledgerClientUrl,
+          grpc.credentials.createSsl(Buffer.from(ca, 'utf8')),
+      );
+      ledgerPrivilegedClient = new LedgerPrivilegedClient(
+          ledgerClientUrl,
+          grpc.credentials.createSsl(Buffer.from(ca, 'utf8')),
+      );
     } else {
-      serviceLedgerClient = new LedgerClient(ledgerClientUrl,
-          grpc.credentials.createInsecure());
-      serviceLedgerPrivilegedClient = new LedgerPrivilegedClient(
+      ledgerClient = new LedgerClient(
+          ledgerClientUrl,
+          grpc.credentials.createInsecure(),
+      );
+      ledgerPrivilegedClient = new LedgerPrivilegedClient(
           ledgerPrivilegedClientUrl,
-          grpc.credentials.createInsecure());
+          grpc.credentials.createInsecure(),
+      );
     }
     const services = {
-      'ledgerClient': serviceLedgerClient,
-      'ledgerPrivileged': serviceLedgerPrivilegedClient,
+      'ledgerClient': ledgerClient,
+      'ledgerPrivileged': ledgerPrivilegedClient,
     };
     super(services, protobuf, properties);
-
-    this.ledgerClient = serviceLedgerClient;
-    this.ledgerPrivilegedClient = serviceLedgerPrivilegedClient;
   }
 
   /**
