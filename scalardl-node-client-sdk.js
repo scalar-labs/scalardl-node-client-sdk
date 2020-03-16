@@ -17,11 +17,11 @@ class ClientService extends ClientServiceBase {
    */
   constructor(properties) {
     const ledgerClientUrl =
-        `${properties['scalar.dl.client.server.host']}:` +
-        `${properties['scalar.dl.client.server.port']}`;
+      `${properties['scalar.dl.client.server.host']}:` +
+      `${properties['scalar.dl.client.server.port']}`;
     const ledgerPrivilegedClientUrl =
-        `${properties['scalar.dl.client.server.host']}:` +
-        `${properties['scalar.dl.client.server.privileged_port']}`;
+      `${properties['scalar.dl.client.server.host']}:` +
+      `${properties['scalar.dl.client.server.privileged_port']}`;
     const ca = properties['scalar.dl.client.tls.ca_root_cert_pem'];
     const tlsEnabled = properties['scalar.dl.client.tls.enabled'];
     let ledgerClient;
@@ -56,7 +56,9 @@ class ClientService extends ClientServiceBase {
    * @param {Uint8Array} serializedBinary
    */
   registerCertificate(serializedBinary) {
-    const request = this.ledgerPrivilegedClient.registerCert.requestDeserialize(serializedBinary);
+    const request = this.ledgerPrivilegedClient.registerCert.requestDeserialize(
+        serializedBinary,
+    );
     this.ledgerPrivilegedClient.registerCert(request);
   }
 
@@ -64,7 +66,10 @@ class ClientService extends ClientServiceBase {
    * @param {Uint8Array} serializedBinary
    */
   registerFunction(serializedBinary) {
-    const request = this.ledgerPrivilegedClient.registerFunction.requestDeserialize(serializedBinary);
+    const request =
+      this.ledgerPrivilegedClient.registerFunction.requestDeserialize(
+          serializedBinary,
+      );
     this.ledgerPrivilegedClient.registerFunction(request);
   }
 
@@ -72,7 +77,8 @@ class ClientService extends ClientServiceBase {
    * @param {Uint8Array} serializedBinary
    */
   registerContract(serializedBinary) {
-    const request = this.ledgerClient.registerContract.requestDeserialize(serializedBinary);
+    const request =
+      this.ledgerClient.registerContract.requestDeserialize(serializedBinary);
     this.ledgerClient.registerContract(request);
   }
 
@@ -80,7 +86,8 @@ class ClientService extends ClientServiceBase {
    * @param {Uint8Array} serializedBinary
    */
   listContracts(serializedBinary) {
-    const request = this.ledgerClient.listContracts.requestDeserialize(serializedBinary);
+    const request =
+      this.ledgerClient.listContracts.requestDeserialize(serializedBinary);
     this.ledgerClient.listContracts(request);
   }
 
@@ -88,7 +95,8 @@ class ClientService extends ClientServiceBase {
    * @param {Uint8Array} serializedBinary
    */
   validateLedger(serializedBinary) {
-    const request = this.ledgerClient.validateLedger.requestDeserialize(serializedBinary);
+    const request =
+      this.ledgerClient.validateLedger.requestDeserialize(serializedBinary);
     this.ledgerClient.validateLedger(request);
   }
 
