@@ -54,58 +54,146 @@ class ClientService extends ClientServiceBase {
 
   /**
    * @param {Uint8Array} serializedBinary
+   * @return {Promise<!proto.google.protobuf.Empty>}
    */
-  registerCertificate(serializedBinary) {
-    const request = this.ledgerPrivilegedClient.registerCert.requestDeserialize(
+  async registerCertificateWithSerializedBinary(serializedBinary) {
+    const request = this.ledgerPrivileged.registerCert.requestDeserialize(
         serializedBinary,
     );
-    this.ledgerPrivilegedClient.registerCert(request);
+
+    return new Promise((resolve, reject) => {
+      this.ledgerPrivileged.registerCert(
+          request,
+          this.metadata,
+          (err, response) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(response);
+            }
+          },
+      );
+    });
   }
 
   /**
    * @param {Uint8Array} serializedBinary
+   * @return {Promise<!proto.google.protobuf.Empty>}
    */
-  registerFunction(serializedBinary) {
+  async registerFunctionWithSerializedBinary(serializedBinary) {
     const request =
-      this.ledgerPrivilegedClient.registerFunction.requestDeserialize(
+      this.ledgerPrivileged.registerFunction.requestDeserialize(
           serializedBinary,
       );
-    this.ledgerPrivilegedClient.registerFunction(request);
+
+    return new Promise((resolve, reject) => {
+      this.ledgerPrivileged.registerFunction(
+          request,
+          this.metadata,
+          (err, response) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(response);
+            }
+          },
+      );
+    });
   }
 
   /**
    * @param {Uint8Array} serializedBinary
+   * @return {Promise<!proto.google.protobuf.Empty>}
    */
-  registerContract(serializedBinary) {
-    const request =
-      this.ledgerClient.registerContract.requestDeserialize(serializedBinary);
-    this.ledgerClient.registerContract(request);
+  async registerContractWithSerializedBinary(serializedBinary) {
+    const request = this.ledgerClient.registerContract.requestDeserialize(
+        serializedBinary,
+    );
+
+    return new Promise((resolve, reject) => {
+      this.ledgerClient.registerContract(
+          request,
+          this.metadata,
+          (err, response) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(response);
+            }
+          },
+      );
+    });
   }
 
   /**
    * @param {Uint8Array} serializedBinary
+   * @return {Promise<!proto.google.protobuf.ContractsListingResponse>}
    */
-  listContracts(serializedBinary) {
+  async listContractsWithSerializedBinary(serializedBinary) {
     const request =
       this.ledgerClient.listContracts.requestDeserialize(serializedBinary);
-    this.ledgerClient.listContracts(request);
+
+    return new Promise((resolve, reject) => {
+      this.ledgerClient.listContracts(
+          request,
+          this.metadata,
+          (err, response) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(response);
+            }
+          },
+      );
+    });
   }
 
   /**
    * @param {Uint8Array} serializedBinary
+   * @return {Promise<!proto.google.protobuf.LedgerValidationResponse>}
    */
-  validateLedger(serializedBinary) {
-    const request =
-      this.ledgerClient.validateLedger.requestDeserialize(serializedBinary);
-    this.ledgerClient.validateLedger(request);
+  async validateLedgerWithSerializedBinary(serializedBinary) {
+    const request = this.ledgerClient.validateLedger.requestDeserialize(
+        serializedBinary,
+    );
+
+    return new Promise((resolve, reject) => {
+      this.ledgerClient.validateLedger(
+          request,
+          this.metadata,
+          (err, response) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(response);
+            }
+          },
+      );
+    });
   }
 
   /**
    * @param {Uint8Array} serializedBinary
+   * @return {Promise<!proto.google.protobuf.ContractExecutionResponse>}
    */
-  executeContract(serializedBinary) {
-    const request = this.ledgerClient.exec.requestDeserialize(serializedBinary);
-    this.ledgerClient.executeContract(request);
+  async executeContractWithSerializedBinary(serializedBinary) {
+    const request = this.ledgerClient.executeContract.requestDeserialize(
+        serializedBinary,
+    );
+
+    return new Promise((resolve, reject) => {
+      this.ledgerClient.executeContract(
+          request,
+          this.metadata,
+          (err, response) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(response);
+            }
+          },
+      );
+    });
   }
 }
 
