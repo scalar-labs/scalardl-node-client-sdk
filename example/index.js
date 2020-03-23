@@ -71,10 +71,6 @@ const path = require('path');
     await clientService.registerCertificate();
     console.log('certificate registered');
 
-    const bin = await clientService.createSerializedCertificateRegistrationRequest();
-    // console.log('Binary: ', bin);
-
-    clientService.registerCertificate(bin);
     console.log('Register contract');
     const fs = require('fs');
     const buffer = fs.readFileSync(
@@ -85,7 +81,7 @@ const path = require('path');
         )
     );
     const contractId =
-        `${properties['scalar.dl.client.cert_holder_id']}_StateUpdater`;
+      `${properties['scalar.dl.client.cert_holder_id']}_StateUpdater`;
     await clientService.registerContract(
         contractId,
         'com.org1.contract.StateUpdater',
