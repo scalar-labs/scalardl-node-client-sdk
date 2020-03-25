@@ -7,56 +7,66 @@ const protobuf = require('./scalar_pb');
 const {LedgerClient, LedgerPrivilegedClient} = require('./scalar_grpc_pb');
 const grpc = require('grpc');
 
+
+/**
+ * @param {Object} properties
+ * @return {Object}
+ */
+function _createGrpcServices(properties) {
+  const ledgerClientUrl =
+  `${properties['scalar.dl.client.server.host']}:` +
+  `${properties['scalar.dl.client.server.port']}`;
+  const ledgerPrivilegedClientUrl =
+  `${properties['scalar.dl.client.server.host']}:` +
+  `${properties['scalar.dl.client.server.privileged_port']}`;
+  const ca = properties['scalar.dl.client.tls.ca_root_cert_pem'];
+  const tlsEnabled = properties['scalar.dl.client.tls.enabled'];
+  let ledgerClient;
+  let ledgerPrivilegedClient;
+  if (tlsEnabled) {
+    ledgerClient = new LedgerClient(
+        ledgerClientUrl,
+        grpc.credentials.createSsl(Buffer.from(ca, 'utf8')),
+    );
+    ledgerPrivilegedClient = new LedgerPrivilegedClient(
+        ledgerClientUrl,
+        grpc.credentials.createSsl(Buffer.from(ca, 'utf8')),
+    );
+  } else {
+    ledgerClient = new LedgerClient(
+        ledgerClientUrl,
+        grpc.credentials.createInsecure(),
+    );
+    ledgerPrivilegedClient = new LedgerPrivilegedClient(
+        ledgerPrivilegedClientUrl,
+        grpc.credentials.createInsecure(),
+    );
+  }
+
+  return {
+    'ledgerClient': ledgerClient,
+    'ledgerPrivileged': ledgerPrivilegedClient,
+  };
+}
+
 /**
  * @class
  */
-class ClientService extends ClientServiceBase {
+class ClientServiceWithBinary extends ClientServiceBase {
   /**
    * Constructor will inject dependencies to generate ClientService
    * @param {Object} properties
    */
   constructor(properties) {
-    const ledgerClientUrl =
-      `${properties['scalar.dl.client.server.host']}:` +
-      `${properties['scalar.dl.client.server.port']}`;
-    const ledgerPrivilegedClientUrl =
-      `${properties['scalar.dl.client.server.host']}:` +
-      `${properties['scalar.dl.client.server.privileged_port']}`;
-    const ca = properties['scalar.dl.client.tls.ca_root_cert_pem'];
-    const tlsEnabled = properties['scalar.dl.client.tls.enabled'];
-    let ledgerClient;
-    let ledgerPrivilegedClient;
-    if (tlsEnabled) {
-      ledgerClient = new LedgerClient(
-          ledgerClientUrl,
-          grpc.credentials.createSsl(Buffer.from(ca, 'utf8')),
-      );
-      ledgerPrivilegedClient = new LedgerPrivilegedClient(
-          ledgerClientUrl,
-          grpc.credentials.createSsl(Buffer.from(ca, 'utf8')),
-      );
-    } else {
-      ledgerClient = new LedgerClient(
-          ledgerClientUrl,
-          grpc.credentials.createInsecure(),
-      );
-      ledgerPrivilegedClient = new LedgerPrivilegedClient(
-          ledgerPrivilegedClientUrl,
-          grpc.credentials.createInsecure(),
-      );
-    }
-    const services = {
-      'ledgerClient': ledgerClient,
-      'ledgerPrivileged': ledgerPrivilegedClient,
-    };
-    super(services, protobuf, properties);
+    super(_createGrpcServices(properties), protobuf, properties);
   }
 
   /**
    * @param {Uint8Array} serializedBinary
+   *   a serialized byte array of CertificateRegistrationRequest
    * @return {Promise<!proto.google.protobuf.Empty>}
    */
-  async registerCertificateWithSerializedBinary(serializedBinary) {
+  async registerCertificate(serializedBinary) {
     const request = this.ledgerPrivileged.registerCert.requestDeserialize(
         serializedBinary,
     );
@@ -78,9 +88,10 @@ class ClientService extends ClientServiceBase {
 
   /**
    * @param {Uint8Array} serializedBinary
+   *   a serialized byte array of FunctionRegistrationRequest
    * @return {Promise<!proto.google.protobuf.Empty>}
    */
-  async registerFunctionWithSerializedBinary(serializedBinary) {
+  async registerFunction(serializedBinary) {
     const request =
       this.ledgerPrivileged.registerFunction.requestDeserialize(
           serializedBinary,
@@ -103,9 +114,10 @@ class ClientService extends ClientServiceBase {
 
   /**
    * @param {Uint8Array} serializedBinary
+   *   a serialized byte array of ContractRegistrationRequest
    * @return {Promise<!proto.google.protobuf.Empty>}
    */
-  async registerContractWithSerializedBinary(serializedBinary) {
+  async registerContract(serializedBinary) {
     const request = this.ledgerClient.registerContract.requestDeserialize(
         serializedBinary,
     );
@@ -127,9 +139,10 @@ class ClientService extends ClientServiceBase {
 
   /**
    * @param {Uint8Array} serializedBinary
+   *   a serialized byte array of ContractsListingRequest
    * @return {Promise<!proto.google.protobuf.ContractsListingResponse>}
    */
-  async listContractsWithSerializedBinary(serializedBinary) {
+  async listContracts(serializedBinary) {
     const request =
       this.ledgerClient.listContracts.requestDeserialize(serializedBinary);
 
@@ -150,9 +163,10 @@ class ClientService extends ClientServiceBase {
 
   /**
    * @param {Uint8Array} serializedBinary
+   *   a serialized byte array of LedgerValidationRequest
    * @return {Promise<!proto.google.protobuf.LedgerValidationResponse>}
    */
-  async validateLedgerWithSerializedBinary(serializedBinary) {
+  async validateLedger(serializedBinary) {
     const request = this.ledgerClient.validateLedger.requestDeserialize(
         serializedBinary,
     );
@@ -174,9 +188,10 @@ class ClientService extends ClientServiceBase {
 
   /**
    * @param {Uint8Array} serializedBinary
+   *   a serialized byte array of ContractExecutionRequest
    * @return {Promise<!proto.google.protobuf.ContractExecutionResponse>}
    */
-  async executeContractWithSerializedBinary(serializedBinary) {
+  async executeContract(serializedBinary) {
     const request = this.ledgerClient.executeContract.requestDeserialize(
         serializedBinary,
     );
@@ -197,7 +212,21 @@ class ClientService extends ClientServiceBase {
   }
 }
 
+/**
+ * @class
+ */
+class ClientService extends ClientServiceBase {
+  /**
+   * Constructor will inject dependencies to generate ClientService
+   * @param {Object} properties
+   */
+  constructor(properties) {
+    super(_createGrpcServices(properties), protobuf, properties);
+  }
+}
+
 module.exports = {
   ClientService,
+  ClientServiceWithBinary,
   StatusCode,
 };

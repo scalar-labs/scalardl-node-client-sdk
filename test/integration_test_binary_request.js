@@ -1,5 +1,5 @@
 const {
-  ClientService,
+  ClientServiceWithBinary,
 } = require('../scalardl-node-client-sdk');
 const fs = require('fs');
 const cassandra = require('cassandra-driver');
@@ -81,22 +81,20 @@ const mockedByteContract = fs.readFileSync(
 const mockedByteFunction = fs.readFileSync(
     __dirname + '/TestFunction.class');
 
-const clientService = new ClientService(properties);
+const clientService = new ClientServiceWithBinary(properties);
 
-describe('Integration test on ClientService serialized binary', async () => {
-  describe('registerCertificateWithSerializedBinary', () => {
+describe('Integration test on ClientServiceWithBinary', async () => {
+  describe('registerCertificate', () => {
     it('should be successful', async () => {
       const binary =
         await clientService.createSerializedCertificateRegistrationRequest();
 
       assert.ok(binary instanceof Uint8Array);
-      await assert.doesNotReject(
-          clientService.registerCertificateWithSerializedBinary(binary),
-      );
+      await assert.doesNotReject(clientService.registerCertificate(binary));
     });
   });
 
-  describe('registerFunctionWithSerializedBinary', () => {
+  describe('registerFunction', () => {
     it('should be successful', async () => {
       const binary =
         await clientService.createSerializedFunctionRegistrationRequest(
@@ -106,13 +104,11 @@ describe('Integration test on ClientService serialized binary', async () => {
         );
 
       assert.ok(binary instanceof Uint8Array);
-      await assert.doesNotReject(
-          clientService.registerFunctionWithSerializedBinary(binary),
-      );
+      await assert.doesNotReject(clientService.registerFunction(binary));
     });
   });
 
-  describe('registerContractWithSerializedBinary', () => {
+  describe('registerContract', () => {
     it('should be successful', async () => {
       const binary =
         await clientService.createSerializedContractRegistrationRequest(
@@ -123,21 +119,17 @@ describe('Integration test on ClientService serialized binary', async () => {
         );
 
       assert.ok(binary instanceof Uint8Array);
-      await assert.doesNotReject(
-          clientService.registerContractWithSerializedBinary(binary),
-      );
+      await assert.doesNotReject(clientService.registerContract(binary));
     });
   });
 
-  describe('listContractsWithSerializedBinary', () => {
+  describe('listContracts', () => {
     it('should return contract metadata' +
     'when the correct contract id is specified',
     async () => {
       const binary =
         await clientService.createSerializedContractsListingRequest();
-      const response = await clientService.listContractsWithSerializedBinary(
-          binary,
-      );
+      const response = await clientService.listContracts(binary);
       const object = JSON.parse(response.getJson());
 
       assert.ok(binary instanceof Uint8Array);
@@ -145,7 +137,7 @@ describe('Integration test on ClientService serialized binary', async () => {
     });
   });
 
-  describe('executeContractWithSerializedBinary', () => {
+  describe('executeContract', () => {
     it('should work as expected when executing a registered contract',
         async () => {
           const binary =
@@ -154,8 +146,7 @@ describe('Integration test on ClientService serialized binary', async () => {
                 mockedContractArgument,
                 {},
             );
-          const response =
-            await clientService.executeContractWithSerializedBinary(binary);
+          const response = await clientService.executeContract(binary);
           const result = JSON.parse(response.getResult());
 
           assert.ok(binary instanceof Uint8Array);
@@ -184,8 +175,7 @@ describe('Integration test on ClientService serialized binary', async () => {
                 contractArgumentWithFunction,
                 mockedFunctionArgument,
             );
-          const response =
-            await clientService.executeContractWithSerializedBinary(binary);
+          const response = await clientService.executeContract(binary);
           const result = JSON.parse(response.getResult());
 
           const cassandraClient = new cassandra.Client({
@@ -212,8 +202,7 @@ describe('Integration test on ClientService serialized binary', async () => {
         await clientService.createSerializedLedgerValidationRequest(
             mockedAssetId,
         );
-      const response =
-        await clientService.validateLedgerWithSerializedBinary(binary);
+      const response = await clientService.validateLedger(binary);
 
       assert.ok(binary instanceof Uint8Array);
       assert.equal(response.getStatusCode(), 200);
