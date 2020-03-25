@@ -69,7 +69,7 @@ await clientService.registerContract('contractId', 'com.example.contract.contrac
 ### Register functions
 Use the `registerFunction` function to register a function.
 ```javascript
-await clientService.registerFunction('functionId, 'com.example.function.functionName', functionUint8Array);
+await clientService.registerFunction('functionId', 'com.example.function.functionName', functionUint8Array);
 ```
 
 ### List registered contracts
@@ -138,6 +138,106 @@ StatusCode = {
   CLIENT_DATABASE_ERROR: 601,
   CLIENT_RUNTIME_ERROR: 602,
 };
+```
+
+## Create raw gRPC requests
+
+Users can use SDK to create raw gRPC requests in byte arries (JavaScript Uint8Array) too.
+The functions have different names but the parameters are exactly identical.
+
+### Register the certificate
+```javascript
+const binary = await ClientService.createSerializedCertificateRegistrationRequest();
+```
+
+### Register contracts
+```javascript
+const binary = await clientService.createSerializedContractRegistrationRequest('contractId', 'com.example.contract.contractName', contractUint8Array, propertiesObject);
+```
+
+### Register functions
+```javascript
+const binary = await clientService.createSerializedFunctionRegistrationRequest('functionId', 'com.example.function.functionName', functionUint8Array);
+```
+
+### List registered contracts
+```javascript
+const binary = await clientService.createSerializedContractsListingRequest();
+```
+
+### Execute a contract
+```javascript
+const binary = await clientService.createSerializedContractExecutionRequest('contractId', argumentObject);
+```
+
+### Validate an asset
+```javascript
+const binary = await clientService.createSerializedLedgerValidationRequest('assetId');
+```
+
+## Send the raw gRPC requests to Scalar DL servers
+The SDK provides another `ClientServiceWithBinary` class whereby users can send byte arries of requests to Scalar DL servers.
+It is similar with `ClientService` class to construct `ClientServiceWithBinary` class.
+However, ClientServiceWithBinary is different from ClientService.
+ClientService encapsulates responses into Scalar defined objects but ClientServiceWithBinary returns gRPC native objects.
+
+```javascript
+const { ClientServiceWithBinary } = require('@scalar-labs/scalardl-node-client-sdk');
+const clientService = new ClientServiceWithBinary(clientProperties);
+```
+
+### Register the certificate
+```javascript
+const binary = await ClientService.createSerializedCertificateRegistrationRequest();
+await ClientService.registerCertificate(binary);
+```
+
+### Register contracts
+```javascript
+const binary = await clientService.createSerializedContractRegistrationRequest('contractId', 'com.example.contract.contractName', contractUint8Array, propertiesObject);
+await ClientService.registerContract(binary);
+```
+
+### Register functions
+```javascript
+const binary = await clientService.createSerializedFunctionRegistrationRequest('functionId', 'com.example.function.functionName', functionUint8Array);
+await clientService.registerFunction(binary);
+```
+
+### List registered contracts
+```javascript
+const binary = await clientService.createSerializedContractsListingRequest();
+const response = await clientService.listContracts(binary);
+const json = response.getJson(); // string
+const contracts = JSON.parse(json);
+```
+
+### Execute a contract
+```javascript
+const binary = await clientService.createSerializedContractExecutionRequest('contractId', argumentObject);
+const response = await clientService.executeContract(binary);
+const result = JSON.parse(response.getResult());
+const proofs = response.getProofs();
+for (const proof of proofs) {
+    const assetId = proof.getAssetId(); // string
+    const age = proof.getAge(); // number
+    const nonce = proof.getNonce(); // string
+    const hash = proof.getHash(); // Uint8Array
+    const signature = proof.getSignature(); // Uint8Array
+}
+```
+
+### Validate an asset
+```javascript
+const binary = await clientService.createSerializedLedgerValidationRequest('assetId');
+const response = await clientService.validateLedger(binary);
+const statusCode = response.getStatusCode(); // number
+const proof = response.getProof();
+const assetId = proof.getAssetId(); // string
+const age = proof.getAge(); // number
+const nonce = proof.getNonce(); // string
+const hash = proof.getHash(); // Uint8Array
+const signature = proof.getSignature(); // Uint8Array
 ```
 
 ## Contributing
