@@ -1,6 +1,9 @@
 const {
   ClientServiceBase,
   StatusCode,
+  ContractExecutionResult,
+  LedgerValidationResult,
+  AssetProof,
 } = require('@scalar-labs/scalardl-javascript-sdk-base');
 
 const protobuf = require('./scalar_pb');
@@ -154,7 +157,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
             if (err) {
               reject(err);
             } else {
-              resolve(response);
+              resolve(JSON.parse(response.getJson()));
             }
           },
       );
@@ -179,7 +182,11 @@ class ClientServiceWithBinary extends ClientServiceBase {
             if (err) {
               reject(err);
             } else {
-              resolve(response);
+              resolve(
+                  LedgerValidationResult.fromGrpcLedgerValidationResponse(
+                      response,
+                  ),
+              );
             }
           },
       );
@@ -204,7 +211,11 @@ class ClientServiceWithBinary extends ClientServiceBase {
             if (err) {
               reject(err);
             } else {
-              resolve(response);
+              resolve(
+                  ContractExecutionResult.fromGrpcContractExecutionResponse(
+                      response,
+                  ),
+              );
             }
           },
       );
@@ -229,4 +240,7 @@ module.exports = {
   ClientService,
   ClientServiceWithBinary,
   StatusCode,
+  ContractExecutionResult,
+  LedgerValidationResult,
+  AssetProof,
 };

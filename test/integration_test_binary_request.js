@@ -130,10 +130,10 @@ describe('Integration test on ClientServiceWithBinary', async () => {
       const binary =
         await clientService.createSerializedContractsListingRequest();
       const response = await clientService.listContracts(binary);
-      const object = JSON.parse(response.getJson());
+      const contracts = response;
 
       assert.ok(binary instanceof Uint8Array);
-      assert.ok(object.hasOwnProperty(mockedContractId));
+      assert.ok(contracts.hasOwnProperty(mockedContractId));
     });
   });
 
@@ -147,7 +147,7 @@ describe('Integration test on ClientServiceWithBinary', async () => {
                 {},
             );
           const response = await clientService.executeContract(binary);
-          const result = JSON.parse(response.getResult());
+          const result = response.getResult();
 
           assert.ok(binary instanceof Uint8Array);
           assert.equal(result.asset_id, mockedAssetId);
@@ -176,7 +176,7 @@ describe('Integration test on ClientServiceWithBinary', async () => {
                 mockedFunctionArgument,
             );
           const response = await clientService.executeContract(binary);
-          const result = JSON.parse(response.getResult());
+          const result = response.getResult();
 
           const cassandraClient = new cassandra.Client({
             contactPoints: ['127.0.0.1:9042'],
@@ -205,7 +205,7 @@ describe('Integration test on ClientServiceWithBinary', async () => {
       const response = await clientService.validateLedger(binary);
 
       assert.ok(binary instanceof Uint8Array);
-      assert.equal(response.getStatusCode(), 200);
+      assert.equal(response.getCode(), 200);
     });
   });
 });
