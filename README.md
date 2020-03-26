@@ -143,7 +143,7 @@ StatusCode = {
 ## Create raw gRPC requests
 
 You can also create a raw gRPC request in byte array (JavaScript Uint8Array) too.
-The functions have different names but the parameters are exactly identical.
+Note that the name of functions are different from usual functions such as `executeContract` but the parameters are exactly the same.
 
 ### Register the certificate
 ```javascript
