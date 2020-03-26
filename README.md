@@ -176,7 +176,7 @@ const binary = await clientService.createSerializedLedgerValidationRequest('asse
 ```
 
 ## Send the raw gRPC requests to Scalar DL servers
-The SDK provides another `ClientServiceWithBinary` class whereby users can send byte arries of requests to Scalar DL servers.
+The SDK has another `ClientServiceWithBinary` class for you to send the byte array of a request to Scalar DL network.
 It is similar with `ClientService` class to construct `ClientServiceWithBinary` class.
 
 ```javascript
