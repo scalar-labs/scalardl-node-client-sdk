@@ -142,7 +142,7 @@ StatusCode = {
 
 ## Create raw gRPC requests
 
-Users can use SDK to create raw gRPC requests in byte arries (JavaScript Uint8Array) too.
+You can also create a raw gRPC request in byte array (JavaScript Uint8Array) too.
 The functions have different names but the parameters are exactly identical.
 
 ### Register the certificate
