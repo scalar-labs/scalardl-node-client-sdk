@@ -178,8 +178,6 @@ const binary = await clientService.createSerializedLedgerValidationRequest('asse
 ## Send the raw gRPC requests to Scalar DL servers
 The SDK provides another `ClientServiceWithBinary` class whereby users can send byte arries of requests to Scalar DL servers.
 It is similar with `ClientService` class to construct `ClientServiceWithBinary` class.
-However, ClientServiceWithBinary is different from ClientService.
-ClientService encapsulates responses into Scalar defined objects but ClientServiceWithBinary returns gRPC native objects.
 
 ```javascript
 const { ClientServiceWithBinary } = require('@scalar-labs/scalardl-node-client-sdk');
@@ -207,23 +205,15 @@ await clientService.registerFunction(binary);
 ### List registered contracts
 ```javascript
 const binary = await clientService.createSerializedContractsListingRequest();
-const response = await clientService.listContracts(binary);
-const json = response.getJson(); // string
-const contracts = JSON.parse(json);
+const contracts = await clientService.listContracts(binary);
 ```
 
 ### Execute a contract
 ```javascript
 const binary = await clientService.createSerializedContractExecutionRequest('contractId', argumentObject);
 const response = await clientService.executeContract(binary);
-const result = JSON.parse(response.getResult());
-const proofs = response.getProofs();
-for (const proof of proofs) {
-    const assetId = proof.getAssetId(); // string
-    const age = proof.getAge(); // number
-    const nonce = proof.getNonce(); // string
-    const hash = proof.getHash(); // Uint8Array
-    const signature = proof.getSignature(); // Uint8Array
+const executionResult = response.getResult();
+const proofsList = response.getProofs();y
 }
 ```
 
@@ -231,13 +221,8 @@ for (const proof of proofs) {
 ```javascript
 const binary = await clientService.createSerializedLedgerValidationRequest('assetId');
 const response = await clientService.validateLedger(binary);
-const statusCode = response.getStatusCode(); // number
+const statusCode = response.getCode();
 const proof = response.getProof();
-const assetId = proof.getAssetId(); // string
-const age = proof.getAge(); // number
-const nonce = proof.getNonce(); // string
-const hash = proof.getHash(); // Uint8Array
-const signature = proof.getSignature(); // Uint8Array
 ```
 
 ## Contributing
