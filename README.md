@@ -69,7 +69,7 @@ await clientService.registerContract('contractId', 'com.example.contract.contrac
 ### Register functions
 Use the `registerFunction` function to register a function.
 ```javascript
-await clientService.registerFunction('functionId, 'com.example.function.functionName', functionUint8Array);
+await clientService.registerFunction('functionId', 'com.example.function.functionName', functionUint8Array);
 ```
 
 ### List registered contracts
@@ -138,6 +138,90 @@ StatusCode = {
   CLIENT_DATABASE_ERROR: 601,
   CLIENT_RUNTIME_ERROR: 602,
 };
+```
+
+## Create raw gRPC requests
+
+You can also create a raw gRPC request in byte array (JavaScript Uint8Array) too.
+Note that the name of functions are different from usual functions such as `executeContract` but the parameters are exactly the same.
+
+### Register the certificate
+```javascript
+const binary = await ClientService.createSerializedCertificateRegistrationRequest();
+```
+
+### Register contracts
+```javascript
+const binary = await clientService.createSerializedContractRegistrationRequest('contractId', 'com.example.contract.contractName', contractUint8Array, propertiesObject);
+```
+
+### Register functions
+```javascript
+const binary = await clientService.createSerializedFunctionRegistrationRequest('functionId', 'com.example.function.functionName', functionUint8Array);
+```
+
+### List registered contracts
+```javascript
+const binary = await clientService.createSerializedContractsListingRequest();
+```
+
+### Execute a contract
+```javascript
+const binary = await clientService.createSerializedContractExecutionRequest('contractId', argumentObject);
+```
+
+### Validate an asset
+```javascript
+const binary = await clientService.createSerializedLedgerValidationRequest('assetId');
+```
+
+## Send the raw gRPC requests to Scalar DL servers
+The SDK has another `ClientServiceWithBinary` class for you to send the byte array of a request to Scalar DL network.
+
+```javascript
+const { ClientServiceWithBinary } = require('@scalar-labs/scalardl-node-client-sdk');
+const clientService = new ClientServiceWithBinary(clientProperties);
+```
+
+### Register the certificate
+```javascript
+const binary = await ClientService.createSerializedCertificateRegistrationRequest();
+await ClientService.registerCertificate(binary);
+```
+
+### Register contracts
+```javascript
+const binary = await clientService.createSerializedContractRegistrationRequest('contractId', 'com.example.contract.contractName', contractUint8Array, propertiesObject);
+await ClientService.registerContract(binary);
+```
+
+### Register functions
+```javascript
+const binary = await clientService.createSerializedFunctionRegistrationRequest('functionId', 'com.example.function.functionName', functionUint8Array);
+await clientService.registerFunction(binary);
+```
+
+### List registered contracts
+```javascript
+const binary = await clientService.createSerializedContractsListingRequest();
+const contracts = await clientService.listContracts(binary);
+```
+
+### Execute a contract
+```javascript
+const binary = await clientService.createSerializedContractExecutionRequest('contractId', argumentObject);
+const response = await clientService.executeContract(binary);
+const executionResult = response.getResult();
+const proofsList = response.getProofs();y
+}
+```
+
+### Validate an asset
+```javascript
+const binary = await clientService.createSerializedLedgerValidationRequest('assetId');
+const response = await clientService.validateLedger(binary);
+const statusCode = response.getCode();
+const proof = response.getProof();
 ```
 
 ## Contributing
