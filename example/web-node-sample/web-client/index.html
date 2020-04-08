@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script
-      src="https://cdn.jsdelivr.net/npm/@scalar-labs/scalardl-web-client-sdk@2.0.0/dist/scalardl-web-client-sdk.bundle.js"></script>
+      src="../scalardl-web-client-sdk.bundle.js"></script>
 </head>
 
 <body>
@@ -14,6 +14,7 @@
     <button id="listContracts" style="font-size: 30px">
       ListContracts
     </button>
+    <br>
     <span id="listContractsResult"></span>
   </div>
 </div>
@@ -91,7 +92,7 @@
       })
       .then(function (response) {
         const jsonValue = response.data['foo@_HostReader']
-        document.querySelector('#registerContractResult').innerHTML = JSON.stringify(jsonValue,
+        document.querySelector('#listContractsResult').innerHTML = JSON.stringify(jsonValue,
             null, 2)
         .replace(/\n( *)/g, function (match, p1) {
           return '<br>' + '&nbsp;'.repeat(p1.length);
