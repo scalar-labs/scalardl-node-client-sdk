@@ -62,7 +62,11 @@
     })
 
     try {
-      const jsonValue = res.data['foo@_HostReader']
+      let firstItem;
+      let jsonValue;
+      for (firstItem in res.data) {
+        jsonValue = res.data[firstItem]
+      }
       document.querySelector('#newquote').innerHTML = prettyPrinter(jsonValue)
     } catch (e) {
       console.error(`${e.code} ${e.message}`)
