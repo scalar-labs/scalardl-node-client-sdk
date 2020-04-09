@@ -1,7 +1,7 @@
 # Web-node validation
 This sample code is to validate that the serialized binary generated on the web-sdk client side can be executed on the node-sdk side.
 
-In conclusion, the listContracts can be request sent by Web SDK can be executed by ScalarDLT if the
+In conclusion, the listContracts request sent by Web SDK can be executed by ScalarDLT if the
 `ClientProperties` provided by the Web SDK is appropriate. 
 
 ## Project Prerequisite
