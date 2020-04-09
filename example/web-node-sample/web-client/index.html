@@ -23,10 +23,8 @@
 
 <script>
   let clientProperties = {};
-  console.log("Started!!")
   document.querySelector('#listContracts')
   .addEventListener('click', event => {
-    console.log("Clicked")
     clientProperties = {
       'scalar.dl.client.server.host': '127.0.0.1',
       'scalar.dl.client.server.port': 50051,
@@ -85,7 +83,6 @@
     };
     const clientService = new Scalar.ClientService(clientProperties);
     clientService.createSerializedContractsListingRequest().then(r => {
-      console.log('Binary: ', r);
       const binaryString = Array.from(r, e => String.fromCharCode(e)).join("")
       axios.post('http://localhost:3002/post', {
         bin: binaryString
@@ -99,7 +96,7 @@
         });
       })
       .catch(function (error) {
-        console.log(error);
+        console.error(error);
         document.querySelector('#listContractsResult').innerHTML =
             `<b>${error.code}: ${error.message}</b>`;
       });
