@@ -88,7 +88,11 @@
         bin: binaryString
       })
       .then(function (response) {
-        const jsonValue = response.data['foo@_HostReader']
+        let firstItem
+        let jsonValue
+        for (firstItem in response.data) {
+          jsonValue = response.data[firstItem]
+        }
         document.querySelector('#listContractsResult').innerHTML = JSON.stringify(jsonValue,
             null, 2)
         .replace(/\n( *)/g, function (match, p1) {
