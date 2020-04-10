@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <link href="style.css" rel="stylesheet" type="text/css">
   <script
       src="../scalardl-web-client-sdk.bundle.js"></script>
 </head>
@@ -46,76 +47,6 @@ await clientService.listContracts(serializedBinary);</code></pre>
   <pre><code id="listContractsResult"></code></pre>
 </div>
 
-<style>
-  #main-container {
-    margin: 8em auto;
-    width: 70%;
-    font-family: "Helvetica Neue", serif;
-    text-align: center;
-  }
-
-  button:focus {
-    outline: 0;
-    background: #90dfff;
-  }
-
-  button {
-    background: #edf9ff;
-    margin: 10px;
-    flex: 1;
-    font-size: 30px;
-    padding: 10px;
-    color: rgb(90, 90, 90);
-    border: 3px #0184bb solid;
-    border-radius: 10px;
-    font-weight: normal;
-    max-width: 200px;
-  }
-
-  input {
-    color: rgb(90, 90, 90);
-    font-size: 15px;
-    border: 2px #30a5d7 solid;
-    border-radius: 10px;
-    font-weight: normal;
-    max-width: 200px;
-  }
-
-  code {
-    background-color: #eee;
-    border: 2px solid #999999;
-    padding: 10px;
-    font-size: 18px;
-    text-align: start;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 200%
-  }
-
-  code:empty {
-    display: none;
-  }
-
-  code:hover {
-    overflow: visible;
-  }
-
-  pre {
-    display: flex;
-    flex-wrap: wrap;
-    flex: 4;
-    width: 100%;
-    max-width: 200%;
-    min-width: 0;
-  }
-
-  .Component {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-  }
-
-</style>
 </body>
 
 <script>
