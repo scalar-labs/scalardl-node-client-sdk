@@ -3,15 +3,15 @@ const {
   ClientServiceWithBinary,
 } = require('@scalar-labs/scalardl-node-client-sdk');
 const app = express();
-const cmpServicePort = 3002;
+const nodeServerPort = 3002;
 const bodyParser = require('body-parser');
 
 const cors = require('cors');
 
 app.use(bodyParser.json());
 app.use(cors());
-app.listen(cmpServicePort,
-    () => console.log(`App listening at http://localhost:${cmpServicePort}`));
+app.listen(nodeServerPort,
+    () => console.log(`App listening at http://localhost:${nodeServerPort}`));
 
 const scalarMain = (async (serializedBinary) => {
   const properties = {
@@ -46,21 +46,16 @@ const scalarMain = (async (serializedBinary) => {
   };
   const clientService = new ClientServiceWithBinary(properties);
   try {
-    console.log('List registered contracts');
-    
     const r = await clientService.listContracts(
         Uint8Array.from(Buffer.from(serializedBinary, 'binary')));
-    console.log(r);
-    
     return r;
   } catch (e) {
-    console.log(`${e.code} ${e.message}`);
+    console.error(`${e.code} ${e.message}`);
   }
 });
 
-app.post('/list-contracts', (req, res) => {
+app.post('/list-contracts', async (req, res) => {
   const receivedBinaryRequest = req.body.bin;
-  scalarMain(receivedBinaryRequest).then((r) => {
-    res.send(r);
-  });
+  const result = await scalarMain(receivedBinaryRequest);
+  res.send(result);
 });
