@@ -18,7 +18,7 @@
       Register Certificate
     </button>
     <pre><code>
-await clientService.registerCertificate(serializedBinary);</code></pre>
+await clientService.registerCertificate();</code></pre>
     <br>
   </div>
   <pre><code id="registerCertificateResult"></code></pre>
@@ -32,7 +32,7 @@ await clientService.registerCertificate(serializedBinary);</code></pre>
       Register Contracts
     </button>
     <pre><code>
-await clientService.registerContracts(serializedBinary);</code></pre>
+await clientService.registerContracts(contractId, contractName, contractBinary, {});</code></pre>
   </div>
   <pre><code id="registerContractResult"></code></pre>
   <br>
@@ -42,7 +42,7 @@ await clientService.registerContracts(serializedBinary);</code></pre>
       List Contracts
     </button>
     <pre><code>
-await clientService.listContracts(serializedBinary);</code></pre>
+await clientService.listContracts(contractId);</code></pre>
   </div>
   <pre><code id="listContractsResult"></code></pre>
 </div>
