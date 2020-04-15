@@ -1,6 +1,6 @@
 const {
   ClientService,
-} = require('../..');
+} = require('../');
 
 const path = require('path');
 
