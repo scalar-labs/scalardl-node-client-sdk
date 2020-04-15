@@ -14,7 +14,7 @@ app.listen(nodeServerPort,
 const properties = {
   'scalar.dl.client.server.host': '127.0.0.1',
   'scalar.dl.client.server.port': 50051,
-  
+  'scalar.dl.client.server.privileged_port': 50052,
   'scalar.dl.client.private_key_pem': '-----BEGIN EC PRIVATE KEY-----\n' +
       'MHcCAQEEICcJGMEw3dyXUGFu/5a36HqY0ynZi9gLUfKgYWMYgr/IoAoGCCqGSM49\n' +
       'AwEHoUQDQgAEBGuhqumyh7BVNqcNKAQQipDGooUpURve2dO66pQCgjtSfu7lJV20\n' +

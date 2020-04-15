@@ -8,10 +8,10 @@ In conclusion, the listContracts request sent by Web SDK can be executed by Scal
 ## Project Prerequisite
 Make sure your ScalarDLT server is up and running by referring to [Scalar DL official documentation](https://scalardl.readthedocs.io/en/latest/). 
 
-`ClientProperties` and `WebService` can be initiated as follows:
+`Web-client` and `Web-service` Scalar DL sdk are initialized as follows:
 ```
 // web-client
-const clientProperties = {
+const webClientProperties = {
     'scalar.dl.client.cert_holder_id': `foo@`,
     'scalar.dl.client.cert_version': 1,
     'scalar.dl.client.private_key_pem': '-----BEGIN EC PRIVATE KEY-----\n' +
@@ -34,13 +34,13 @@ const clientProperties = {
         'SM49BAMCA0cAMEQCIC/Bo4oNU6yHFLJeme5ApxoNdyu3rWyiqWPxJmJAr9L0AiBl\n' +
         'Gc/v+yh4dHIDhCrimajTQAYOG9n0kajULI70Gg7TNw==\n-----END CERTIFICATE-----\n',
   };
-const clientService = new Scalar.ClientService(clientProperties);
+const webClient = new Scalar.ClientService(webClientProperties);
 
 // web-service
 const properties = {
   'scalar.dl.client.server.host': '127.0.0.1',
   'scalar.dl.client.server.port': 50051,
-  
+  'scalar.dl.client.server.privileged_port': 50052,
   'scalar.dl.client.private_key_pem': '-----BEGIN EC PRIVATE KEY-----\n' +
       'MHcCAQEEICcJGMEw3dyXUGFu/5a36HqY0ynZi9gLUfKgYWMYgr/IoAoGCCqGSM49\n' +
       'AwEHoUQDQgAEBGuhqumyh7BVNqcNKAQQipDGooUpURve2dO66pQCgjtSfu7lJV20\n' +
@@ -66,9 +66,11 @@ const webService = new ClientServiceWithBinary(properties);
 ```
 
 
-## Spin up web-client
+## Spin up web-service
 ```
+cd web-service;
+npm install;
 node node-server.js
 ```
 ### Send Scalar DL requests from the browser
-The Scalardl web client request can be invoked via the html file [here](./web-client/index.html)
+The Scalar DL web client request can be invoked via the html file [here](./web-client/index.html)
