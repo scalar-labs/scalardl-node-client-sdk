@@ -3,7 +3,7 @@ This sample code is to demonstrate that the node sdk can be used to execute Scal
 
 ![](img/samplecode.png)
 
-In conclusion, the listContracts request sent by Web SDK can be executed by ScalarDLT invoked from node sdk.
+In conclusion, the requests sent by Web SDK can be executed by ScalarDLT invoked from node sdk.
 
 ## Project Prerequisite
 Make sure your ScalarDLT server is up and running by referring to [Scalar DL official documentation](https://scalardl.readthedocs.io/en/latest/). 
