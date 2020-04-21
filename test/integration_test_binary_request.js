@@ -1,5 +1,6 @@
 const {
   ClientServiceWithBinary,
+  StatusCode,
 } = require('../scalardl-node-client-sdk');
 const fs = require('fs');
 const cassandra = require('cassandra-driver');
@@ -92,6 +93,20 @@ describe('Integration test on ClientServiceWithBinary', async () => {
       assert.ok(binary instanceof Uint8Array);
       await assert.doesNotReject(clientService.registerCertificate(binary));
     });
+    it('should get error if register certificate again', async () => {
+      const binary =
+        await clientService.createSerializedCertificateRegistrationRequest();
+      await assert.rejects(
+          clientService.registerCertificate(binary),
+          (err) => {
+            assert.equal(
+                err.code,
+                StatusCode.CERTIFICATE_ALREADY_REGISTERED,
+            );
+            return true;
+          },
+      );
+    });
   });
 
   describe('registerFunction', () => {
@@ -121,6 +136,25 @@ describe('Integration test on ClientServiceWithBinary', async () => {
       assert.ok(binary instanceof Uint8Array);
       await assert.doesNotReject(clientService.registerContract(binary));
     });
+    it('should get error if register again', async () => {
+      const binary =
+        await clientService.createSerializedContractRegistrationRequest(
+            mockedContractId,
+            mockedContractName,
+            mockedByteContract,
+            contractProperty,
+        );
+      await assert.rejects(
+          clientService.registerContract(binary),
+          (err) => {
+            assert.equal(
+                err.code,
+                StatusCode.CONTRACT_ALREADY_REGISTERED,
+            );
+            return true;
+          },
+      );
+    });
   });
 
   describe('listContracts', () => {
@@ -134,6 +168,34 @@ describe('Integration test on ClientServiceWithBinary', async () => {
 
       assert.ok(binary instanceof Uint8Array);
       assert.ok(contracts.hasOwnProperty(mockedContractId));
+    });
+    it('should get error if private key is incorrect', async () => {
+      const anotherProperties = {
+        ...properties,
+        ...{
+          'scalar.dl.client.private_key_pem':
+          '-----BEGIN EC PRIVATE KEY-----\n' +
+          'MHcCAQEEIIbElY/Vs5nEoVGsHZ8G9icxZcsRlT2DcHIfxFNkZrnHoAoGCCqGSM49\n' +
+          'AwEHoUQDQgAE/TzGEcYJNcwe5d+BlPuxuwiIhMhKpMpTMZM94L+bRhDPFn4nMigc\n' +
+          'Cijley7qhOfwplVrTtnNLTNMD82ttwnR7g==\n' +
+          '-----END EC PRIVATE KEY-----\n',
+        },
+      };
+      const anotherClientService =
+        new ClientServiceWithBinary(anotherProperties);
+
+      const binary =
+        await anotherClientService.createSerializedContractsListingRequest();
+      await assert.rejects(
+          anotherClientService.listContracts(binary),
+          (err) => {
+            assert.equal(
+                err.code,
+                StatusCode.INVALID_SIGNATURE,
+            );
+            return true;
+          },
+      );
     });
   });
 
@@ -153,6 +215,26 @@ describe('Integration test on ClientServiceWithBinary', async () => {
           assert.equal(result.asset_id, mockedAssetId);
           assert.equal(result.state, mockedState);
           assert.equal(result.properties, contractProperty.properties);
+        },
+    );
+    it('should get error if contract id does exist',
+        async () => {
+          const binary =
+            await clientService.createSerializedContractExecutionRequest(
+                'notexisting',
+                mockedContractArgument,
+                {},
+            );
+          await assert.rejects(
+              clientService.executeContract(binary),
+              (err) => {
+                assert.equal(
+                    err.code,
+                    StatusCode.CONTRACT_NOT_FOUND,
+                );
+                return true;
+              },
+          );
         },
     );
 
@@ -206,6 +288,31 @@ describe('Integration test on ClientServiceWithBinary', async () => {
 
       assert.ok(binary instanceof Uint8Array);
       assert.equal(response.getCode(), 200);
+    });
+    it('should get error is holder id is incorrect', async () => {
+      const anotherProperties = {
+        ...properties,
+        ...{
+          'scalar.dl.client.cert_holder_id': 'whatever',
+        },
+      };
+      const anotherClientService =
+        new ClientServiceWithBinary(anotherProperties);
+
+      const binary =
+        await anotherClientService.createSerializedLedgerValidationRequest(
+            mockedAssetId,
+        );
+      await assert.rejects(
+          anotherClientService.validateLedger(binary),
+          (err) => {
+            assert.equal(
+                err.code,
+                StatusCode.CERTIFICATE_NOT_FOUND,
+            );
+            return true;
+          },
+      );
     });
   });
 });
