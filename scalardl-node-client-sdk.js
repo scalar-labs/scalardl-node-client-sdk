@@ -5,6 +5,8 @@ const {
   LedgerValidationResult,
   AssetProof,
   ClientError,
+  ClientPropertiesField,
+  ClientProperties,
 } = require('@scalar-labs/scalardl-javascript-sdk-base');
 
 const protobuf = require('./scalar_pb');
@@ -17,13 +19,21 @@ const grpc = require('grpc');
  * @return {Object}
  */
 function _createGrpcServices(properties) {
+  const clientProperties = new ClientProperties(
+      properties,
+      [
+        ClientPropertiesField.SERVER_HOST,
+        ClientPropertiesField.SERVER_PORT,
+        ClientPropertiesField.SERVER_PRIVILEGED_PORT,
+      ],
+  );
+
   const ledgerClientUrl =
-  `${properties['scalar.dl.client.server.host']}:` +
-  `${properties['scalar.dl.client.server.port']}`;
+    `${clientProperties.getServerHost()}:${clientProperties.getServerPort()}`;
   const ledgerPrivilegedClientUrl =
-  `${properties['scalar.dl.client.server.host']}:` +
-  `${properties['scalar.dl.client.server.privileged_port']}`;
-  const ca = properties['scalar.dl.client.tls.ca_root_cert_pem'];
+    `${clientProperties.getServerHost()}:` +
+    `${clientProperties.getServerPrivilegedPort()}`;
+  const ca = clientProperties.getTlsCaRootCertPem();
   const tlsEnabled = properties['scalar.dl.client.tls.enabled'];
   let ledgerClient;
   let ledgerPrivilegedClient;
