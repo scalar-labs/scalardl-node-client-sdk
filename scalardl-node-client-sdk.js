@@ -4,6 +4,7 @@ const {
   ContractExecutionResult,
   LedgerValidationResult,
   AssetProof,
+  ClientError,
 } = require('@scalar-labs/scalardl-javascript-sdk-base');
 
 const protobuf = require('./scalar_pb');
@@ -80,7 +81,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
           this.metadata,
           (err, response) => {
             if (err) {
-              reject(err);
+              reject(this._handleError(err));
             } else {
               resolve(response);
             }
@@ -106,7 +107,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
           this.metadata,
           (err, response) => {
             if (err) {
-              reject(err);
+              reject(this._handleError(err));
             } else {
               resolve(response);
             }
@@ -131,7 +132,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
           this.metadata,
           (err, response) => {
             if (err) {
-              reject(err);
+              reject(this._handleError(err));
             } else {
               resolve(response);
             }
@@ -155,7 +156,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
           this.metadata,
           (err, response) => {
             if (err) {
-              reject(err);
+              reject(this._handleError(err));
             } else {
               resolve(JSON.parse(response.getJson()));
             }
@@ -180,7 +181,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
           this.metadata,
           (err, response) => {
             if (err) {
-              reject(err);
+              reject(this._handleError(err));
             } else {
               resolve(
                   LedgerValidationResult.fromGrpcLedgerValidationResponse(
@@ -209,7 +210,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
           this.metadata,
           (err, response) => {
             if (err) {
-              reject(err);
+              reject(this._handleError(err));
             } else {
               resolve(
                   ContractExecutionResult.fromGrpcContractExecutionResponse(
@@ -220,6 +221,22 @@ class ClientServiceWithBinary extends ClientServiceBase {
           },
       );
     });
+  }
+
+  /**
+   * @param {Error} error
+   * @return {ClientError}
+   */
+  _handleError(error) {
+    let code = StatusCode.UNKNOWN_TRANSACTION_STATUS;
+    let message = error.message;
+    const status = this._parseStatusFromError(error);
+    if (status) {
+      code = status.code;
+      message = status.message;
+    }
+
+    return new ClientError(code, message);
   }
 }
 
@@ -243,4 +260,5 @@ module.exports = {
   ContractExecutionResult,
   LedgerValidationResult,
   AssetProof,
+  ClientError,
 };
