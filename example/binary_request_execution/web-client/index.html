@@ -147,7 +147,7 @@ await clientService.listContracts(contractId);</code></pre>
     } catch (e) {
       const errMsg = `${e.response.status} ${e.response.data.error}`
       console.error(errMsg)
-      document.querySelector('#listContractsResult').innerHTML = `${e.code} ${e.message}`
+      document.querySelector('#listContractsResult').innerHTML = errMsg
     }
   });
 
