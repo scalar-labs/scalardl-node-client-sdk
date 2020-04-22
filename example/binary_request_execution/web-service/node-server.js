@@ -6,8 +6,7 @@ const cors = require('cors');
 const app = express();
 const nodeServerPort = 3002;
 const bodyParser = require('body-parser');
-
-app.use(bodyParser.json());
+app.use(bodyParser.raw({type: 'application/octet-stream'}));
 app.use(cors());
 app.listen(nodeServerPort,
     () => console.log(`App listening at http://localhost:${nodeServerPort}`));
@@ -19,7 +18,6 @@ const properties = {
       'MHcCAQEEICcJGMEw3dyXUGFu/5a36HqY0ynZi9gLUfKgYWMYgr/IoAoGCCqGSM49\n' +
       'AwEHoUQDQgAEBGuhqumyh7BVNqcNKAQQipDGooUpURve2dO66pQCgjtSfu7lJV20\n' +
       'XYWdrgo0Y3eXEhvK0lsURO9N0nrPiQWT4A==\n-----END EC PRIVATE KEY-----\n',
-  
   'scalar.dl.client.cert_pem': '-----BEGIN CERTIFICATE-----\n' +
       'MIICizCCAjKgAwIBAgIUMEUDTdWsQpftFkqs6bCd6U++4nEwCgYIKoZIzj0EAwIw\n' +
       'bzELMAkGA1UEBhMCSlAxDjAMBgNVBAgTBVRva3lvMQ4wDAYDVQQHEwVUb2t5bzEf\n' +
@@ -40,8 +38,7 @@ const properties = {
 const registerCertificateFunction = (async (serializedBinary) => {
   const webService = new ClientServiceWithBinary(properties);
   try {
-    return await webService.registerCertificate(
-        Uint8Array.from(Buffer.from(serializedBinary, 'binary')));
+    return await webService.registerCertificate(serializedBinary);
   } catch (e) {
     throw new Error(`${e.message}`);
   }
@@ -50,8 +47,7 @@ const registerCertificateFunction = (async (serializedBinary) => {
 const registerContractsFunction = (async (serializedBinary) => {
   const webService = new ClientServiceWithBinary(properties);
   try {
-    return await webService.registerContract(
-        Uint8Array.from(Buffer.from(serializedBinary, 'binary')));
+    return await webService.registerContract(serializedBinary);
   } catch (e) {
     throw new Error(`${e.message}`);
   }
@@ -60,8 +56,7 @@ const registerContractsFunction = (async (serializedBinary) => {
 const listContractsFunction = (async (serializedBinary) => {
   const webService = new ClientServiceWithBinary(properties);
   try {
-    return await webService.listContracts(
-        Uint8Array.from(Buffer.from(serializedBinary, 'binary')));
+    return await webService.listContracts(serializedBinary);
   } catch (e) {
     throw new Error(`${e.message}`);
   }
@@ -69,7 +64,7 @@ const listContractsFunction = (async (serializedBinary) => {
 
 let result;
 app.post('/register-certificate', async (req, res) => {
-  const receivedBinaryRequest = req.body.bin;
+  const receivedBinaryRequest = req.body;
   try {
     result = await registerCertificateFunction(receivedBinaryRequest);
     res.send(result);
@@ -80,7 +75,7 @@ app.post('/register-certificate', async (req, res) => {
 });
 
 app.post('/register-contracts', async (req, res) => {
-  const receivedBinaryRequest = req.body.bin;
+  const receivedBinaryRequest = req.body;
   try {
     const result = await registerContractsFunction(receivedBinaryRequest);
     res.send(result);
@@ -91,7 +86,7 @@ app.post('/register-contracts', async (req, res) => {
 });
 
 app.post('/list-contracts', async (req, res) => {
-  const receivedBinaryRequest = req.body.bin;
+  const receivedBinaryRequest = req.body;
   try {
     const result = await listContractsFunction(receivedBinaryRequest);
     res.send(result);
