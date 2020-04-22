@@ -79,17 +79,14 @@ await clientService.listContracts(contractId);</code></pre>
         'Gc/v+yh4dHIDhCrimajTQAYOG9n0kajULI70Gg7TNw==\n-----END CERTIFICATE-----\n',
   };
   const clientService = new Scalar.ClientService(clientProperties);
-
+  this.axios.defaults.headers['Content-Type'] = 'application/octet-stream';
   document.querySelector('#registerCertificateBtn')
   .addEventListener('click', async event => {
     const binaryRegisterCertificateRequest = await clientService.createSerializedCertificateRegistrationRequest()
-    const binaryString = getBinaryString(binaryRegisterCertificateRequest)
     let res;
     try {
-      res = await this.axios.post(webClientAddress + 'register-certificate', {
-        bin: binaryString
-      })
-
+      res = await this.axios.post(webClientAddress + 'register-certificate',
+          binaryRegisterCertificateRequest);
       for (firstItem in res.data) {
         jsonValue = res.data[firstItem]
       }
@@ -122,12 +119,10 @@ await clientService.listContracts(contractId);</code></pre>
     const contractId =
         `${clientProperties['scalar.dl.client.cert_holder_id']}_StateUpdater`;
     const binaryRegisterCertificateRequest = await clientService.createSerializedContractRegistrationRequest(
-        contractId, 'com.org1.contract.StateUpdater', contractBinary, {'properties': ''})
-    const binaryString = getBinaryString(binaryRegisterCertificateRequest)
+        contractId, 'com.org1.contract.StateUpdater', contractBinary, {'properties': ''});
     try {
-      const res = await this.axios.post(webClientAddress + 'register-contracts', {
-        bin: binaryString
-      })
+      const res = await this.axios.post(webClientAddress + 'register-contracts',
+          binaryRegisterCertificateRequest);
       for (firstItem in res.data) {
         jsonValue = res.data[firstItem]
       }
@@ -141,12 +136,9 @@ await clientService.listContracts(contractId);</code></pre>
 
   document.querySelector('#listContractsBtn')
   .addEventListener('click', async event => {
-    const binaryRequest = await clientService.createSerializedContractsListingRequest()
-    const binaryString = Array.from(binaryRequest, e => String.fromCharCode(e)).join("")
-    const res = await this.axios.post(webClientAddress + 'list-contracts', {
-      bin: binaryString
-    })
-
+    const binaryListContractsRequest = await clientService.createSerializedContractsListingRequest()
+    const res = await this.axios.post(webClientAddress + 'list-contracts',
+        binaryListContractsRequest);
     try {
       for (firstItem in res.data) {
         jsonValue = res.data[firstItem]
@@ -158,10 +150,6 @@ await clientService.listContracts(contractId);</code></pre>
       document.querySelector('#listContractsResult').innerHTML = `${e.code} ${e.message}`
     }
   });
-
-  function getBinaryString(binaryRequest) {
-    return Array.from(binaryRequest, e => String.fromCharCode(e)).join("")
-  }
 
   function prettyPrinter(json) {
     return JSON.stringify(json, null, 2)
