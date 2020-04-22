@@ -34,7 +34,7 @@ function _createGrpcServices(properties) {
     `${clientProperties.getServerHost()}:` +
     `${clientProperties.getServerPrivilegedPort()}`;
   const ca = clientProperties.getTlsCaRootCertPem();
-  const tlsEnabled = properties['scalar.dl.client.tls.enabled'];
+  const tlsEnabled = clientProperties.getTlsEnabled();
   let ledgerClient;
   let ledgerPrivilegedClient;
   if (tlsEnabled) {
