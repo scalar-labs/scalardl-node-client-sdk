@@ -73,6 +73,10 @@ const mockedContractArgument = {
   asset_id: mockedAssetId,
   state: mockedState,
 };
+const nonAsciiContractArgument = {
+  asset_id: '国家标准_ふーバル_情報銀行_정보은행_ƣƢƠ_ஞண',
+  state: mockedState,
+};
 const contractProperty = {
   properties: 'bar',
 };
@@ -155,6 +159,18 @@ describe('Integration test on ClientServiceWithBinary', async () => {
           assert.equal(result.properties, contractProperty.properties);
         },
     );
+    it('should work as expected when executing a registered contract with non-ascii character',
+        async () => {
+          const response = await clientService.executeContract(
+              mockedContractId,
+              nonAsciiContractArgument, {});
+
+          const contractResult = response.result;
+          assert.equal(contractResult.asset_id, nonAsciiContractArgument.asset_id);
+          assert.equal(contractResult.state, mockedState);
+          assert.equal(contractResult.properties,
+              contractProperty.properties);
+        });
 
     it(
         'should execute the function properly and cassandra' +
