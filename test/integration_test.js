@@ -11,7 +11,7 @@ const properties = {
   'scalar.dl.client.server.privileged_port': 50052,
 
   // Make the test idempotent.
-  'scalar.dl.client.cert_holder_id': `foo@${Date.now()}`,
+  'scalar.dl.client.cert_holder_id': `国家标准_ふーバル_情報銀行_정보은행_ƣƢƠ_ஞண@${Date.now()}`,
 
   'scalar.dl.client.private_key_pem': '-----BEGIN EC PRIVATE KEY-----\n' +
   'MHcCAQEEICcJGMEw3dyXUGFu/5a36HqY0ynZi9gLUfKgYWMYgr/IoAoGCCqGSM49\n' +
@@ -76,13 +76,14 @@ describe('Integration test on ClientService', async () => {
   const mockedContractName = 'com.org1.contract.StateUpdater';
   const mockedFunctionName = 'com.org1.function.TestFunction';
   const mockedAssetId = `mockedAssetId${Date.now()}`;
+  const mockedNonAsciiAssetId = `国家标准_ふーバル_情報銀行_정보은행_ƣƢƠ_ஞண${Date.now()}`;
   const mockedState = 1;
   const mockedContractArgument = {
     asset_id: mockedAssetId,
     state: mockedState,
   };
   const nonAsciiContractArgument = {
-    asset_id: '国家标准_ふーバル_情報銀行_정보은행_ƣƢƠ_ஞண',
+    asset_id: mockedNonAsciiAssetId,
     state: mockedState,
   };
   const contractProperty = {
@@ -158,8 +159,17 @@ describe('Integration test on ClientService', async () => {
         state: Date.now(),
         _functions_: [mockedFunctionId],
       };
+      const contractNonAsciiArgumentWithFunction = {
+        asset_id: mockedNonAsciiAssetId,
+        state: Date.now(),
+        _functions_: [mockedFunctionId],
+      };
       const mockedFunctionArgument = {
         asset_id: mockedAssetId,
+        state: mockedState,
+      };
+      const mockedNonAsciiFunctionArgument = {
+        asset_id: mockedNonAsciiAssetId,
         state: mockedState,
       };
       const response = await clientService.executeContract(
@@ -167,9 +177,18 @@ describe('Integration test on ClientService', async () => {
           contractArgumentWithFunction,
           mockedFunctionArgument,
       );
+      const responseNonAscii = await clientService.executeContract(
+          mockedContractId,
+          contractNonAsciiArgumentWithFunction,
+          mockedNonAsciiFunctionArgument,
+      );
       assert.equal(
           response.getResult().state,
           contractArgumentWithFunction.state,
+      );
+      assert.equal(
+          responseNonAscii.getResult().state,
+          contractNonAsciiArgumentWithFunction.state,
       );
       cassandraClient = new cassandra.Client({
         contactPoints: ['127.0.0.1:9042'],

@@ -9,7 +9,7 @@ const properties = {
   'scalar.dl.client.server.host': 'localhost',
   'scalar.dl.client.server.port': 50051,
   'scalar.dl.client.server.privileged_port': 50052,
-  'scalar.dl.client.cert_holder_id': `foo@${Date.now()}`,
+  'scalar.dl.client.cert_holder_id': `国家标准_ふーバル_情報銀行_정보은행_ƣƢƠ_ஞண@${Date.now()}`,
   'scalar.dl.client.cert_version': 1,
   'scalar.dl.client.tls.enabled': false,
   'scalar.dl.client.tls.ca_root_cert_pem': '-----BEGIN CERTIFICATE-----\n' +
@@ -68,13 +68,14 @@ const mockedContractId = `StateUpdater${Date.now()}`;
 const mockedContractName = 'com.org1.contract.StateUpdater';
 const mockedFunctionName = 'com.org1.function.TestFunction';
 const mockedAssetId = `mockedAssetId${Date.now()}`;
+const mockedNonAsciiAssetId = '国家标准_ふーバル_情報銀行_정보은행_ƣƢƠ_ஞண';
 const mockedState = 1;
 const mockedContractArgument = {
   asset_id: mockedAssetId,
   state: mockedState,
 };
 const nonAsciiContractArgument = {
-  asset_id: '国家标准_ふーバル_情報銀行_정보은행_ƣƢƠ_ஞண',
+  asset_id: mockedNonAsciiAssetId,
   state: mockedState,
 };
 const contractProperty = {
@@ -181,6 +182,11 @@ describe('Integration test on ClientServiceWithBinary', async () => {
             state: Date.now(),
             _functions_: [mockedFunctionId],
           };
+          const contractNonAsciiArgumentWithFunction = {
+            asset_id: mockedNonAsciiAssetId,
+            state: Date.now(),
+            _functions_: [mockedFunctionId],
+          };
           const mockedFunctionArgument = {
             asset_id: mockedAssetId,
             state: mockedState,
@@ -191,8 +197,16 @@ describe('Integration test on ClientServiceWithBinary', async () => {
                 contractArgumentWithFunction,
                 mockedFunctionArgument,
             );
+          const nonAsciiBinary =
+              await clientService.createSerializedContractExecutionRequest(
+                  mockedContractId,
+                  contractNonAsciiArgumentWithFunction,
+                  mockedFunctionArgument,
+              );
           const response = await clientService.executeContract(binary);
+          const nonAsciiResponse = await clientService.executeContract(nonAsciiBinary);
           const result = response.getResult();
+          const nonAsciiResult = nonAsciiResponse.getResult();
 
           const cassandraClient = new cassandra.Client({
             contactPoints: ['127.0.0.1:9042'],
@@ -203,6 +217,7 @@ describe('Integration test on ClientServiceWithBinary', async () => {
           );
 
           assert.equal(result.state, contractArgumentWithFunction.state);
+          assert.equal(nonAsciiResult.state, contractArgumentWithFunction.state);
           assert.equal(
               cassandraResponse.rows[0].column_a,
               contractArgumentWithFunction.asset_id,
