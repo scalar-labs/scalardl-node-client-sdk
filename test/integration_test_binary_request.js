@@ -162,10 +162,12 @@ describe('Integration test on ClientServiceWithBinary', async () => {
     );
     it('should work as expected when executing a registered contract with non-ascii character',
         async () => {
-          const response = await clientService.executeContract(
-              mockedContractId,
-              nonAsciiContractArgument, {});
+          const binary =
+              await clientService.createSerializedContractExecutionRequest(
+                  mockedContractId,
+                  nonAsciiContractArgument, {});
 
+          const response = await clientService.executeContract(binary);
           const contractResult = response.result;
           assert.equal(contractResult.asset_id, nonAsciiContractArgument.asset_id);
           assert.equal(contractResult.state, mockedState);
@@ -204,16 +206,18 @@ describe('Integration test on ClientServiceWithBinary', async () => {
                   mockedFunctionArgument,
               );
           const response = await clientService.executeContract(binary);
-          const nonAsciiResponse = await clientService.executeContract(nonAsciiBinary);
           const result = response.getResult();
+          console.log('got result normal:', result);
+          const nonAsciiResponse = await clientService.executeContract(nonAsciiBinary);
           const nonAsciiResult = nonAsciiResponse.getResult();
+          console.log('nonAscii result:', nonAsciiResult);
 
           const cassandraClient = new cassandra.Client({
             contactPoints: ['127.0.0.1:9042'],
             localDataCenter: 'datacenter1',
           });
           const cassandraResponse = await cassandraClient.execute(
-              `SELECT * FROM foo.bar WHERE column_a='${mockedAssetId}';`,
+              `SELECT * FROM foo.bar WHERE column_a='${'asd'}';`,
           );
 
           assert.equal(result.state, contractArgumentWithFunction.state);
