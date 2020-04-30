@@ -297,7 +297,7 @@ describe('Integration test on ClientServiceWithBinary', async () => {
             localDataCenter: 'datacenter1',
           });
           const cassandraResponse = await cassandraClient.execute(
-              `SELECT * FROM foo.bar WHERE column_a='${'asd'}';`,
+              `SELECT * FROM foo.bar WHERE column_a='${mockedAssetId}';`,
           );
 
           assert.equal(result.state, contractArgumentWithFunction.state);
