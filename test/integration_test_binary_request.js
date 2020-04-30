@@ -289,10 +289,8 @@ describe('Integration test on ClientServiceWithBinary', async () => {
               );
           const response = await clientService.executeContract(binary);
           const result = response.getResult();
-          console.log('got result normal:', result);
           const nonAsciiResponse = await clientService.executeContract(nonAsciiBinary);
           const nonAsciiResult = nonAsciiResponse.getResult();
-          console.log('nonAscii result:', nonAsciiResult);
 
           const cassandraClient = new cassandra.Client({
             contactPoints: ['127.0.0.1:9042'],
