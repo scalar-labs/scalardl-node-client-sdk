@@ -11,7 +11,7 @@ const properties = {
   'scalar.dl.client.server.privileged_port': 50052,
 
   // Make the test idempotent.
-  'scalar.dl.client.cert_holder_id': `国家标准_ふーバル_情報銀行_정보은행_ƣƢƠ_ஞண@${Date.now()}`,
+  'scalar.dl.client.cert_holder_id': `foo@${Date.now()}`,
 
   'scalar.dl.client.private_key_pem': '-----BEGIN EC PRIVATE KEY-----\n' +
   'MHcCAQEEICcJGMEw3dyXUGFu/5a36HqY0ynZi9gLUfKgYWMYgr/IoAoGCCqGSM49\n' +

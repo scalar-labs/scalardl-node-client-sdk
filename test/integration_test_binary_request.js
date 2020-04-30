@@ -9,7 +9,7 @@ const properties = {
   'scalar.dl.client.server.host': 'localhost',
   'scalar.dl.client.server.port': 50051,
   'scalar.dl.client.server.privileged_port': 50052,
-  'scalar.dl.client.cert_holder_id': `国家标准_ふーバル_情報銀行_정보은행_ƣƢƠ_ஞண@${Date.now()}`,
+  'scalar.dl.client.cert_holder_id': `foo@${Date.now()}`,
   'scalar.dl.client.cert_version': 1,
   'scalar.dl.client.tls.enabled': false,
   'scalar.dl.client.tls.ca_root_cert_pem': '-----BEGIN CERTIFICATE-----\n' +
