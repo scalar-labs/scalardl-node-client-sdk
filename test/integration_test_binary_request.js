@@ -69,7 +69,7 @@ const mockedContractId = `StateUpdater${Date.now()}`;
 const mockedContractName = 'com.org1.contract.StateUpdater';
 const mockedFunctionName = 'com.org1.function.TestFunction';
 const mockedAssetId = `mockedAssetId${Date.now()}`;
-const mockedNonAsciiAssetId = '国家标准_ふーバル_情報銀行_정보은행_ƣƢƠ_ஞண';
+const mockedNonAsciiAssetId = `国家标准_ふーバル_情報銀行_정보은행_ƣƢƠ_ஞண${Date.now()}`;
 const mockedState = 1;
 const mockedContractArgument = {
   asset_id: mockedAssetId,
