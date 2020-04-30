@@ -212,8 +212,7 @@ const contracts = await clientService.listContracts(binary);
 const binary = await clientService.createSerializedContractExecutionRequest('contractId', argumentObject);
 const response = await clientService.executeContract(binary);
 const executionResult = response.getResult();
-const proofsList = response.getProofs();y
-}
+const proofsList = response.getProofs();
 ```
 
 ### Validate an asset
