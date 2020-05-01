@@ -10,9 +10,9 @@ Web client is the client side (for example browser or mobile devices) of a produ
 integrated with ScalarDLT, normally we would serialize the requests into one binary array (Uint8Array)
 and send to a designated backend service (Web service). Web service is the backend of the product/service where all the
 business logic are executed here. In this guide, the web service would just forward the serialized
-binary requests from the client side to the scalarDLT server. Therefor the web service and scalarDLT
+binary requests from the client side to the scalarDLT server. Therefor the web service and ScalarDLT
 server has to be up and running.
-Refer here on how [run a ScalarDLT server](https://scalardl.readthedocs.io/en/latest/) .
+Refer here on how to [run a ScalarDLT server](https://scalardl.readthedocs.io/en/latest/) .
 
 `Web-client` and `Web-service` Scalar DL SDKs are initialized as follows:
 ```
