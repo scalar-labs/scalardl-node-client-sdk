@@ -13,6 +13,8 @@ const protobuf = require('./scalar_pb');
 const {LedgerClient, LedgerPrivilegedClient} = require('./scalar_grpc_pb');
 const grpc = require('grpc');
 
+const {SignerFactory} = require('./signer');
+
 
 /**
  * @param {Object} properties
@@ -72,7 +74,14 @@ class ClientServiceWithBinary extends ClientServiceBase {
    * @param {Object} properties
    */
   constructor(properties) {
-    super(_createGrpcServices(properties), protobuf, properties);
+    super(
+        {
+          ..._createGrpcServices(properties),
+          signerFactory: new SignerFactory(),
+        },
+        protobuf,
+        properties,
+    );
   }
 
   /**
@@ -259,7 +268,14 @@ class ClientService extends ClientServiceBase {
    * @param {Object} properties
    */
   constructor(properties) {
-    super(_createGrpcServices(properties), protobuf, properties);
+    super(
+        {
+          ..._createGrpcServices(properties),
+          signerFactory: new SignerFactory(),
+        },
+        protobuf,
+        properties,
+    );
   }
 }
 

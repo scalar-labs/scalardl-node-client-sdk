@@ -1,6 +1,6 @@
 {
   "name": "@scalar-labs/scalardl-node-client-sdk",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "The Node.js client SDK for Scalar DL",
   "author": "Scalar, Inc.",
   "main": "scalardl-node-client-sdk.js",
@@ -10,19 +10,21 @@
     "url": "git@github.com:scalar-labs/scalardl-node-client-sdk.git"
   },
   "dependencies": {
-    "@scalar-labs/scalardl-javascript-sdk-base": "^2.6.1",
-    "cassandra-driver": "4.3.1",
-    "google-protobuf": "^3.6.1",
-    "grpc": "^1.16.0"
+    "@scalar-labs/scalardl-javascript-sdk-base": "^3.0.0",
+    "elliptic": "^6.5.2",
+    "google-protobuf": "^3.12.1",
+    "grpc": "^1.16.0",
+    "jsrsasign": "^8.0.15"
   },
   "scripts": {
     "test": "mocha --reporter mochawesome test/"
   },
   "devDependencies": {
+    "cassandra-driver": "4.3.1",
+    "chai": "4.2.0",
     "eslint": "^5.16.0",
     "eslint-config-google": "^0.12.0",
-    "mocha": "^6.2.2",
-    "mochawesome": "^4.1.0",
-    "chai": "4.2.0"
+    "mocha": "^6.2.3",
+    "mochawesome": "^4.1.0"
   }
 }
