@@ -6,7 +6,7 @@ To present this feature, we will rely on a demonstration application.
 In this demonstration application, the web client will use the [Scalar DL web-sdk](https://github.com/scalar-labs/scalardl-web-client-sdk) to generate a serialized request then it will
 send it to the web service, using the Scalar DL node-sdk, which will execute the request against the Scalar DL server.
 
-![overview](./img/overview.png)
+![overview](img/overview.png)
 
 
 ### Serialized request creation using the web sdk
@@ -23,7 +23,7 @@ const clientService = new Scalar.ClientService(clientProperties);
 const serializedCertificateRegistrationRequest = await clientService.createSerializedCertificateRegistrationRequest();
 ```
 
-For the full code, please refer to the [source](./web-client/index.html) file.
+For the full code, please refer to the [source](web-client/index.html) file.
 
 ### Serialized request execution using the node sdk
 
@@ -42,7 +42,7 @@ await binaryClientService.registerCertificate(serializedCertificateRegistrationR
 It should be noted that since the binary client service is only executing the request which was created before by web-client,
 the binary client service does not require the user private key if it only executes serialized request as in a way it only passes the already created request along to the Scalar DL server.
 
-For the full code, please refer to the [source](./web-service/node-server.js) file.
+For the full code, please refer to the [source](web-service/node-server.js) file.
 
 ## Run the sample application
 
@@ -55,4 +55,4 @@ npm install
 node node-server.js
 ```
 
-Finally, open the web-client self contained [html page](./web-client/index.html) with your browser to send request.
+Finally, open the web-client self contained [html page](web-client/index.html) with your browser to send request.
