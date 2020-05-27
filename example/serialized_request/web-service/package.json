@@ -1,17 +1,17 @@
 {
   "name": "web-service",
   "version": "1.0.0",
-  "description": "Scalar DL Web service",
+  "description": "Web service",
   "main": "node-server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "scalar",
-  "license": "ISC",
+  "license": "AGPL-3.0-or-later",
   "dependencies": {
-    "@scalar-labs/scalardl-node-client-sdk": "2.1.0",
-    "cors": "^2.8.5",
+    "@scalar-labs/scalardl-node-client-sdk": "^2.2.0",
     "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "express": "^4.17.1"
   }
 }

@@ -5,34 +5,34 @@
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <link href="style.css" rel="stylesheet" type="text/css">
   <script
-      src="scalardl-web-client-sdk.bundle.js"></script>
+    src="scalardl-web-client-sdk.bundle.js"></script>
 </head>
 
 <body>
 <div id="main-container">
   <img src="../img/scalar_logo_horizontal.jpg" width="25%">
-  <h2 style="color: rgb(60, 103, 177)">Binary request execution sample</h2>
-
+  <h2 style="color: rgb(60, 103, 177)">Serialized request execution sample</h2>
   <div class="Component">
     <button id="registerCertificateBtn">
       Register Certificate
     </button>
     <pre><code>
-await clientService.registerCertificate();</code></pre>
+await clientService.createSerializedCertificateRegistrationRequest();</code></pre>
     <br>
   </div>
   <pre><code id="registerCertificateResult"></code></pre>
   <br>
   <br>
   <div style="color: rgb(90, 90, 90)">
-    Upload StateUpdater.class contract: <input id="contractBinary" type="file"/>
+    Upload web-client/StateUpdater.class contract: <input id="contractBinary" type="file"/>
   </div>
   <div class="Component">
     <button id="registerContractsBtn">
       Register Contracts
     </button>
     <pre><code>
-await clientService.registerContracts(contractId, contractName, contractBinary, {});</code></pre>
+await clientService.createSerializedContractRegistrationRequest(
+            contractId, 'com.org1.contract.StateUpdater', contractBinary, {'properties': ''});</code></pre>
   </div>
   <pre><code id="registerContractResult"></code></pre>
   <br>
@@ -42,7 +42,7 @@ await clientService.registerContracts(contractId, contractName, contractBinary, 
       List Contracts
     </button>
     <pre><code>
-await clientService.listContracts(contractId);</code></pre>
+ await clientService.createSerializedContractsListingRequest();</code></pre>
   </div>
   <pre><code id="listContractsResult"></code></pre>
 </div>
@@ -54,9 +54,14 @@ await clientService.listContracts(contractId);</code></pre>
   let firstItem;
   let contractBinary;
   let jsonValue;
-  const webClientAddress = "http://localhost:3002/"
+  const webClientAddress = 'http://localhost:3002/';
   const clientProperties = {
-    'scalar.dl.client.cert_holder_id': `foo@`,
+    //TODO Remove this 3 properties when this issue is resolved https://github.com/scalar-labs/scalardl-web-client-sdk/issues/33
+    'scalar.dl.client.server.host': '127.0.0.1',
+    'scalar.dl.client.server.port': 80,
+    'scalar.dl.client.server.privileged_port': 8080,
+
+    'scalar.dl.client.cert_holder_id': `foo`,
     'scalar.dl.client.cert_version': 1,
     'scalar.dl.client.private_key_pem': '-----BEGIN EC PRIVATE KEY-----\n' +
         'MHcCAQEEICcJGMEw3dyXUGFu/5a36HqY0ynZi9gLUfKgYWMYgr/IoAoGCCqGSM49\n' +
@@ -81,82 +86,77 @@ await clientService.listContracts(contractId);</code></pre>
   const clientService = new Scalar.ClientService(clientProperties);
   this.axios.defaults.headers['Content-Type'] = 'application/octet-stream';
   document.querySelector('#registerCertificateBtn')
-  .addEventListener('click', async event => {
-    const binaryRegisterCertificateRequest = await clientService.createSerializedCertificateRegistrationRequest()
-    let res;
-    try {
-      res = await this.axios.post(webClientAddress + 'register-certificate',
-          binaryRegisterCertificateRequest);
-      for (firstItem in res.data) {
-        jsonValue = res.data[firstItem]
-      }
-      console.log(res)
-      document.querySelector('#registerCertificateResult').innerHTML = prettyPrinter(jsonValue)
-    } catch (e) {
-      const errMsg = `${e.response.status} ${e.response.data.error}`
-      console.error(errMsg)
-      document.querySelector('#registerCertificateResult').innerHTML = errMsg
-    }
-  });
+      .addEventListener('click', async event => {
+        const serializedCertificateRegistrationRequest = await clientService.createSerializedCertificateRegistrationRequest();
+        try {
+          document.querySelector('#registerCertificateResult').innerHTML = 'Sending request ...';
+          await this.axios.post(webClientAddress + 'register-certificate',
+              serializedCertificateRegistrationRequest);
+          document.querySelector('#registerCertificateResult').innerHTML = 'OK';
+        } catch (e) {
+          handleError('#registerCertificateResult', e);
+        }
+      });
 
   document.querySelector('#contractBinary')
-  .addEventListener('change', event => {
-    const f = event.target.files[0];
-    if (f) {
-      const reader = new FileReader();
-      reader.onload = event => {
-        contractBinary = new Uint8Array(event.target.result);
-      };
-      reader.readAsArrayBuffer(f);
-    }
-  });
+      .addEventListener('change', event => {
+        const f = event.target.files[0];
+        if (f) {
+          const reader = new FileReader();
+          reader.onload = event => {
+            contractBinary = new Uint8Array(event.target.result);
+          };
+          reader.readAsArrayBuffer(f);
+        }
+      });
 
   document.querySelector('#registerContractsBtn')
-  .addEventListener('click', async event => {
-    if (contractBinary == null) {
-      document.querySelector('#registerContractResult').innerHTML = 'Please upload your contract'
-    }
-    const contractId =
-        `${clientProperties['scalar.dl.client.cert_holder_id']}_StateUpdater`;
-    const binaryRegisterCertificateRequest = await clientService.createSerializedContractRegistrationRequest(
-        contractId, 'com.org1.contract.StateUpdater', contractBinary, {'properties': ''});
-    try {
-      const res = await this.axios.post(webClientAddress + 'register-contracts',
-          binaryRegisterCertificateRequest);
-      for (firstItem in res.data) {
-        jsonValue = res.data[firstItem]
-      }
-      document.querySelector('#registerContractResult').innerHTML = prettyPrinter(jsonValue)
-    } catch (e) {
-      const errMsg = `${e.response.status} ${e.response.data.error}`
-      console.error(errMsg)
-      document.querySelector('#registerContractResult').innerHTML = errMsg
-    }
-  });
+      .addEventListener('click', async event => {
+        if (contractBinary == null) {
+          document.querySelector(
+              '#registerContractResult').innerHTML = 'Please upload the \'web-client/StateUpdater.class\' contract ' +
+              'binary using the button right above.';
+        }
+        const contractId =
+            `${clientProperties['scalar.dl.client.cert_holder_id']}_StateUpdater`;
+        document.querySelector('#registerContractResult').innerHTML = 'Sending request ...';
+        const serializedContractRegistrationRequest = await clientService.createSerializedContractRegistrationRequest(
+            contractId, 'com.org1.contract.StateUpdater', contractBinary, {'properties': ''});
+        try {
+          await this.axios.post(webClientAddress + 'register-contracts',
+              serializedContractRegistrationRequest);
+          document.querySelector('#registerContractResult').innerHTML = 'OK';
+        } catch (e) {
+          handleError('#registerContractResult', e);
+        }
+      });
 
   document.querySelector('#listContractsBtn')
-  .addEventListener('click', async event => {
-    const binaryListContractsRequest = await clientService.createSerializedContractsListingRequest()
-    const res = await this.axios.post(webClientAddress + 'list-contracts',
-        binaryListContractsRequest);
-    try {
-      for (firstItem in res.data) {
-        jsonValue = res.data[firstItem]
-      }
-      document.querySelector('#listContractsResult').innerHTML = prettyPrinter(jsonValue)
-    } catch (e) {
-      const errMsg = `${e.response.status} ${e.response.data.error}`
-      console.error(errMsg)
-      document.querySelector('#listContractsResult').innerHTML = errMsg
-    }
-  });
+      .addEventListener('click', async event => {
+        const serializedContractListingRequest = await clientService.createSerializedContractsListingRequest();
+        const res = await this.axios.post(webClientAddress + 'list-contracts',
+            serializedContractListingRequest);
+        try {
+          for (firstItem in res.data) {
+            jsonValue = res.data[firstItem];
+          }
+          document.querySelector('#listContractsResult').innerHTML = prettyPrinter(jsonValue);
+        } catch (e) {
+          handleError('#listContractsResult', e);
+        }
+      });
 
   function prettyPrinter(json) {
     return JSON.stringify(json, null, 2)
-    .replace(/\n( *)/g, function (match, p1) {
-      return '<br>' + '&nbsp;'.repeat(p1.length);
-    });
+        .replace(/\n( *)/g, function(match, p1) {
+          return '<br>' + '&nbsp;'.repeat(p1.length);
+        });
+  }
+
+  function handleError(divId, error) {
+    const errMsg = `${error.response.status} ${error.response.data.error}`;
+    console.error(errMsg);
+    document.querySelector(divId).innerHTML = errMsg;
   }
 </script>
-
 </html>
