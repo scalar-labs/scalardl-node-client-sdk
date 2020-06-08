@@ -4,11 +4,16 @@ const {
   ContractExecutionResult,
   LedgerValidationResult,
   AssetProof,
+  ClientError,
+  ClientPropertiesField,
+  ClientProperties,
 } = require('@scalar-labs/scalardl-javascript-sdk-base');
 
 const protobuf = require('./scalar_pb');
 const {LedgerClient, LedgerPrivilegedClient} = require('./scalar_grpc_pb');
 const grpc = require('grpc');
+
+const {SignerFactory} = require('./signer');
 
 
 /**
@@ -16,14 +21,22 @@ const grpc = require('grpc');
  * @return {Object}
  */
 function _createGrpcServices(properties) {
+  const clientProperties = new ClientProperties(
+      properties,
+      [
+        ClientPropertiesField.SERVER_HOST,
+        ClientPropertiesField.SERVER_PORT,
+        ClientPropertiesField.SERVER_PRIVILEGED_PORT,
+      ],
+  );
+
   const ledgerClientUrl =
-  `${properties['scalar.dl.client.server.host']}:` +
-  `${properties['scalar.dl.client.server.port']}`;
+    `${clientProperties.getServerHost()}:${clientProperties.getServerPort()}`;
   const ledgerPrivilegedClientUrl =
-  `${properties['scalar.dl.client.server.host']}:` +
-  `${properties['scalar.dl.client.server.privileged_port']}`;
-  const ca = properties['scalar.dl.client.tls.ca_root_cert_pem'];
-  const tlsEnabled = properties['scalar.dl.client.tls.enabled'];
+    `${clientProperties.getServerHost()}:` +
+    `${clientProperties.getServerPrivilegedPort()}`;
+  const ca = clientProperties.getTlsCaRootCertPem();
+  const tlsEnabled = clientProperties.getTlsEnabled();
   let ledgerClient;
   let ledgerPrivilegedClient;
   if (tlsEnabled) {
@@ -61,7 +74,14 @@ class ClientServiceWithBinary extends ClientServiceBase {
    * @param {Object} properties
    */
   constructor(properties) {
-    super(_createGrpcServices(properties), protobuf, properties);
+    super(
+        {
+          ..._createGrpcServices(properties),
+          signerFactory: new SignerFactory(),
+        },
+        protobuf,
+        properties,
+    );
   }
 
   /**
@@ -80,7 +100,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
           this.metadata,
           (err, response) => {
             if (err) {
-              reject(err);
+              reject(this._handleError(err));
             } else {
               resolve(response);
             }
@@ -106,7 +126,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
           this.metadata,
           (err, response) => {
             if (err) {
-              reject(err);
+              reject(this._handleError(err));
             } else {
               resolve(response);
             }
@@ -131,7 +151,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
           this.metadata,
           (err, response) => {
             if (err) {
-              reject(err);
+              reject(this._handleError(err));
             } else {
               resolve(response);
             }
@@ -155,7 +175,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
           this.metadata,
           (err, response) => {
             if (err) {
-              reject(err);
+              reject(this._handleError(err));
             } else {
               resolve(JSON.parse(response.getJson()));
             }
@@ -180,7 +200,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
           this.metadata,
           (err, response) => {
             if (err) {
-              reject(err);
+              reject(this._handleError(err));
             } else {
               resolve(
                   LedgerValidationResult.fromGrpcLedgerValidationResponse(
@@ -209,7 +229,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
           this.metadata,
           (err, response) => {
             if (err) {
-              reject(err);
+              reject(this._handleError(err));
             } else {
               resolve(
                   ContractExecutionResult.fromGrpcContractExecutionResponse(
@@ -220,6 +240,22 @@ class ClientServiceWithBinary extends ClientServiceBase {
           },
       );
     });
+  }
+
+  /**
+   * @param {Error} error
+   * @return {ClientError}
+   */
+  _handleError(error) {
+    let code = StatusCode.UNKNOWN_TRANSACTION_STATUS;
+    let message = error.message;
+    const status = this._parseStatusFromError(error);
+    if (status) {
+      code = status.code;
+      message = status.message;
+    }
+
+    return new ClientError(code, message);
   }
 }
 
@@ -232,7 +268,14 @@ class ClientService extends ClientServiceBase {
    * @param {Object} properties
    */
   constructor(properties) {
-    super(_createGrpcServices(properties), protobuf, properties);
+    super(
+        {
+          ..._createGrpcServices(properties),
+          signerFactory: new SignerFactory(),
+        },
+        protobuf,
+        properties,
+    );
   }
 }
 
@@ -243,4 +286,5 @@ module.exports = {
   ContractExecutionResult,
   LedgerValidationResult,
   AssetProof,
+  ClientError,
 };
