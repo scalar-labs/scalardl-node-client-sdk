@@ -13,8 +13,8 @@
     "@scalar-labs/scalardl-javascript-sdk-base": "^3.0.0",
     "elliptic": "^6.5.2",
     "google-protobuf": "^3.12.1",
-    "grpc": "^1.16.0",
-    "jsrsasign": "^8.0.15"
+    "grpc": "^1.24.3",
+    "jsrsasign": "^8.0.20"
   },
   "scripts": {
     "test": "mocha --reporter mochawesome test/"
