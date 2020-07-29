@@ -82,9 +82,28 @@ jobs:
 
       - store_artifacts:
           path: ~/scalardl-node-client-sdk/mochawesome-report
+  deploy:
+    docker:
+      - image: circleci/node
+    steps:
+      - checkout
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+      - run:
+          name: Publish package
+          command: npm publish --access public
+
 workflows:
   version: 2
   build-deploy:
     jobs:
       - build:
           context: "scalar"
+      - deploy:
+          context: "scalar"
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
