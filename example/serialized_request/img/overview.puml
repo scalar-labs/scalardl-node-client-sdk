@@ -1,0 +1,16 @@
+@startuml
+skinparam ParticipantBorderColor black
+
+actor user as "User" #FFFFF
+participant web as "Web client (web-sdk)" #397bce
+participant service as "Web service (node-sdk)" #03aeef
+participant dl as "Scalar DL server" #d69d36
+
+user -> web ++: Click on 'Register certificate' button
+web -> web: Create a serialized certificate registration request
+web -> service ++ : Send the serialized request
+service -> dl ++: Execute the serialized request
+return done
+return done
+web --> user --: done
+@enduml
