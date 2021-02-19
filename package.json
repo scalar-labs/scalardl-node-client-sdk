@@ -10,7 +10,7 @@
     "url": "git@github.com:scalar-labs/scalardl-node-client-sdk.git"
   },
   "dependencies": {
-    "@scalar-labs/scalardl-javascript-sdk-base": "^3.0.2",
+    "@scalar-labs/scalardl-javascript-sdk-base": "^3.0.3",
     "elliptic": "^6.5.2",
     "google-protobuf": "^3.13.0",
     "grpc": "^1.24.3",

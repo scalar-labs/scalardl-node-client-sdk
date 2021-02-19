@@ -77,7 +77,7 @@ const path = require('path');
         path.join(
             __dirname,
             '..',
-            'test/StateUpdater.class'
+            'test/StateUpdater.class',
         )
     );
     const contractId =
