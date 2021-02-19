@@ -105,7 +105,7 @@ const path = require('path');
     console.log(r);
     
     console.log('Validate ledger');
-    r = await clientService.validateLedger('foo');
+    r = await clientService.validateLedger('foo', 0, 1);
     console.log(r);
   } catch (e) {
     console.log(`${e.code} ${e.message}`);
