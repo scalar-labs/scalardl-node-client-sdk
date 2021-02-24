@@ -42,11 +42,11 @@ function _createGrpcServices(properties) {
   if (tlsEnabled) {
     ledgerClient = new LedgerClient(
         ledgerClientUrl,
-        grpc.credentials.createSsl(Buffer.from(ca, 'utf8')),
+        grpc.credentials.createSsl(),
     );
     ledgerPrivilegedClient = new LedgerPrivilegedClient(
         ledgerClientUrl,
-        grpc.credentials.createSsl(Buffer.from(ca, 'utf8')),
+        grpc.credentials.createSsl(),
     );
   } else {
     ledgerClient = new LedgerClient(
