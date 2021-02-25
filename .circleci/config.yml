@@ -19,8 +19,8 @@ jobs:
 
       - image: ghcr.io/scalar-labs/scalar-ledger:2.1.0
         auth:
-          username: $DOCKERHUB_USERNAME
-          password: $DOCKERHUB_PASSWORD
+          username: $GHCR_USERNAME
+          password: $GHCR_PAT
         environment:
           SCALAR_CASSANDRA_HOST: 127.0.0.1
           MAX_HEAP_SIZE: 500m
