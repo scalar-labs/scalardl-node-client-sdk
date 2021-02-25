@@ -17,7 +17,7 @@ jobs:
           MAX_HEAP_SIZE: 1300m
           HEAP_NEWSIZE: 512m
 
-      - image: scalarlabs/scalar-ledger:2.0.2
+      - image: ghcr.io/scalar-labs/scalar-ledger:2.1.0
         auth:
           username: $DOCKERHUB_USERNAME
           password: $DOCKERHUB_PASSWORD
