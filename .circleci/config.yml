@@ -13,11 +13,14 @@ jobs:
           HEAP_NEWSIZE: 512m
 
       - image: cassandra:3.11
+        container_name: cassandra
         environment:
           MAX_HEAP_SIZE: 1300m
           HEAP_NEWSIZE: 512m
 
       - image: ghcr.io/scalar-labs/scalar-ledger:2.1.0
+        depends_on:
+          - cassandra
         auth:
           username: $GHCR_USERNAME
           password: $GHCR_PAT
