@@ -19,8 +19,6 @@ jobs:
           HEAP_NEWSIZE: 512m
 
       - image: ghcr.io/scalar-labs/scalar-ledger:2.1.0
-        depends_on:
-          - cassandra
         auth:
           username: $GHCR_USERNAME
           password: $GHCR_PAT
@@ -39,6 +37,11 @@ jobs:
             - dependency-cache-{{ checksum "package-lock.json" }}
 
       - run:
+          name: Docker login
+          command: echo ${GHCR_PAT} | docker login https://ghcr.io -u
+          ${GHCR_USERNAME} --password-stdin
+
+      - run:
           name: Install cqlsh
           # We need to edit DEFAULT_CQLVER defined in the cqlsh script
           # to connect to the server without --cqlversion command line option
@@ -48,14 +51,14 @@ jobs:
             sudo pip install cqlsh
             sudo sed -i "s/^DEFAULT_CQLVER = .*/DEFAULT_CQLVER = '3.4.4'/" /usr/local/bin/cqlsh
 
+      - run: Run ./dlt up
+        command: ./dlt up
+        working_directory: .circleci/
+
       - run:
           name: Wait for Cassandra
           # dockerize command is included in circleci/openjdk:8-jdk image
           command: dockerize -wait tcp://127.0.0.1:9042 -timeout 1m
-
-      - run:
-          name: Install schema on Cassandra
-          command: cqlsh --execute "$SCHEMA_CONTENT" 127.0.0.1 9042
 
       - run:
           name: Install schema for function purpose on Cassandra
