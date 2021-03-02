@@ -6,17 +6,18 @@ version: 2
 jobs:
   build:
     docker:
-      # set a fixed version for the image circleci/openjdk:8-jdk-node-browsers
       - image: circleci/openjdk:8-jdk-node-browsers
         environment:
           MAX_HEAP_SIZE: 2048m
           HEAP_NEWSIZE: 512m
 
       - image: cassandra:3.11
-        container_name: cassandra
+        name: cassandra
         environment:
           MAX_HEAP_SIZE: 1300m
           HEAP_NEWSIZE: 512m
+          CASSANDRA_DC=dc1
+          CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
 
       - image: ghcr.io/scalar-labs/scalar-ledger:2.1.0
         auth:
@@ -90,7 +91,8 @@ jobs:
           path: ~/scalardl-node-client-sdk/mochawesome-report
   deploy:
     docker:
-      - image: circleci/node
+      #Node LTS 14.16 "fermium"
+      - image: circleci/node:14.16
     steps:
       - checkout
       - run:

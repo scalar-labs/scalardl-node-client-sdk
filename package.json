@@ -5,26 +5,30 @@
   "author": "Scalar, Inc.",
   "main": "scalardl-node-client-sdk.js",
   "license": "AGPL-3.0-or-later",
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:scalar-labs/scalardl-node-client-sdk.git"
   },
   "dependencies": {
-    "@scalar-labs/scalardl-javascript-sdk-base": "file:../javascript-sdk-base",
+    "@scalar-labs/scalardl-javascript-sdk-base": "file:../scalardl-javascript-sdk-base",
     "elliptic": "^6.5.2",
     "google-protobuf": "^3.13.0",
     "grpc": "^1.24.3",
     "jsrsasign": "^10.0.5"
   },
   "scripts": {
-    "test": "mocha --reporter mochawesome test/"
+    "test": "./node_modules/mocha/bin/mocha --reporter mochawesome test/"
   },
   "devDependencies": {
     "cassandra-driver": "^4.6.0",
     "chai": "4.2.0",
     "eslint": "^7.12.1",
     "eslint-config-google": "^0.14.0",
-    "mocha": "^8.2.1",
+    "mocha": "^8.3.0",
     "mochawesome": "^6.2.1"
   }
 }
