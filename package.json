@@ -21,7 +21,7 @@
     "jsrsasign": "^10.0.5"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --reporter mochawesome test/"
+    "test": "mocha --reporter mochawesome test/"
   },
   "devDependencies": {
     "cassandra-driver": "^4.6.0",
