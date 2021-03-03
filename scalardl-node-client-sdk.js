@@ -139,19 +139,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
         serializedBinary,
     );
 
-    return new Promise((resolve, reject) => {
-      this.ledgerPrivileged.registerCert(
-          request,
-          this.metadata,
-          (err, response) => {
-            if (err) {
-              reject(this._handleError(err));
-            } else {
-              resolve(response);
-            }
-          },
-      );
-    });
+    return super._registerCertificate(request);
   }
 
   /**
@@ -165,19 +153,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
           serializedBinary,
       );
 
-    return new Promise((resolve, reject) => {
-      this.ledgerPrivileged.registerFunction(
-          request,
-          this.metadata,
-          (err, response) => {
-            if (err) {
-              reject(this._handleError(err));
-            } else {
-              resolve(response);
-            }
-          },
-      );
-    });
+    return super._registerFunction(request);
   }
 
   /**
@@ -190,19 +166,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
         serializedBinary,
     );
 
-    return new Promise((resolve, reject) => {
-      this.ledgerClient.registerContract(
-          request,
-          this.metadata,
-          (err, response) => {
-            if (err) {
-              reject(this._handleError(err));
-            } else {
-              resolve(response);
-            }
-          },
-      );
-    });
+    return super._registerContract(request);
   }
 
   /**
@@ -214,19 +178,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
     const request =
       this.ledgerClient.listContracts.requestDeserialize(serializedBinary);
 
-    return new Promise((resolve, reject) => {
-      this.ledgerClient.listContracts(
-          request,
-          this.metadata,
-          (err, response) => {
-            if (err) {
-              reject(this._handleError(err));
-            } else {
-              resolve(JSON.parse(response.getJson()));
-            }
-          },
-      );
-    });
+    return super._listContracts(request);
   }
 
   /**
@@ -239,23 +191,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
         serializedBinary,
     );
 
-    return new Promise((resolve, reject) => {
-      this.ledgerClient.validateLedger(
-          request,
-          this.metadata,
-          (err, response) => {
-            if (err) {
-              reject(this._handleError(err));
-            } else {
-              resolve(
-                  LedgerValidationResult.fromGrpcLedgerValidationResponse(
-                      response,
-                  ),
-              );
-            }
-          },
-      );
-    });
+    return super._validateLedger(request);
   }
 
   /**
@@ -268,39 +204,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
         serializedBinary,
     );
 
-    return new Promise((resolve, reject) => {
-      this.ledgerClient.executeContract(
-          request,
-          this.metadata,
-          (err, response) => {
-            if (err) {
-              reject(this._handleError(err));
-            } else {
-              resolve(
-                  ContractExecutionResult.fromGrpcContractExecutionResponse(
-                      response,
-                  ),
-              );
-            }
-          },
-      );
-    });
-  }
-
-  /**
-   * @param {Error} error
-   * @return {ClientError}
-   */
-  _handleError(error) {
-    let code = StatusCode.UNKNOWN_TRANSACTION_STATUS;
-    let message = error.message;
-    const status = this._parseStatusFromError(error);
-    if (status) {
-      code = status.code;
-      message = status.message;
-    }
-
-    return new ClientError(code, message);
+    return super._executeContract(request);
   }
 }
 
