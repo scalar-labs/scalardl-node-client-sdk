@@ -10,7 +10,12 @@ const {
 } = require('@scalar-labs/scalardl-javascript-sdk-base');
 
 const protobuf = require('./scalar_pb');
-const {LedgerClient, LedgerPrivilegedClient} = require('./scalar_grpc_pb');
+const {
+  LedgerClient,
+  LedgerPrivilegedClient,
+  AuditorClient,
+  AuditorPrivilegedClient,
+} = require('./scalar_grpc_pb');
 const grpc = require('grpc');
 
 const {SignerFactory} = require('./signer');
@@ -35,6 +40,13 @@ function _createGrpcServices(properties) {
   const ledgerPrivilegedClientUrl =
     `${clientProperties.getServerHost()}:` +
     `${clientProperties.getServerPrivilegedPort()}`;
+  const auditorEnabled = clientProperties.getAuditorEnabled();
+  const auditorClientUrl =
+    `${clientProperties.getAuditorHost()}:` +
+    `${clientProperties.getAuditorPort()}`;
+  const auditorPrivilegedClientUrl =
+    `${clientProperties.getAuditorHost()}:` +
+    `${clientProperties.getAuditorPrivilegedPort()}`;
   const ca = clientProperties.getTlsCaRootCertPem();
   const tlsEnabled = clientProperties.getTlsEnabled();
 
@@ -60,9 +72,24 @@ function _createGrpcServices(properties) {
         ledgerPrivilegedClientUrl,
         grpcChannelCredentials);
 
+  let auditorClient;
+  let auditorPrivilegedClient;
+  if (auditorEnabled) {
+    auditorClient = new AuditorClient(
+        auditorClientUrl,
+        grpcChannelCredentials,
+    );
+    auditorPrivilegedClient = new AuditorPrivilegedClient(
+        auditorPrivilegedClientUrl,
+        grpcChannelCredentials,
+    );
+  }
+
   return {
     'ledgerClient': ledgerClient,
     'ledgerPrivileged': ledgerPrivilegedClient,
+    'auditorClient': auditorClient,
+    'auditorPrivileged': auditorPrivilegedClient,
   };
 }
 
