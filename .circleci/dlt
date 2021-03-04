@@ -1,0 +1,39 @@
+#!/bin/bash
+
+
+
+
+up() {
+    docker-compose up -d
+
+    echo -n "Wait for C* "
+    until docker exec cassandra cqlsh 2> /dev/null ; do
+        sleep 0.5
+        echo -n "#"
+    done
+
+    echo -e "\nExecute CQL"
+    docker cp ./create_schema.cql cassandra:/tmp
+    docker exec cassandra cqlsh -f /tmp/create_schema.cql --request-timeout=30
+    docker restart scalar-ledger # 念のために
+    echo "Scalar DL network is ready"
+}
+
+down () {
+    docker-compose down -v
+}
+
+case "$1" in
+up)
+	up
+    ;;
+
+down)
+	down
+    ;;
+
+reset)
+	down
+	up
+	;;
+esac

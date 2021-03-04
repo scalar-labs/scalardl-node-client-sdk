@@ -1,0 +1,48 @@
+version: "3.6"
+services:
+  cassandra:
+    image: cassandra:3.11
+    container_name: cassandra
+    volumes:
+      - cassandra:/var/lib/cassandra
+    ports:
+      - 9042:9042
+
+  scalar-ledger:
+    image: ghcr.io/scalar-labs/scalar-ledger:2.1.0
+    container_name: scalar-ledger
+    depends_on:
+      - cassandra
+    environment:
+      - SCALAR_CASSANDRA_HOST=cassandra
+      - SCALAR_DL_LEDGER_PROOF_ENABLED=true
+      - SCALAR_DL_LEDGER_PROOF_PRIVATE_KEY_PATH=/foo-key.pem
+    volumes:
+      - ./foo-key.pem:/foo-key.pem
+    ports:
+      - 50051:50051
+      - 50052:50052
+
+  envoy:
+    image: envoyproxy/envoy:v1.12.2
+    ports:
+      - 80:80
+      - 443:443
+      - 8081:8081
+      - 8443:8443
+    container_name: envoy
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+      - ./crt:/crt
+      - ./key:/key
+    depends_on:
+      - scalar-ledger
+    command: /usr/local/bin/envoy -c /etc/envoy/envoy.yaml -l trace
+
+volumes:
+  cassandra:
+    name: cassandra
+
+networks:
+  default:
+    name: scalar-dlt
