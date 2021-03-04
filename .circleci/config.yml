@@ -12,6 +12,23 @@ jobs:
           MAX_HEAP_SIZE: 2048m
           HEAP_NEWSIZE: 512m
 
+      - image: cassandra:3.11
+        name: cassandra
+        environment:
+          MAX_HEAP_SIZE: 1300m
+          HEAP_NEWSIZE: 512m
+          CASSANDRA_DC=dc1
+          CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+
+      - image: ghcr.io/scalar-labs/scalar-ledger:2.1.0
+        auth:
+          username: $GHCR_USERNAME
+          password: $GHCR_PAT
+        environment:
+          SCALAR_CASSANDRA_HOST: cassandra
+          MAX_HEAP_SIZE: 500m
+          HEAP_NEWSIZE: 512m
+
     working_directory: ~/scalardl-node-client-sdk
 
     steps:
@@ -75,7 +92,8 @@ jobs:
           path: ~/scalardl-node-client-sdk/mochawesome-report
   deploy:
     docker:
-      - image: circleci/node
+      #Node LTS 14.16 "fermium"
+      - image: circleci/node:14.16
     steps:
       - checkout
       - run:
