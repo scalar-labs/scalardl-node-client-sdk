@@ -36,9 +36,10 @@ jobs:
             sudo pip install cqlsh
             sudo sed -i "s/^DEFAULT_CQLVER = .*/DEFAULT_CQLVER = '3.4.4'/" /usr/local/bin/cqlsh
 
-      - run: Run ./dlt up
-        command: ./dlt up
-        working_directory: .circleci/
+      - run:
+          name: Running docker compose up
+          command: docker-compose up -d
+          working_directory: .circleci/
 
       - run:
           name: Wait for Cassandra
@@ -47,7 +48,7 @@ jobs:
 
       - run:
           name: Install schema for function purpose on Cassandra
-          command: cqlsh -f .circleci/function_schema.cql 127.0.0.1 9042
+          command: cqlsh -f .circleci/function_schema.cql
 
       - run:
           name: Wait for Scalardl
