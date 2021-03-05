@@ -5,12 +5,12 @@
 version: 2
 jobs:
   build:
-    docker:
+    machine: true
       # set a fixed version for the image circleci/openjdk:8-jdk-node-browsers
-      - image: circleci/openjdk:8-jdk-node-browsers
-        environment:
-          MAX_HEAP_SIZE: 2048m
-          HEAP_NEWSIZE: 512m
+    image: circleci/openjdk:8-jdk-node-browsers
+    environment:
+      MAX_HEAP_SIZE: 2048m
+      HEAP_NEWSIZE: 512m
 
     working_directory: ~/scalardl-node-client-sdk
 
@@ -50,7 +50,8 @@ jobs:
 
       - run:
           name: Run docker-compose up
-          command: docker-compose -f .circleci/docker-compose.yml up
+          command: docker-compose up -d
+          working_directory: .circleci/
 
       - run:
           name: Wait for Cassandra
