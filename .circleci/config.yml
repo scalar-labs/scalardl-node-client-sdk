@@ -23,8 +23,8 @@ jobs:
 
       - run:
           name: Docker login
-          command: echo ${GHCR_PAT} | docker login https://ghcr.io -u
-          ${GHCR_USERNAME} --password-stdin
+          command: |
+            echo ${GHCR_PAT} | docker login https://ghcr.io -u ${GHCR_USERNAME} --password-stdin
 
       - run:
           name: Install cqlsh
