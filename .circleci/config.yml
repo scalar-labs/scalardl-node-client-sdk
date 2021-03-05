@@ -22,7 +22,9 @@ jobs:
             - dependency-cache-{{ checksum "package-lock.json" }}
 
       - setup_remote_docker:
-        version: 20.10.2
+          version: 20.10.2
+          docker_layer_caching: false
+
 
       - run:
           name: Install cqlsh
