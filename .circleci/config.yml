@@ -41,6 +41,11 @@ jobs:
             sudo mv ~/docker-compose /usr/local/bin/docker-compose
 
       - run:
+          name: Docker login
+          command: |
+            echo ${GHCR_PAT} | docker login https://ghcr.io -u ${GHCR_USERNAME} --password-stdin
+
+      - run:
           name: Run docker-compose up
           command: docker-compose -f .circleci/docker-compose.yml up
 
