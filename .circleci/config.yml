@@ -14,6 +14,7 @@ jobs:
 
       - image: cassandra:3.11
         container_name: "circleci_scalardl-cassandra-1"
+        volumes: cassandra-data:/var/lib/cassandra
         name: cassandra
         port: "9042:9042"
         environment:
@@ -27,12 +28,7 @@ jobs:
         auth:
           username: $GHCR_USERNAME
           password: $GHCR_PAT
-        command:
-          - "--cassandra"
-          - "-h"
-          - "cassandra"
-          - "-R"
-          - "1"
+        command: "--cassandra -h circleci_scalardl-cassandra-1 -R 1"
         networks: scalar-ledger
         restart: on-failure
 
@@ -58,14 +54,9 @@ jobs:
 
       - image: envoyproxy/envoy:v1.12.2
         container_name: "circleci_scalardl-envoy-1"
-        ports:
-          - "9901:9901"
-          - "50051:50051"
-          - "50052:50052"
-        volumes:
-          - ./envoy.yaml:/etc/envoy/envoy.yaml
-        depends_on:
-          - scalar-ledger
+        ports: "9901:9901 50051:50051 50052:50052"
+        volumes: ./envoy.yaml:/etc/envoy/envoy.yaml
+        depends_on: scalar-ledger
         command: /usr/local/bin/envoy -c /etc/envoy/envoy.yaml
         networks: scalar-ledger
 
