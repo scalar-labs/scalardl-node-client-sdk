@@ -8,9 +8,6 @@ jobs:
     machine: true
       # set a fixed version for the image circleci/openjdk:8-jdk-node-browsers
     image: circleci/openjdk:8-jdk-node-browsers
-    environment:
-      MAX_HEAP_SIZE: 2048m
-      HEAP_NEWSIZE: 512m
 
     working_directory: ~/scalardl-node-client-sdk
 
@@ -20,11 +17,6 @@ jobs:
       - restore_cache:
           keys:
             - dependency-cache-{{ checksum "package-lock.json" }}
-
-      - setup_remote_docker:
-          version: 20.10.2
-          docker_layer_caching: false
-
 
       - run:
           name: Install cqlsh
