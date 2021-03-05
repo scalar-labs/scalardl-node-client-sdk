@@ -66,46 +66,6 @@ services:
     networks:
       - scalar-ledger
 
-  cfssl-init:
-    # This service should be run separately before two services below
-    # (cfssl-serve and cfssl-ocspserve) with `depends_on` option, because if
-    # they start up at the same time (by commands like `docker-compose up`),
-    # they both attempt to generate the same missing certificate files, which
-    # results in a race condition.
-    image: ghcr.io/scalar-labs/scalar-cfssl:1.0.0
-    container_name: "circleci_scalardl-cfssl-init-1"
-    volumes:
-      - ./cfssl/data:/cfssl/data
-    command: /bin/true
-    networks:
-      - scalar-ledger
-
-  cfssl-serve:
-    image: ghcr.io/scalar-labs/scalar-cfssl:1.0.0
-    container_name: "circleci_scalardl-cfssl-serve-1"
-    volumes:
-      - ./cfssl/data:/cfssl/data
-    depends_on:
-      - cfssl-init
-    command: serve
-    ports:
-      - "8888:8888"
-    networks:
-      - scalar-ledger
-
-  cfssl-ocspserve:
-    image: ghcr.io/scalar-labs/scalar-cfssl:1.0.0
-    container_name: "circleci_scalardl-cfssl-ocspserve-1"
-    volumes:
-      - ./cfssl/data:/cfssl/data
-    depends_on:
-      - cfssl-init
-    command: ocspserve
-    ports:
-      - "8889:8889"
-    networks:
-      - scalar-ledger
-
 volumes:
   cassandra-data:
 
