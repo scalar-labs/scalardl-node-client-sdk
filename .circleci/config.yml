@@ -50,11 +50,12 @@ jobs:
           command: npm install
 
       - run:
-          name: Install schema on Cassandra
+          name: Insert function table
           command: |
             docker cp function_schema.cql \
             circleci_scalardl-cassandra-1:function_schema.cql
-            docker exec cassandra cqlsh -f function_schema.cql
+            docker exec circleci_scalardl-cassandra-1 cqlsh -f function_schema.cql
+          working_directory: .circleci/
 
       - save_cache:
           key: v1-dependencies-{{ checksum "package-lock.json" }}
