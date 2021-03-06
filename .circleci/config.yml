@@ -7,7 +7,7 @@ jobs:
   build:
     machine: true
       # set a fixed version for the image circleci/openjdk:8-jdk-node-browsers
-    image: circleci/openjdk:8-jdk-node-browsers
+    image: ubuntu-2004:202010-01
 
     working_directory: ~/scalardl-node-client-sdk
 
@@ -17,16 +17,6 @@ jobs:
       - restore_cache:
           keys:
             - dependency-cache-{{ checksum "package-lock.json" }}
-
-      - run:
-          name: Install cqlsh
-          # We need to edit DEFAULT_CQLVER defined in the cqlsh script
-          # to connect to the server without --cqlversion command line option
-          command: |
-            curl -O https://bootstrap.pypa.io/2.7/get-pip.py
-            sudo python get-pip.py
-            sudo pip install cqlsh
-            sudo sed -i "s/^DEFAULT_CQLVER = .*/DEFAULT_CQLVER = '3.4.4'/" /usr/local/bin/cqlsh
 
       - run:
           name: Install Docker Compose
@@ -46,20 +36,25 @@ jobs:
           working_directory: .circleci/
 
       - run:
-          name: Wait for Cassandra
-          # dockerize command is included in circleci/openjdk:8-jdk image
-          command: dockerize -wait tcp://127.0.0.1:9042 -timeout 1m
+          name: Install node@14.15.1 # Update node for karma to work
+          command: |
+            export NVM_DIR="/opt/circleci/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm install v14.15.1
+            nvm alias default v14.15.1
+            echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
+            echo "[ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\"" >> $BASH_ENV
 
       - run:
-          name: Install schema for function purpose on Cassandra
-          command: cqlsh -f .circleci/function_schema.cql
-
-      - run:
-          name: Wait for Scalardl
-          command: dockerize -wait tcp://127.0.0.1:50051 -timeout 1m
-
-      - run:
+          name: Install npm
           command: npm install
+
+      - run:
+          name: Install schema on Cassandra
+          command: |
+            docker cp function_schema.cql \
+            circleci_scalardl-cassandra-1:function_schema.cql
+            docker exec cassandra cqlsh -f function_schema.cql
 
       - save_cache:
           key: v1-dependencies-{{ checksum "package-lock.json" }}
