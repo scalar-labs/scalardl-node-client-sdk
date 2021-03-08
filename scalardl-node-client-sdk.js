@@ -50,6 +50,16 @@ function _createGrpcServices(properties) {
         ledgerClientUrl,
         grpc.credentials.createSsl(),
     );
+  } else if (tlsEnabled && ca) {
+    // Use custom root CA
+    ledgerClient = new LedgerClient(
+        ledgerClientUrl,
+        grpc.credentials.createSsl(Buffer.from(ca, 'utf8')),
+    );
+    ledgerPrivilegedClient = new LedgerPrivilegedClient(
+        ledgerClientUrl,
+        grpc.credentials.createSsl(Buffer.from(ca, 'utf8')),
+    );
   } else {
     ledgerClient = new LedgerClient(
         ledgerClientUrl,
