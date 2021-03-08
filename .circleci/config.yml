@@ -29,9 +29,6 @@ jobs:
             sudo apt-get purge docker-ce containerd.io
             curl -fsSL https://get.docker.com -o get-docker.sh
             sudo sh get-docker.sh
-            sudo rm /usr/local/bin/docker-compose
-            sudo apt remove docker-compose
-            sudo apt autoremove
             sudo curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
 
