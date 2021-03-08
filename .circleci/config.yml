@@ -7,7 +7,7 @@ jobs:
   build:
     machine: true
       # set a fixed version for the image circleci/openjdk:8-jdk-node-browsers
-    image: ubuntu-1604:202101-01
+    image: ubuntu-2004:202101-01
 
     working_directory: ~/scalardl-node-client-sdk
 
@@ -61,11 +61,12 @@ jobs:
               done
 
       - run:
-          name: Insert function table
+          name: Insert function table and wait
           command: |
             docker cp function_schema.cql \
             circleci_scalardl-cassandra-1:function_schema.cql
             docker exec circleci_scalardl-cassandra-1 cqlsh -f function_schema.cql
+            sleep 10
           working_directory: .circleci/
 
       - save_cache:
