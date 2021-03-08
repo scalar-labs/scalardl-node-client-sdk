@@ -19,13 +19,6 @@ jobs:
             - dependency-cache-{{ checksum "package-lock.json" }}
 
       - run:
-          name: Install Docker Compose
-          command: |
-            curl -L https://github.com/docker/compose/releases/download/1.27.4/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
-            chmod +x ~/docker-compose
-            sudo mv ~/docker-compose /usr/local/bin/docker-compose
-
-      - run:
           name: Docker login
           command: |
             echo ${GHCR_PAT} | docker login https://ghcr.io -u ${GHCR_USERNAME} --password-stdin
@@ -48,6 +41,15 @@ jobs:
       - run:
           name: Install npm
           command: npm install
+
+      - run:
+          name: Wait for cassandra to spin up
+          command: |
+            echo -n "Wait for C* "
+              until docker exec cassandra cqlsh 2> /dev/null ; do
+                  sleep 0.5
+                  echo -n "#"
+              done
 
       - run:
           name: Insert function table
