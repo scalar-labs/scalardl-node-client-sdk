@@ -7,7 +7,7 @@ jobs:
   build:
     machine: true
       # set a fixed version for the image circleci/openjdk:8-jdk-node-browsers
-    image: ubuntu-2004:202010-01
+    image: ubuntu-2004:202101-01
 
     working_directory: ~/scalardl-node-client-sdk
 
@@ -46,7 +46,7 @@ jobs:
           name: Wait for cassandra to spin up
           command: |
             echo -n "Wait for C* "
-              until docker exec cassandra cqlsh 2> /dev/null ; do
+              until docker exec circleci_scalardl-cassandra-1 cqlsh 2> /dev/null ; do
                   sleep 0.5
                   echo -n "#"
               done
