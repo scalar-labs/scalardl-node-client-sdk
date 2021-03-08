@@ -7,7 +7,7 @@ jobs:
   build:
     machine: true
       # set a fixed version for the image circleci/openjdk:8-jdk-node-browsers
-    image: ubuntu-2004:202101-01
+    image: ubuntu-1604:202101-01
 
     working_directory: ~/scalardl-node-client-sdk
 
@@ -17,23 +17,6 @@ jobs:
       - restore_cache:
           keys:
             - dependency-cache-{{ checksum "package-lock.json" }}
-
-      - run:
-          name: Update Docker Compose and Docker
-          command: |
-            sudo apt-get remove docker-compose
-            VERSION=$(curl --silent https://api.github.com/repos/docker/compose/releases/latest | jq .name -r)
-            DESTINATION=/usr/local/bin/docker-compose
-            sudo curl -L https://github.com/docker/compose/releases/download/${VERSION}/docker-compose-$(uname -s)-$(uname -m) -o $DESTINATION
-            sudo chmod 755 $DESTINATION
-            sudo apt-get remove --purge docker docker-engine docker.io
-            sudo add-apt-repository \
-              "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-              $(lsb_release -cs) \
-              stable"
-            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-            sudo apt-get update
-            sudo apt-get install docker-ce
 
       - run:
           name: Docker login
