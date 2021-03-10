@@ -39,27 +39,29 @@ function _createGrpcServices(properties) {
   const tlsEnabled = clientProperties.getTlsEnabled();
   let ledgerClient;
   let ledgerPrivilegedClient;
-  if (tlsEnabled && !ca) {
-    // When no custom root CA is provided to init the SSL/TLS connection,
-    // default root CA will be used
-    ledgerClient = new LedgerClient(
-        ledgerClientUrl,
-        grpc.credentials.createSsl(),
-    );
-    ledgerPrivilegedClient = new LedgerPrivilegedClient(
-        ledgerClientUrl,
-        grpc.credentials.createSsl(),
-    );
-  } else if (tlsEnabled && ca) {
-    // Use custom root CA
-    ledgerClient = new LedgerClient(
-        ledgerClientUrl,
-        grpc.credentials.createSsl(Buffer.from(ca, 'utf8')),
-    );
-    ledgerPrivilegedClient = new LedgerPrivilegedClient(
-        ledgerClientUrl,
-        grpc.credentials.createSsl(Buffer.from(ca, 'utf8')),
-    );
+  if (tlsEnabled) {
+    if (ca) {
+      // Use custom root CA
+      ledgerClient = new LedgerClient(
+          ledgerClientUrl,
+          grpc.credentials.createSsl(Buffer.from(ca, 'utf8')),
+      );
+      ledgerPrivilegedClient = new LedgerPrivilegedClient(
+          ledgerClientUrl,
+          grpc.credentials.createSsl(Buffer.from(ca, 'utf8')),
+      );
+    } else {
+      // When no custom root CA is provided to init the SSL/TLS connection,
+      // default root CA maintained by Node.js will be used
+      ledgerClient = new LedgerClient(
+          ledgerClientUrl,
+          grpc.credentials.createSsl(),
+      );
+      ledgerPrivilegedClient = new LedgerPrivilegedClient(
+          ledgerClientUrl,
+          grpc.credentials.createSsl(),
+      );
+    }
   } else {
     ledgerClient = new LedgerClient(
         ledgerClientUrl,
