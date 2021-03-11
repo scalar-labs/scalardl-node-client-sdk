@@ -47,18 +47,18 @@ function _createGrpcServices(properties) {
     } else {
       // When no custom root CA is provided to init the SSL/TLS connection,
       // default root CA maintained by Node.js will be used
-      grpcChannelCredentials =
-        grpc.credentials.createSsl();
+      grpcChannelCredentials = grpc.credentials.createSsl();
     }
   } else {
-    grpcChannelCredentials =
-      grpc.credentials.createInsecure();
+    grpcChannelCredentials = grpc.credentials.createInsecure();
   }
 
   const ledgerClient =
     new LedgerClient(ledgerClientUrl, grpcChannelCredentials);
   const ledgerPrivilegedClient =
-    new LedgerPrivilegedClient(ledgerPrivilegedClientUrl, grpcChannelCredentials);
+    new LedgerPrivilegedClient(
+        ledgerPrivilegedClientUrl,
+        grpcChannelCredentials);
 
   return {
     'ledgerClient': ledgerClient,
