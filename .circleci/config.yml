@@ -36,7 +36,7 @@ jobs:
           name: checkout scalar-samples code
           command: |
             git init
-            git pull https://${GHCR_USERNAME}:${GITHUB_PASSWORD}@github.com/scalar-labs/scalar-samples.git ci_branch
+            git pull https://${GHCR_USERNAME}:${GITHUB_PASSWORD}@github.com/scalar-labs/scalar-samples.git
           working_directory: .circleci/
 
 
