@@ -42,7 +42,7 @@ jobs:
 
       - run:
           name: Run docker-compose up
-          command: docker-compose up -d
+          command: docker-compose -f docker-compose.yml -f docker-compose-open-cassandra-port.yml up -d
           working_directory: .circleci/
 
       - run:
