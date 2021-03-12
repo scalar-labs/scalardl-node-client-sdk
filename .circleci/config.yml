@@ -36,7 +36,7 @@ jobs:
           name: checkout scalar-samples code
           command: |
             git init
-            git pull https://${GHCR_USERNAME}:${GITHUB_PASSWORD}@github.com/scalar-labs/scalar-samples.git
+            git pull https://${GHCR_USERNAME}:${GITHUB_PASSWORD}@github.com/scalar-labs/scalar-samples.git ci_branch
           working_directory: .circleci/
 
 
@@ -63,7 +63,7 @@ jobs:
           name: Wait for cassandra to spin up
           command: |
             echo -n "Wait for C* "
-              until docker exec circleci_scalardl-cassandra-1 cqlsh 2> /dev/null ; do
+              until docker exec scalar-samples-cassandra-1 cqlsh 2> /dev/null ; do
                   sleep 0.5
                   echo -n "#"
               done
@@ -72,8 +72,8 @@ jobs:
           name: Insert function table and wait
           command: |
             docker cp function_schema.cql \
-            circleci_scalardl-cassandra-1:function_schema.cql
-            docker exec circleci_scalardl-cassandra-1 cqlsh -f function_schema.cql
+            scalar-samples-cassandra-1:function_schema.cql
+            docker exec scalar-samples-cassandra-1 cqlsh -f function_schema.cql
             sleep 10
           working_directory: .circleci/
 
