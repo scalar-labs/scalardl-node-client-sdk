@@ -35,8 +35,8 @@ jobs:
       - run:
           name: checkout scalar-samples code
           command: |
-          git clone https://${GHCR_USERNAME}:${GITHUB_PASSWORD}@github \
-          .com/scalar-labs/scalar-samples.git .circleci/
+            git clone https://${GHCR_USERNAME}:${GITHUB_PASSWORD}@github \
+            .com/scalar-labs/scalar-samples.git .circleci/
 
 
       - run:
