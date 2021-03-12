@@ -1,14 +1,5 @@
 version: "3.5"
 services:
   cassandra:
-    image: cassandra:3.11
-    container_name: "scalar-samples-cassandra-1"
-    volumes:
-      - cassandra-data:/var/lib/cassandra
     ports:
-      - "127.0.0.1:9042:9042" # native protocol clients
-    environment:
-      - CASSANDRA_DC=dc1
-      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
-    networks:
-      - scalar-ledger
+      - "9042:9042"
