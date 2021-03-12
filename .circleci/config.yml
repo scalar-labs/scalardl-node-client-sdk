@@ -33,6 +33,13 @@ jobs:
             sudo chmod +x /usr/local/bin/docker-compose
 
       - run:
+          name: checkout scalar-samples code
+          command: |
+          git clone https://${GHCR_USERNAME}:${GITHUB_PASSWORD}@github \
+          .com/scalar-labs/scalar-samples.git .circleci/
+
+
+      - run:
           name: Run docker-compose up
           command: docker-compose up -d
           working_directory: .circleci/
