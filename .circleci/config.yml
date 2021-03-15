@@ -33,7 +33,7 @@ jobs:
             sudo chmod +x /usr/local/bin/docker-compose
 
       - run:
-          name: checkout scalar-samples code
+          name: checkout scalar-samples repository as it contains the script to spin up scalardl environment and easier for us to maintain the CI
           command: |
             git init
             git pull https://${GHCR_USERNAME}:${GITHUB_PASSWORD}@github.com/scalar-labs/scalar-samples.git
@@ -41,7 +41,7 @@ jobs:
 
 
       - run:
-          name: Run docker-compose up
+          name: Start Scalar DL environment
           command: docker-compose -f docker-compose.yml -f docker-compose-open-cassandra-port.yml up -d
           working_directory: .circleci/
 
@@ -60,7 +60,7 @@ jobs:
           command: npm install
 
       - run:
-          name: Wait for cassandra to spin up
+          name: Wait for Cassandra to spin up to be able to update the Cassandra schema in the next step
           command: |
             echo -n "Wait for C* "
               until docker exec scalar-samples-cassandra-1 cqlsh 2> /dev/null ; do
