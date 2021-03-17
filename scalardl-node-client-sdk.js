@@ -37,32 +37,49 @@ function _createGrpcServices(properties) {
     `${clientProperties.getServerPrivilegedPort()}`;
   const ca = clientProperties.getTlsCaRootCertPem();
   const tlsEnabled = clientProperties.getTlsEnabled();
-  let ledgerClient;
-  let ledgerPrivilegedClient;
+
+  let grpcChannelCredentials;
   if (tlsEnabled) {
-    ledgerClient = new LedgerClient(
-        ledgerClientUrl,
-        grpc.credentials.createSsl(Buffer.from(ca, 'utf8')),
-    );
-    ledgerPrivilegedClient = new LedgerPrivilegedClient(
-        ledgerClientUrl,
-        grpc.credentials.createSsl(Buffer.from(ca, 'utf8')),
-    );
+    if (ca) {
+      // Use custom root CA
+      grpcChannelCredentials =
+        grpc.credentials.createSsl(Buffer.from(ca, 'utf8'));
+    } else {
+      // When no custom root CA is provided to init the SSL/TLS connection,
+      // default root CA maintained by Node.js will be used
+      grpcChannelCredentials = grpc.credentials.createSsl();
+    }
   } else {
-    ledgerClient = new LedgerClient(
-        ledgerClientUrl,
-        grpc.credentials.createInsecure(),
-    );
-    ledgerPrivilegedClient = new LedgerPrivilegedClient(
-        ledgerPrivilegedClientUrl,
-        grpc.credentials.createInsecure(),
-    );
+    grpcChannelCredentials = grpc.credentials.createInsecure();
   }
+
+  const ledgerClient =
+    new LedgerClient(ledgerClientUrl, grpcChannelCredentials);
+  const ledgerPrivilegedClient =
+    new LedgerPrivilegedClient(
+        ledgerPrivilegedClientUrl,
+        grpcChannelCredentials);
 
   return {
     'ledgerClient': ledgerClient,
     'ledgerPrivileged': ledgerPrivilegedClient,
   };
+}
+
+/**
+ * Create the grpc request metadata
+ * @param {Object} properties
+ * @return {module:grpc.Metadata} create metadata
+ * @private
+ */
+function _createMetadata(properties) {
+  const clientProperties = new ClientProperties(properties);
+  const metadata = new grpc.Metadata();
+  if (clientProperties.getAuthorizationCredential()) {
+    metadata.set('authorization',
+        clientProperties.getAuthorizationCredential());
+  }
+  return metadata;
 }
 
 /**
@@ -81,6 +98,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
         },
         protobuf,
         properties,
+        _createMetadata(properties),
     );
   }
 
@@ -275,6 +293,7 @@ class ClientService extends ClientServiceBase {
         },
         protobuf,
         properties,
+        _createMetadata(properties),
     );
   }
 }

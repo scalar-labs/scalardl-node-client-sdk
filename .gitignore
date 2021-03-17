@@ -3,3 +3,4 @@ node_modules/
 mochawesome-report/
 .idea/
 out/
+.gradle

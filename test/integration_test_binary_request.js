@@ -262,7 +262,7 @@ describe('Integration test on ClientServiceWithBinary', async () => {
 
           const cassandraClient = new cassandra.Client({
             contactPoints: ['127.0.0.1:9042'],
-            localDataCenter: 'datacenter1',
+            localDataCenter: 'dc1',
           });
           const cassandraResponse = await cassandraClient.execute(
               `SELECT * FROM foo.bar WHERE column_a='${mockedAssetId}';`,
@@ -279,10 +279,10 @@ describe('Integration test on ClientServiceWithBinary', async () => {
   });
 
   describe('validateLedger', () => {
-    it('should return 200 when correct asset id is specified', async () => {
+    it('should return 200 when correct asset id and age is specified', async () => {
       const binary =
         await clientService.createSerializedLedgerValidationRequest(
-            mockedAssetId,
+            mockedAssetId, 0, 1,
         );
       const response = await clientService.validateLedger(binary);
 
@@ -301,7 +301,7 @@ describe('Integration test on ClientServiceWithBinary', async () => {
 
       const binary =
         await anotherClientService.createSerializedLedgerValidationRequest(
-            mockedAssetId,
+            mockedAssetId, 0, 1,
         );
       await assert.rejects(
           anotherClientService.validateLedger(binary),
