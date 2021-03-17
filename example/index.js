@@ -77,7 +77,7 @@ const path = require('path');
         path.join(
             __dirname,
             '..',
-            'test/StateUpdater.class'
+            'test/StateUpdater.class',
         )
     );
     const contractId =
@@ -105,7 +105,7 @@ const path = require('path');
     console.log(r);
     
     console.log('Validate ledger');
-    r = await clientService.validateLedger('foo');
+    r = await clientService.validateLedger('foo', 0, 1);
     console.log(r);
   } catch (e) {
     console.log(`${e.code} ${e.message}`);

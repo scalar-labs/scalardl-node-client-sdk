@@ -16,6 +16,28 @@ function deserialize_google_protobuf_Empty(buffer_arg) {
   return google_protobuf_empty_pb.Empty.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_rpc_AssetProofRetrievalRequest(arg) {
+  if (!(arg instanceof scalar_pb.AssetProofRetrievalRequest)) {
+    throw new Error('Expected argument of type rpc.AssetProofRetrievalRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_rpc_AssetProofRetrievalRequest(buffer_arg) {
+  return scalar_pb.AssetProofRetrievalRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_rpc_AssetProofRetrievalResponse(arg) {
+  if (!(arg instanceof scalar_pb.AssetProofRetrievalResponse)) {
+    throw new Error('Expected argument of type rpc.AssetProofRetrievalResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_rpc_AssetProofRetrievalResponse(buffer_arg) {
+  return scalar_pb.AssetProofRetrievalResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_rpc_CertificateRegistrationRequest(arg) {
   if (!(arg instanceof scalar_pb.CertificateRegistrationRequest)) {
     throw new Error('Expected argument of type rpc.CertificateRegistrationRequest');
@@ -93,15 +115,15 @@ function deserialize_rpc_FunctionRegistrationRequest(buffer_arg) {
   return scalar_pb.FunctionRegistrationRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_rpc_IdentifiableContractExecutionResponse(arg) {
-  if (!(arg instanceof scalar_pb.IdentifiableContractExecutionResponse)) {
-    throw new Error('Expected argument of type rpc.IdentifiableContractExecutionResponse');
+function serialize_rpc_IdentifiableResponse(arg) {
+  if (!(arg instanceof scalar_pb.IdentifiableResponse)) {
+    throw new Error('Expected argument of type rpc.IdentifiableResponse');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_rpc_IdentifiableContractExecutionResponse(buffer_arg) {
-  return scalar_pb.IdentifiableContractExecutionResponse.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_rpc_IdentifiableResponse(buffer_arg) {
+  return scalar_pb.IdentifiableResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_rpc_LedgerValidationRequest(arg) {
@@ -126,15 +148,26 @@ function deserialize_rpc_LedgerValidationResponse(buffer_arg) {
   return scalar_pb.LedgerValidationResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_rpc_PauseRequest(arg) {
-  if (!(arg instanceof scalar_pb.PauseRequest)) {
-    throw new Error('Expected argument of type rpc.PauseRequest');
+function serialize_rpc_LedgersValidationRequest(arg) {
+  if (!(arg instanceof scalar_pb.LedgersValidationRequest)) {
+    throw new Error('Expected argument of type rpc.LedgersValidationRequest');
   }
   return Buffer.from(arg.serializeBinary());
 }
 
-function deserialize_rpc_PauseRequest(buffer_arg) {
-  return scalar_pb.PauseRequest.deserializeBinary(new Uint8Array(buffer_arg));
+function deserialize_rpc_LedgersValidationRequest(buffer_arg) {
+  return scalar_pb.LedgersValidationRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_rpc_LedgersValidationResponse(arg) {
+  if (!(arg instanceof scalar_pb.LedgersValidationResponse)) {
+    throw new Error('Expected argument of type rpc.LedgersValidationResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_rpc_LedgersValidationResponse(buffer_arg) {
+  return scalar_pb.LedgersValidationResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_rpc_ProofRetrievalRequest(arg) {
@@ -170,17 +203,6 @@ function deserialize_rpc_ProofsRegistrationRequest(buffer_arg) {
   return scalar_pb.ProofsRegistrationRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_rpc_ResultRetrievalRequest(arg) {
-  if (!(arg instanceof scalar_pb.ResultRetrievalRequest)) {
-    throw new Error('Expected argument of type rpc.ResultRetrievalRequest');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_rpc_ResultRetrievalRequest(buffer_arg) {
-  return scalar_pb.ResultRetrievalRequest.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
 function serialize_rpc_StateRetrievalRequest(arg) {
   if (!(arg instanceof scalar_pb.StateRetrievalRequest)) {
     throw new Error('Expected argument of type rpc.StateRetrievalRequest');
@@ -201,17 +223,6 @@ function serialize_rpc_StateRetrievalResponse(arg) {
 
 function deserialize_rpc_StateRetrievalResponse(buffer_arg) {
   return scalar_pb.StateRetrievalResponse.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_rpc_StatsResponse(arg) {
-  if (!(arg instanceof scalar_pb.StatsResponse)) {
-    throw new Error('Expected argument of type rpc.StatsResponse');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_rpc_StatsResponse(buffer_arg) {
-  return scalar_pb.StatsResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 
@@ -261,6 +272,17 @@ var LedgerService = exports.LedgerService = {
     responseSerialize: serialize_rpc_LedgerValidationResponse,
     responseDeserialize: deserialize_rpc_LedgerValidationResponse,
   },
+  retrieveAssetProof: {
+    path: '/rpc.Ledger/RetrieveAssetProof',
+    requestStream: false,
+    responseStream: false,
+    requestType: scalar_pb.AssetProofRetrievalRequest,
+    responseType: scalar_pb.AssetProofRetrievalResponse,
+    requestSerialize: serialize_rpc_AssetProofRetrievalRequest,
+    requestDeserialize: deserialize_rpc_AssetProofRetrievalRequest,
+    responseSerialize: serialize_rpc_AssetProofRetrievalResponse,
+    responseDeserialize: deserialize_rpc_AssetProofRetrievalResponse,
+  },
 };
 
 exports.LedgerClient = grpc.makeGenericClientConstructor(LedgerService);
@@ -301,43 +323,6 @@ var LedgerPrivilegedService = exports.LedgerPrivilegedService = {
 };
 
 exports.LedgerPrivilegedClient = grpc.makeGenericClientConstructor(LedgerPrivilegedService);
-var AdminService = exports.AdminService = {
-  pause: {
-    path: '/rpc.Admin/Pause',
-    requestStream: false,
-    responseStream: false,
-    requestType: scalar_pb.PauseRequest,
-    responseType: google_protobuf_empty_pb.Empty,
-    requestSerialize: serialize_rpc_PauseRequest,
-    requestDeserialize: deserialize_rpc_PauseRequest,
-    responseSerialize: serialize_google_protobuf_Empty,
-    responseDeserialize: deserialize_google_protobuf_Empty,
-  },
-  unpause: {
-    path: '/rpc.Admin/Unpause',
-    requestStream: false,
-    responseStream: false,
-    requestType: google_protobuf_empty_pb.Empty,
-    responseType: google_protobuf_empty_pb.Empty,
-    requestSerialize: serialize_google_protobuf_Empty,
-    requestDeserialize: deserialize_google_protobuf_Empty,
-    responseSerialize: serialize_google_protobuf_Empty,
-    responseDeserialize: deserialize_google_protobuf_Empty,
-  },
-  stats: {
-    path: '/rpc.Admin/Stats',
-    requestStream: false,
-    responseStream: false,
-    requestType: google_protobuf_empty_pb.Empty,
-    responseType: scalar_pb.StatsResponse,
-    requestSerialize: serialize_google_protobuf_Empty,
-    requestDeserialize: deserialize_google_protobuf_Empty,
-    responseSerialize: serialize_rpc_StatsResponse,
-    responseDeserialize: deserialize_rpc_StatsResponse,
-  },
-};
-
-exports.AdminClient = grpc.makeGenericClientConstructor(AdminService);
 // Proof registry service definition.
 var ProofRegistryService = exports.ProofRegistryService = {
   registerProofs: {
@@ -365,23 +350,40 @@ var ProofRegistryService = exports.ProofRegistryService = {
 };
 
 exports.ProofRegistryClient = grpc.makeGenericClientConstructor(ProofRegistryService);
-// Result retriever service definition.
-var ResultRetrieverService = exports.ResultRetrieverService = {
-  retrieveExecutionResponse: {
-    path: '/rpc.ResultRetriever/RetrieveExecutionResponse',
+var ProxyService = exports.ProxyService = {
+  registerCert: {
+    path: '/rpc.Proxy/RegisterCert',
     requestStream: false,
     responseStream: false,
-    requestType: scalar_pb.ResultRetrievalRequest,
-    responseType: scalar_pb.ContractExecutionResponse,
-    requestSerialize: serialize_rpc_ResultRetrievalRequest,
-    requestDeserialize: deserialize_rpc_ResultRetrievalRequest,
-    responseSerialize: serialize_rpc_ContractExecutionResponse,
-    responseDeserialize: deserialize_rpc_ContractExecutionResponse,
+    requestType: scalar_pb.CertificateRegistrationRequest,
+    responseType: google_protobuf_empty_pb.Empty,
+    requestSerialize: serialize_rpc_CertificateRegistrationRequest,
+    requestDeserialize: deserialize_rpc_CertificateRegistrationRequest,
+    responseSerialize: serialize_google_protobuf_Empty,
+    responseDeserialize: deserialize_google_protobuf_Empty,
   },
-};
-
-exports.ResultRetrieverClient = grpc.makeGenericClientConstructor(ResultRetrieverService);
-var ProxyService = exports.ProxyService = {
+  registerContract: {
+    path: '/rpc.Proxy/RegisterContract',
+    requestStream: false,
+    responseStream: false,
+    requestType: scalar_pb.ContractRegistrationRequest,
+    responseType: google_protobuf_empty_pb.Empty,
+    requestSerialize: serialize_rpc_ContractRegistrationRequest,
+    requestDeserialize: deserialize_rpc_ContractRegistrationRequest,
+    responseSerialize: serialize_google_protobuf_Empty,
+    responseDeserialize: deserialize_google_protobuf_Empty,
+  },
+  registerFunction: {
+    path: '/rpc.Proxy/RegisterFunction',
+    requestStream: false,
+    responseStream: false,
+    requestType: scalar_pb.FunctionRegistrationRequest,
+    responseType: google_protobuf_empty_pb.Empty,
+    requestSerialize: serialize_rpc_FunctionRegistrationRequest,
+    requestDeserialize: deserialize_rpc_FunctionRegistrationRequest,
+    responseSerialize: serialize_google_protobuf_Empty,
+    responseDeserialize: deserialize_google_protobuf_Empty,
+  },
   executeContract: {
     path: '/rpc.Proxy/ExecuteContract',
     requestStream: false,
@@ -393,14 +395,25 @@ var ProxyService = exports.ProxyService = {
     responseSerialize: serialize_rpc_ContractExecutionResponse,
     responseDeserialize: deserialize_rpc_ContractExecutionResponse,
   },
+  validateLedgers: {
+    path: '/rpc.Proxy/ValidateLedgers',
+    requestStream: false,
+    responseStream: false,
+    requestType: scalar_pb.LedgersValidationRequest,
+    responseType: scalar_pb.LedgersValidationResponse,
+    requestSerialize: serialize_rpc_LedgersValidationRequest,
+    requestDeserialize: deserialize_rpc_LedgersValidationRequest,
+    responseSerialize: serialize_rpc_LedgersValidationResponse,
+    responseDeserialize: deserialize_rpc_LedgersValidationResponse,
+  },
   proxyResponse: {
     path: '/rpc.Proxy/ProxyResponse',
     requestStream: false,
     responseStream: false,
-    requestType: scalar_pb.IdentifiableContractExecutionResponse,
+    requestType: scalar_pb.IdentifiableResponse,
     responseType: google_protobuf_empty_pb.Empty,
-    requestSerialize: serialize_rpc_IdentifiableContractExecutionResponse,
-    requestDeserialize: deserialize_rpc_IdentifiableContractExecutionResponse,
+    requestSerialize: serialize_rpc_IdentifiableResponse,
+    requestDeserialize: deserialize_rpc_IdentifiableResponse,
     responseSerialize: serialize_google_protobuf_Empty,
     responseDeserialize: deserialize_google_protobuf_Empty,
   },
