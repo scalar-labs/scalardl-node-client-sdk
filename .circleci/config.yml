@@ -36,7 +36,7 @@ jobs:
           name: checkout scalar-samples repository as it contains the script to spin up scalardl environment and easier for us to maintain the CI
           command: |
             git init
-            git pull https://${GHCR_USERNAME}:${GITHUB_PASSWORD}@github.com/scalar-labs/scalar-samples.git
+            git pull https://${GHCR_USERNAME}:${GHCR_PAT}@github.com/scalar-labs/scalar-samples.git
           working_directory: .circleci/
 
 
