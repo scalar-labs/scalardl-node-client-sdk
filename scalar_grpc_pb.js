@@ -38,17 +38,6 @@ function deserialize_rpc_AssetProofRetrievalResponse(buffer_arg) {
   return scalar_pb.AssetProofRetrievalResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_rpc_AssetProofsRegistrationRequest(arg) {
-  if (!(arg instanceof scalar_pb.AssetProofsRegistrationRequest)) {
-    throw new Error('Expected argument of type rpc.AssetProofsRegistrationRequest');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_rpc_AssetProofsRegistrationRequest(buffer_arg) {
-  return scalar_pb.AssetProofsRegistrationRequest.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
 function serialize_rpc_CertificateRegistrationRequest(arg) {
   if (!(arg instanceof scalar_pb.CertificateRegistrationRequest)) {
     throw new Error('Expected argument of type rpc.CertificateRegistrationRequest');
@@ -69,6 +58,17 @@ function serialize_rpc_ContractExecutionRequest(arg) {
 
 function deserialize_rpc_ContractExecutionRequest(buffer_arg) {
   return scalar_pb.ContractExecutionRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_rpc_ContractExecutionRequestWithAssetProofs(arg) {
+  if (!(arg instanceof scalar_pb.ContractExecutionRequestWithAssetProofs)) {
+    throw new Error('Expected argument of type rpc.ContractExecutionRequestWithAssetProofs');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_rpc_ContractExecutionRequestWithAssetProofs(buffer_arg) {
+  return scalar_pb.ContractExecutionRequestWithAssetProofs.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_rpc_ContractExecutionResponse(arg) {
@@ -313,16 +313,16 @@ var AuditorService = exports.AuditorService = {
     responseSerialize: serialize_google_protobuf_Empty,
     responseDeserialize: deserialize_google_protobuf_Empty,
   },
-  registerAssetProofs: {
-    path: '/rpc.Auditor/RegisterAssetProofs',
+  executeContractWithProofs: {
+    path: '/rpc.Auditor/ExecuteContractWithProofs',
     requestStream: false,
     responseStream: false,
-    requestType: scalar_pb.AssetProofsRegistrationRequest,
-    responseType: google_protobuf_empty_pb.Empty,
-    requestSerialize: serialize_rpc_AssetProofsRegistrationRequest,
-    requestDeserialize: deserialize_rpc_AssetProofsRegistrationRequest,
-    responseSerialize: serialize_google_protobuf_Empty,
-    responseDeserialize: deserialize_google_protobuf_Empty,
+    requestType: scalar_pb.ContractExecutionRequestWithAssetProofs,
+    responseType: scalar_pb.ContractExecutionResponse,
+    requestSerialize: serialize_rpc_ContractExecutionRequestWithAssetProofs,
+    requestDeserialize: deserialize_rpc_ContractExecutionRequestWithAssetProofs,
+    responseSerialize: serialize_rpc_ContractExecutionResponse,
+    responseDeserialize: deserialize_rpc_ContractExecutionResponse,
   },
   validateLedger: {
     path: '/rpc.Auditor/ValidateLedger',
