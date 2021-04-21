@@ -3737,7 +3737,9 @@ proto.rpc.AssetProof.toObject = function(includeInstance, msg) {
     assetId: jspb.Message.getFieldWithDefault(msg, 1, ""),
     age: jspb.Message.getFieldWithDefault(msg, 2, 0),
     nonce: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    input: jspb.Message.getFieldWithDefault(msg, 4, ""),
     hash: msg.getHash_asB64(),
+    prevhash: msg.getPrevhash_asB64(),
     signature: msg.getSignature_asB64()
   };
 
@@ -3788,10 +3790,18 @@ proto.rpc.AssetProof.deserializeBinaryFromReader = function(msg, reader) {
       msg.setNonce(value);
       break;
     case 4:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setInput(value);
+      break;
+    case 5:
       var value = /** @type {!Uint8Array} */ (reader.readBytes());
       msg.setHash(value);
       break;
-    case 5:
+    case 6:
+      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      msg.setPrevhash(value);
+      break;
+    case 7:
       var value = /** @type {!Uint8Array} */ (reader.readBytes());
       msg.setSignature(value);
       break;
@@ -3845,17 +3855,31 @@ proto.rpc.AssetProof.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
+  f = message.getInput();
+  if (f.length > 0) {
+    writer.writeString(
+      4,
+      f
+    );
+  }
   f = message.getHash_asU8();
   if (f.length > 0) {
     writer.writeBytes(
-      4,
+      5,
+      f
+    );
+  }
+  f = message.getPrevhash_asU8();
+  if (f.length > 0) {
+    writer.writeBytes(
+      6,
       f
     );
   }
   f = message.getSignature_asU8();
   if (f.length > 0) {
     writer.writeBytes(
-      5,
+      7,
       f
     );
   }
@@ -3917,16 +3941,34 @@ proto.rpc.AssetProof.prototype.setNonce = function(value) {
 
 
 /**
- * optional bytes hash = 4;
- * @return {!(string|Uint8Array)}
+ * optional string input = 4;
+ * @return {string}
  */
-proto.rpc.AssetProof.prototype.getHash = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+proto.rpc.AssetProof.prototype.getInput = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
 };
 
 
 /**
- * optional bytes hash = 4;
+ * @param {string} value
+ * @return {!proto.rpc.AssetProof} returns this
+ */
+proto.rpc.AssetProof.prototype.setInput = function(value) {
+  return jspb.Message.setProto3StringField(this, 4, value);
+};
+
+
+/**
+ * optional bytes hash = 5;
+ * @return {!(string|Uint8Array)}
+ */
+proto.rpc.AssetProof.prototype.getHash = function() {
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+};
+
+
+/**
+ * optional bytes hash = 5;
  * This is a type-conversion wrapper around `getHash()`
  * @return {string}
  */
@@ -3937,7 +3979,7 @@ proto.rpc.AssetProof.prototype.getHash_asB64 = function() {
 
 
 /**
- * optional bytes hash = 4;
+ * optional bytes hash = 5;
  * Note that Uint8Array is not supported on all browsers.
  * @see http://caniuse.com/Uint8Array
  * This is a type-conversion wrapper around `getHash()`
@@ -3954,21 +3996,63 @@ proto.rpc.AssetProof.prototype.getHash_asU8 = function() {
  * @return {!proto.rpc.AssetProof} returns this
  */
 proto.rpc.AssetProof.prototype.setHash = function(value) {
-  return jspb.Message.setProto3BytesField(this, 4, value);
+  return jspb.Message.setProto3BytesField(this, 5, value);
 };
 
 
 /**
- * optional bytes signature = 5;
+ * optional bytes prevHash = 6;
+ * @return {!(string|Uint8Array)}
+ */
+proto.rpc.AssetProof.prototype.getPrevhash = function() {
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+};
+
+
+/**
+ * optional bytes prevHash = 6;
+ * This is a type-conversion wrapper around `getPrevhash()`
+ * @return {string}
+ */
+proto.rpc.AssetProof.prototype.getPrevhash_asB64 = function() {
+  return /** @type {string} */ (jspb.Message.bytesAsB64(
+      this.getPrevhash()));
+};
+
+
+/**
+ * optional bytes prevHash = 6;
+ * Note that Uint8Array is not supported on all browsers.
+ * @see http://caniuse.com/Uint8Array
+ * This is a type-conversion wrapper around `getPrevhash()`
+ * @return {!Uint8Array}
+ */
+proto.rpc.AssetProof.prototype.getPrevhash_asU8 = function() {
+  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
+      this.getPrevhash()));
+};
+
+
+/**
+ * @param {!(string|Uint8Array)} value
+ * @return {!proto.rpc.AssetProof} returns this
+ */
+proto.rpc.AssetProof.prototype.setPrevhash = function(value) {
+  return jspb.Message.setProto3BytesField(this, 6, value);
+};
+
+
+/**
+ * optional bytes signature = 7;
  * @return {!(string|Uint8Array)}
  */
 proto.rpc.AssetProof.prototype.getSignature = function() {
-  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
 };
 
 
 /**
- * optional bytes signature = 5;
+ * optional bytes signature = 7;
  * This is a type-conversion wrapper around `getSignature()`
  * @return {string}
  */
@@ -3979,7 +4063,7 @@ proto.rpc.AssetProof.prototype.getSignature_asB64 = function() {
 
 
 /**
- * optional bytes signature = 5;
+ * optional bytes signature = 7;
  * Note that Uint8Array is not supported on all browsers.
  * @see http://caniuse.com/Uint8Array
  * This is a type-conversion wrapper around `getSignature()`
@@ -3996,7 +4080,7 @@ proto.rpc.AssetProof.prototype.getSignature_asU8 = function() {
  * @return {!proto.rpc.AssetProof} returns this
  */
 proto.rpc.AssetProof.prototype.setSignature = function(value) {
-  return jspb.Message.setProto3BytesField(this, 5, value);
+  return jspb.Message.setProto3BytesField(this, 7, value);
 };
 
 
