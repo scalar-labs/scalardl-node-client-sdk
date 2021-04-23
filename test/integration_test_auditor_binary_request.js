@@ -3,13 +3,16 @@ const {
   StatusCode,
 } = require('../scalardl-node-client-sdk');
 const fs = require('fs');
-const cassandra = require('cassandra-driver');
 const assert = require('assert');
 
 const properties = {
   'scalar.dl.client.server.host': 'localhost',
   'scalar.dl.client.server.port': 50051,
   'scalar.dl.client.server.privileged_port': 50052,
+  'scalar.dl.client.auditor.enabled': true,
+  'scalar.dl.client.auditor.host': 'localhost',
+  'scalar.dl.client.auditor.port': 40051,
+  'scalar.dl.client.auditor.privileged_port': 40052,
   'scalar.dl.client.cert_holder_id': `foo@${Date.now()}`,
   'scalar.dl.client.cert_version': 1,
   'scalar.dl.client.tls.enabled': false,
@@ -79,8 +82,6 @@ const contractProperty = {
 };
 const mockedByteContract = fs.readFileSync(
     __dirname + '/StateUpdater.class');
-const mockedByteFunction = fs.readFileSync(
-    __dirname + '/TestFunction.class');
 
 const clientService = new ClientServiceWithBinary(properties);
 
@@ -92,34 +93,6 @@ describe('Integration test on ClientServiceWithBinary', async () => {
 
       assert.ok(binary instanceof Uint8Array);
       await assert.doesNotReject(clientService.registerCertificate(binary));
-    });
-    it('should get error if register certificate again', async () => {
-      const binary =
-        await clientService.createSerializedCertificateRegistrationRequest();
-      await assert.rejects(
-          clientService.registerCertificate(binary),
-          (err) => {
-            assert.equal(
-                err.code,
-                StatusCode.CERTIFICATE_ALREADY_REGISTERED,
-            );
-            return true;
-          },
-      );
-    });
-  });
-
-  describe('registerFunction', () => {
-    it('should be successful', async () => {
-      const binary =
-        await clientService.createSerializedFunctionRegistrationRequest(
-            mockedFunctionId,
-            mockedFunctionName,
-            mockedByteFunction,
-        );
-
-      assert.ok(binary instanceof Uint8Array);
-      await assert.doesNotReject(clientService.registerFunction(binary));
     });
   });
 
@@ -135,67 +108,6 @@ describe('Integration test on ClientServiceWithBinary', async () => {
 
       assert.ok(binary instanceof Uint8Array);
       await assert.doesNotReject(clientService.registerContract(binary));
-    });
-    it('should get error if register again', async () => {
-      const binary =
-        await clientService.createSerializedContractRegistrationRequest(
-            mockedContractId,
-            mockedContractName,
-            mockedByteContract,
-            contractProperty,
-        );
-      await assert.rejects(
-          clientService.registerContract(binary),
-          (err) => {
-            assert.equal(
-                err.code,
-                StatusCode.CONTRACT_ALREADY_REGISTERED,
-            );
-            return true;
-          },
-      );
-    });
-  });
-
-  describe('listContracts', () => {
-    it('should return contract metadata ' +
-    'when the correct contract id is specified',
-    async () => {
-      const binary =
-        await clientService.createSerializedContractsListingRequest();
-      const response = await clientService.listContracts(binary);
-      const contracts = response;
-
-      assert.ok(binary instanceof Uint8Array);
-      assert.ok(contracts.hasOwnProperty(mockedContractId));
-    });
-    it('should get error if private key is incorrect', async () => {
-      const anotherProperties = {
-        ...properties,
-        ...{
-          'scalar.dl.client.private_key_pem':
-          '-----BEGIN EC PRIVATE KEY-----\n' +
-          'MHcCAQEEIIbElY/Vs5nEoVGsHZ8G9icxZcsRlT2DcHIfxFNkZrnHoAoGCCqGSM49\n' +
-          'AwEHoUQDQgAE/TzGEcYJNcwe5d+BlPuxuwiIhMhKpMpTMZM94L+bRhDPFn4nMigc\n' +
-          'Cijley7qhOfwplVrTtnNLTNMD82ttwnR7g==\n' +
-          '-----END EC PRIVATE KEY-----\n',
-        },
-      };
-      const anotherClientService =
-        new ClientServiceWithBinary(anotherProperties);
-
-      const binary =
-        await anotherClientService.createSerializedContractsListingRequest();
-      await assert.rejects(
-          anotherClientService.listContracts(binary),
-          (err) => {
-            assert.equal(
-                err.code,
-                StatusCode.INVALID_SIGNATURE,
-            );
-            return true;
-          },
-      );
     });
   });
 
@@ -217,102 +129,23 @@ describe('Integration test on ClientServiceWithBinary', async () => {
           assert.equal(result.properties, contractProperty.properties);
         },
     );
-    it('should get error if contract id does exist',
-        async () => {
-          const binary =
-            await clientService.createSerializedContractExecutionRequest(
-                'notexisting',
-                mockedContractArgument,
-                {},
-            );
-          await assert.rejects(
-              clientService.executeContract(binary),
-              (err) => {
-                assert.equal(
-                    err.code,
-                    StatusCode.CONTRACT_NOT_FOUND,
-                );
-                return true;
-              },
-          );
-        },
-    );
-
-    it(
-        'should execute the function properly and cassandra ' +
-        'query should return proper object when correct inputs are specified',
-        async () => {
-          const contractArgumentWithFunction = {
-              asset_id: mockedAssetId,
-              state: Date.now(),
-              _functions_: [mockedFunctionId],
-          };
-          const mockedFunctionArgument = {
-              asset_id: mockedAssetId,
-              state: mockedState,
-          };
-          const binary =
-            await clientService.createSerializedContractExecutionRequest(
-                mockedContractId,
-                contractArgumentWithFunction,
-                mockedFunctionArgument,
-            );
-          const response = await clientService.executeContract(binary);
-          const result = response.getResult();
-
-          const cassandraClient = new cassandra.Client({
-              contactPoints: ['127.0.0.1:9042'],
-              localDataCenter: 'dc1',
-          });
-          const cassandraResponse = await cassandraClient.execute(
-              `SELECT * FROM foo.bar WHERE column_a='${mockedAssetId}';`,
-          );
-
-          assert.equal(result.state, contractArgumentWithFunction.state);
-          assert.equal(
-              cassandraResponse.rows[0].column_a,
-              contractArgumentWithFunction.asset_id,
-          );
-          await cassandraClient.shutdown();
-        },
-    );
   });
 
   describe('validateLedger', () => {
-    it('should return 200 when correct asset id and age is specified', async () => {
+    it('should return 200 when correct asset id is specified', async () => {
       const binary =
         await clientService.createSerializedLedgerValidationRequest(
-            mockedAssetId, 0, 1,
+            mockedAssetId,
         );
       const response = await clientService.validateLedger(binary);
 
       assert.ok(binary instanceof Uint8Array);
       assert.equal(response.getCode(), 200);
-    });
-    it('should get error is holder id is incorrect', async () => {
-      const anotherProperties = {
-        ...properties,
-        ...{
-          'scalar.dl.client.cert_holder_id': 'whatever',
-        },
-      };
-      const anotherClientService =
-        new ClientServiceWithBinary(anotherProperties);
-
-      const binary =
-        await anotherClientService.createSerializedLedgerValidationRequest(
-            mockedAssetId, 0, 1,
-        );
-      await assert.rejects(
-          anotherClientService.validateLedger(binary),
-          (err) => {
-            assert.equal(
-                err.code,
-                StatusCode.CERTIFICATE_NOT_FOUND,
-            );
-            return true;
-          },
-      );
+      const proof = response.getProof();
+      const auditorProof = response.getAuditorProof();
+      assert.equal(proof.getId(), mockedAssetId);
+      assert.equal(auditorProof.getId(), mockedAssetId);
+      assert.equal(proof.hashEquals(auditorProof.getHash()), true);
     });
   });
 });

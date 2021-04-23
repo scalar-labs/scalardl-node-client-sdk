@@ -10,7 +10,12 @@ const {
 } = require('@scalar-labs/scalardl-javascript-sdk-base');
 
 const protobuf = require('./scalar_pb');
-const {LedgerClient, LedgerPrivilegedClient} = require('./scalar_grpc_pb');
+const {
+  LedgerClient,
+  LedgerPrivilegedClient,
+  AuditorClient,
+  AuditorPrivilegedClient,
+} = require('./scalar_grpc_pb');
 const grpc = require('grpc');
 
 const {SignerFactory} = require('./signer');
@@ -35,6 +40,13 @@ function _createGrpcServices(properties) {
   const ledgerPrivilegedClientUrl =
     `${clientProperties.getServerHost()}:` +
     `${clientProperties.getServerPrivilegedPort()}`;
+  const auditorEnabled = clientProperties.getAuditorEnabled();
+  const auditorClientUrl =
+    `${clientProperties.getAuditorHost()}:` +
+    `${clientProperties.getAuditorPort()}`;
+  const auditorPrivilegedClientUrl =
+    `${clientProperties.getAuditorHost()}:` +
+    `${clientProperties.getAuditorPrivilegedPort()}`;
   const ca = clientProperties.getTlsCaRootCertPem();
   const tlsEnabled = clientProperties.getTlsEnabled();
 
@@ -60,9 +72,24 @@ function _createGrpcServices(properties) {
         ledgerPrivilegedClientUrl,
         grpcChannelCredentials);
 
+  let auditorClient;
+  let auditorPrivilegedClient;
+  if (auditorEnabled) {
+    auditorClient = new AuditorClient(
+        auditorClientUrl,
+        grpcChannelCredentials,
+    );
+    auditorPrivilegedClient = new AuditorPrivilegedClient(
+        auditorPrivilegedClientUrl,
+        grpcChannelCredentials,
+    );
+  }
+
   return {
     'ledgerClient': ledgerClient,
     'ledgerPrivileged': ledgerPrivilegedClient,
+    'auditorClient': auditorClient,
+    'auditorPrivileged': auditorPrivilegedClient,
   };
 }
 
@@ -112,19 +139,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
         serializedBinary,
     );
 
-    return new Promise((resolve, reject) => {
-      this.ledgerPrivileged.registerCert(
-          request,
-          this.metadata,
-          (err, response) => {
-            if (err) {
-              reject(this._handleError(err));
-            } else {
-              resolve(response);
-            }
-          },
-      );
-    });
+    return super._registerCertificate(request);
   }
 
   /**
@@ -138,19 +153,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
           serializedBinary,
       );
 
-    return new Promise((resolve, reject) => {
-      this.ledgerPrivileged.registerFunction(
-          request,
-          this.metadata,
-          (err, response) => {
-            if (err) {
-              reject(this._handleError(err));
-            } else {
-              resolve(response);
-            }
-          },
-      );
-    });
+    return super._registerFunction(request);
   }
 
   /**
@@ -163,19 +166,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
         serializedBinary,
     );
 
-    return new Promise((resolve, reject) => {
-      this.ledgerClient.registerContract(
-          request,
-          this.metadata,
-          (err, response) => {
-            if (err) {
-              reject(this._handleError(err));
-            } else {
-              resolve(response);
-            }
-          },
-      );
-    });
+    return super._registerContract(request);
   }
 
   /**
@@ -187,19 +178,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
     const request =
       this.ledgerClient.listContracts.requestDeserialize(serializedBinary);
 
-    return new Promise((resolve, reject) => {
-      this.ledgerClient.listContracts(
-          request,
-          this.metadata,
-          (err, response) => {
-            if (err) {
-              reject(this._handleError(err));
-            } else {
-              resolve(JSON.parse(response.getJson()));
-            }
-          },
-      );
-    });
+    return super._listContracts(request);
   }
 
   /**
@@ -212,23 +191,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
         serializedBinary,
     );
 
-    return new Promise((resolve, reject) => {
-      this.ledgerClient.validateLedger(
-          request,
-          this.metadata,
-          (err, response) => {
-            if (err) {
-              reject(this._handleError(err));
-            } else {
-              resolve(
-                  LedgerValidationResult.fromGrpcLedgerValidationResponse(
-                      response,
-                  ),
-              );
-            }
-          },
-      );
-    });
+    return super._validateLedger(request);
   }
 
   /**
@@ -241,39 +204,7 @@ class ClientServiceWithBinary extends ClientServiceBase {
         serializedBinary,
     );
 
-    return new Promise((resolve, reject) => {
-      this.ledgerClient.executeContract(
-          request,
-          this.metadata,
-          (err, response) => {
-            if (err) {
-              reject(this._handleError(err));
-            } else {
-              resolve(
-                  ContractExecutionResult.fromGrpcContractExecutionResponse(
-                      response,
-                  ),
-              );
-            }
-          },
-      );
-    });
-  }
-
-  /**
-   * @param {Error} error
-   * @return {ClientError}
-   */
-  _handleError(error) {
-    let code = StatusCode.UNKNOWN_TRANSACTION_STATUS;
-    let message = error.message;
-    const status = this._parseStatusFromError(error);
-    if (status) {
-      code = status.code;
-      message = status.message;
-    }
-
-    return new ClientError(code, message);
+    return super._executeContract(request);
   }
 }
 
