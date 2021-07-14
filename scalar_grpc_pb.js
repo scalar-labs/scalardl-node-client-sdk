@@ -60,17 +60,6 @@ function deserialize_rpc_ContractExecutionRequest(buffer_arg) {
   return scalar_pb.ContractExecutionRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
-function serialize_rpc_ContractExecutionRequestWithAssetProofs(arg) {
-  if (!(arg instanceof scalar_pb.ContractExecutionRequestWithAssetProofs)) {
-    throw new Error('Expected argument of type rpc.ContractExecutionRequestWithAssetProofs');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_rpc_ContractExecutionRequestWithAssetProofs(buffer_arg) {
-  return scalar_pb.ContractExecutionRequestWithAssetProofs.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
 function serialize_rpc_ContractExecutionResponse(arg) {
   if (!(arg instanceof scalar_pb.ContractExecutionResponse)) {
     throw new Error('Expected argument of type rpc.ContractExecutionResponse');
@@ -115,6 +104,28 @@ function deserialize_rpc_ContractsListingResponse(buffer_arg) {
   return scalar_pb.ContractsListingResponse.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_rpc_ExecutionOrderingResponse(arg) {
+  if (!(arg instanceof scalar_pb.ExecutionOrderingResponse)) {
+    throw new Error('Expected argument of type rpc.ExecutionOrderingResponse');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_rpc_ExecutionOrderingResponse(buffer_arg) {
+  return scalar_pb.ExecutionOrderingResponse.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
+function serialize_rpc_ExecutionValidationRequest(arg) {
+  if (!(arg instanceof scalar_pb.ExecutionValidationRequest)) {
+    throw new Error('Expected argument of type rpc.ExecutionValidationRequest');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_rpc_ExecutionValidationRequest(buffer_arg) {
+  return scalar_pb.ExecutionValidationRequest.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_rpc_FunctionRegistrationRequest(arg) {
   if (!(arg instanceof scalar_pb.FunctionRegistrationRequest)) {
     throw new Error('Expected argument of type rpc.FunctionRegistrationRequest');
@@ -146,17 +157,6 @@ function serialize_rpc_LedgerValidationResponse(arg) {
 
 function deserialize_rpc_LedgerValidationResponse(buffer_arg) {
   return scalar_pb.LedgerValidationResponse.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_rpc_RequestProofRegistrationRequest(arg) {
-  if (!(arg instanceof scalar_pb.RequestProofRegistrationRequest)) {
-    throw new Error('Expected argument of type rpc.RequestProofRegistrationRequest');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_rpc_RequestProofRegistrationRequest(buffer_arg) {
-  return scalar_pb.RequestProofRegistrationRequest.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_rpc_StateRetrievalRequest(arg) {
@@ -302,25 +302,25 @@ var AuditorService = exports.AuditorService = {
     responseSerialize: serialize_rpc_ContractsListingResponse,
     responseDeserialize: deserialize_rpc_ContractsListingResponse,
   },
-  registerRequestProof: {
-    path: '/rpc.Auditor/RegisterRequestProof',
+  orderExecution: {
+    path: '/rpc.Auditor/OrderExecution',
     requestStream: false,
     responseStream: false,
-    requestType: scalar_pb.RequestProofRegistrationRequest,
-    responseType: google_protobuf_empty_pb.Empty,
-    requestSerialize: serialize_rpc_RequestProofRegistrationRequest,
-    requestDeserialize: deserialize_rpc_RequestProofRegistrationRequest,
-    responseSerialize: serialize_google_protobuf_Empty,
-    responseDeserialize: deserialize_google_protobuf_Empty,
+    requestType: scalar_pb.ContractExecutionRequest,
+    responseType: scalar_pb.ExecutionOrderingResponse,
+    requestSerialize: serialize_rpc_ContractExecutionRequest,
+    requestDeserialize: deserialize_rpc_ContractExecutionRequest,
+    responseSerialize: serialize_rpc_ExecutionOrderingResponse,
+    responseDeserialize: deserialize_rpc_ExecutionOrderingResponse,
   },
-  executeContractWithProofs: {
-    path: '/rpc.Auditor/ExecuteContractWithProofs',
+  validateExecution: {
+    path: '/rpc.Auditor/ValidateExecution',
     requestStream: false,
     responseStream: false,
-    requestType: scalar_pb.ContractExecutionRequestWithAssetProofs,
+    requestType: scalar_pb.ExecutionValidationRequest,
     responseType: scalar_pb.ContractExecutionResponse,
-    requestSerialize: serialize_rpc_ContractExecutionRequestWithAssetProofs,
-    requestDeserialize: deserialize_rpc_ContractExecutionRequestWithAssetProofs,
+    requestSerialize: serialize_rpc_ExecutionValidationRequest,
+    requestDeserialize: deserialize_rpc_ExecutionValidationRequest,
     responseSerialize: serialize_rpc_ContractExecutionResponse,
     responseDeserialize: deserialize_rpc_ContractExecutionResponse,
   },

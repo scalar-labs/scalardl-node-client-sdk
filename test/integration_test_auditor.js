@@ -74,10 +74,8 @@ const properties = {
 let clientService;
 
 describe('Integration test on ClientService', async () => {
-  const mockedFunctionId = 'TestFunction';
   const mockedContractId = `StateUpdater${Date.now()}`;
   const mockedContractName = 'com.org1.contract.StateUpdater';
-  const mockedFunctionName = 'com.org1.function.TestFunction';
   const mockedAssetId = `mockedAssetId${Date.now()}`;
   const mockedState = 1;
   const mockedContractArgument = {
@@ -117,17 +115,6 @@ describe('Integration test on ClientService', async () => {
           assert.equal(contractResult.state, mockedState);
           assert.equal(contractResult.properties,
               contractProperty.properties);
-    });
-  });
-  describe('validateLedger', () => {
-    it('should return 200 when correct asset id is specified', async () => {
-      const response = await clientService.validateLedger(mockedAssetId);
-      assert.equal(response.getCode(), 200);
-      const proof = response.getProof();
-      const auditorProof = response.getAuditorProof();
-      assert.equal(proof.getId(), mockedAssetId);
-      assert.equal(auditorProof.getId(), mockedAssetId);
-      assert.equal(proof.hashEquals(auditorProof.getHash()), true);
-    });
+        });
   });
 });

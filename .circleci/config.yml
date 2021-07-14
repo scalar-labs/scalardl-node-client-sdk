@@ -39,7 +39,6 @@ jobs:
             git pull https://${GHCR_USERNAME}:${GHCR_PAT}@github.com/scalar-labs/scalar-samples.git
           working_directory: .circleci/
 
-
       - run:
           name: Start Scalar DL environment
           command: docker-compose -f docker-compose.yml -f docker-compose-open-cassandra-port.yml up -d
@@ -82,11 +81,26 @@ jobs:
           paths:
             - ./node_modules
 
-      # run tests!
       - run:
+          name: run tests without auditor
           command: npm test
           environment:
             MOCHA_FILE: "~/scalardl-node-client-sdk/mochawesome-report/mochawesome.html"
+          when: always
+
+      - run:
+          name: Restart Scalar DL environment with auditor
+          command: |
+            docker-compose -f docker-compose.yml -f docker-compose-open-cassandra-port.yml down
+            docker volume rm scalar-samples_cassandra-data
+            docker-compose -f docker-compose.yml -f docker-compose-auditor.yml up -d
+          working_directory: .circleci/
+
+      - run:
+          name: run tests with auditor
+          command: npm run test-auditor
+          environment:
+            MOCHA_FILE: "~/scalardl-node-client-sdk/mochawesome-report/mochawesome-auditor.html"
           when: always
 
       - store_test_results:

@@ -1,6 +1,5 @@
 const {
   ClientServiceWithBinary,
-  StatusCode,
 } = require('../scalardl-node-client-sdk');
 const fs = require('fs');
 const assert = require('assert');
@@ -67,10 +66,8 @@ const properties = {
   'Gc/v+yh4dHIDhCrimajTQAYOG9n0kajULI70Gg7TNw==\n-----END CERTIFICATE-----\n',
 };
 
-const mockedFunctionId = 'TestFunction';
 const mockedContractId = `StateUpdater${Date.now()}`;
 const mockedContractName = 'com.org1.contract.StateUpdater';
-const mockedFunctionName = 'com.org1.function.TestFunction';
 const mockedAssetId = `mockedAssetId${Date.now()}`;
 const mockedState = 1;
 const mockedContractArgument = {
@@ -129,23 +126,5 @@ describe('Integration test on ClientServiceWithBinary', async () => {
           assert.equal(result.properties, contractProperty.properties);
         },
     );
-  });
-
-  describe('validateLedger', () => {
-    it('should return 200 when correct asset id is specified', async () => {
-      const binary =
-        await clientService.createSerializedLedgerValidationRequest(
-            mockedAssetId,
-        );
-      const response = await clientService.validateLedger(binary);
-
-      assert.ok(binary instanceof Uint8Array);
-      assert.equal(response.getCode(), 200);
-      const proof = response.getProof();
-      const auditorProof = response.getAuditorProof();
-      assert.equal(proof.getId(), mockedAssetId);
-      assert.equal(auditorProof.getId(), mockedAssetId);
-      assert.equal(proof.hashEquals(auditorProof.getHash()), true);
-    });
   });
 });
