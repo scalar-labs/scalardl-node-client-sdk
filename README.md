@@ -39,10 +39,10 @@ const clientService = new ClientService(clientProperties);
 ```
 
 The `clientProperties` argument is mandatory for the constructor.
-This is a properties example that a user `foo@example.com` would use to try to connect to the server `scalardl.example.com:50051` of the Scalar DL network.
+This is a properties example that a user `foo@example.com` would use to try to connect to the server `scalardl-server.example.com:50051` of the Scalar DL network.
 ```javascript
 {
-    'scalar.dl.client.server.host': 'scalardl.example.com',
+    'scalar.dl.client.server.host': 'scalardl-server.example.com',
     'scalar.dl.client.server.port': 50051,
     'scalar.dl.client.server.privileged_port': 50052,
     'scalar.dl.client.cert_holder_id': 'foo@example.com',
@@ -53,6 +53,17 @@ This is a properties example that a user `foo@example.com` would use to try to c
     'scalar.dl.client.tls.ca_root_cert_pem': '-----BEGIN CERTIFICATE-----\n...\n',
     'scalar.dl.client.authorization.credential': '...',
     'scalar.dl.client.proxy.server': '...',
+}
+```
+
+If the auditor capability is enabled on the Scalar DL network, specify additional properties like the following example. In this example, the client interacts with the auditor `scalardl-auditor.example.com` and detects Byzantine faults including data tampering when executing contracts.
+
+```javascript
+{
+    'scalar.dl.client.auditor.enabled': true,
+    'scalar.dl.client.auditor.host': 'scalardl-auditor.example.com',
+    'scalar.dl.client.auditor.port': 40051,
+    'scalar.dl.client.auditor.privileged_port': 40052,
 }
 ```
 
