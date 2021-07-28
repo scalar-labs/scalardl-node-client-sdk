@@ -79,8 +79,7 @@ jobs:
           command: |
             docker-compose -f docker-compose.yml -f docker-compose-open-cassandra-port.yml down -v
             docker-compose -f docker-compose.yml -f docker-compose-auditor.yml up -d
-            sleep 60
-            docker ps -a
+            for i in `seq 1 10`; do sleep 60; docker ps -a; done
           working_directory: .circleci/
 
       - run:
