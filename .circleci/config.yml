@@ -89,6 +89,9 @@ jobs:
             docker-compose -f docker-compose.yml -f docker-compose-auditor.yml up scalardl-auditor-schema-loader-cassandra
             docker-compose -f docker-compose.yml -f docker-compose-auditor.yml up -d scalar-ledger scalar-auditor ledger-envoy auditor-envoy
             docker-compose -f docker-compose.yml -f docker-compose-auditor.yml up -d scalar-ledger-as-client scalar-audior-as-client
+            docker-compose -f docker-compose.yml -f docker-compose-auditor.yml logs ledger-envoy auditor-envoy
+            docker-compose ps
+            netstat -an | grep LISTEN
           working_directory: .circleci/
 
       - run:
