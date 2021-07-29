@@ -158,7 +158,7 @@ describe('Integration test on ClientServiceWithBinary', async () => {
   });
 
   describe('listContracts', () => {
-    it('should return contract metadata' +
+    it('should return contract metadata ' +
     'when the correct contract id is specified',
     async () => {
       const binary =
@@ -239,17 +239,17 @@ describe('Integration test on ClientServiceWithBinary', async () => {
     );
 
     it(
-        'should execute the function properly and cassandra' +
+        'should execute the function properly and cassandra ' +
         'query should return proper object when correct inputs are specified',
         async () => {
           const contractArgumentWithFunction = {
-            asset_id: mockedAssetId,
-            state: Date.now(),
-            _functions_: [mockedFunctionId],
+              asset_id: mockedAssetId,
+              state: Date.now(),
+              _functions_: [mockedFunctionId],
           };
           const mockedFunctionArgument = {
-            asset_id: mockedAssetId,
-            state: mockedState,
+              asset_id: mockedAssetId,
+              state: mockedState,
           };
           const binary =
             await clientService.createSerializedContractExecutionRequest(
@@ -261,8 +261,8 @@ describe('Integration test on ClientServiceWithBinary', async () => {
           const result = response.getResult();
 
           const cassandraClient = new cassandra.Client({
-            contactPoints: ['127.0.0.1:9042'],
-            localDataCenter: 'dc1',
+              contactPoints: ['127.0.0.1:9042'],
+              localDataCenter: 'dc1',
           });
           const cassandraResponse = await cassandraClient.execute(
               `SELECT * FROM foo.bar WHERE column_a='${mockedAssetId}';`,
