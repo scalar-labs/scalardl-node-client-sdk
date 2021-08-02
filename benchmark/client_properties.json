@@ -1,0 +1,14 @@
+{
+	"scalar.dl.client.server.host": "localhost",
+	"scalar.dl.client.server.port": 50051,
+	"scalar.dl.client.server.privileged_port": 50052,
+	"scalar.dl.client.cert_holder_id": "foo",
+	"scalar.dl.client.cert_version": 1,
+	"scalar.dl.client.cert_pem": "-----BEGIN CERTIFICATE-----\nMIICjTCCAjKgAwIBAgIUacmufnXYLxwZkSssxVjBePp4zoUwCgYIKoZIzj0EAwIw\nbzELMAkGA1UEBhMCSlAxDjAMBgNVBAgTBVRva3lvMQ4wDAYDVQQHEwVUb2t5bzEf\nMB0GA1UEChMWU2NhbGFyIEludGVybWVkaWF0ZSBDQTEfMB0GA1UEAxMWU2NhbGFy\nIEludGVybWVkaWF0ZSBDQTAeFw0yMTA2MzAwMzA4MDBaFw0yNDA2MjkwMzA4MDBa\nMEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIEwpTb21lLVN0YXRlMSEwHwYDVQQKExhJ\nbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNC\nAARSNCGmQdwdhqAGialLsvF/H1B0jBbVZbEG1n7PooQSHzGtAickhowU4+0iyRDq\ng90qe7Ex/dPWHexWNbqkjCLfo4HVMIHSMA4GA1UdDwEB/wQEAwIFoDATBgNVHSUE\nDDAKBggrBgEFBQcDAjAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBTRioMqi4AZX+dU\nY1+YAVtyWMtMszAfBgNVHSMEGDAWgBQgvyjyoVxJUr2q5UpJng2NUCjgAjAxBggr\nBgEFBQcBAQQlMCMwIQYIKwYBBQUHMAGGFWh0dHA6Ly9sb2NhbGhvc3Q6ODg4OTAq\nBgNVHR8EIzAhMB+gHaAbhhlodHRwOi8vbG9jYWxob3N0Ojg4ODgvY3JsMAoGCCqG\nSM49BAMCA0kAMEYCIQCYTdQjk6kNJxOWoGUAsXMGhiTWtrPKrZxxvJjkD87/4QIh\nAPfY/gpIqfSu71YWIdRDbk2McECIRgHkXTd8ArIKUz8C\n-----END CERTIFICATE-----\n",
+	"scalar.dl.client.private_key_pem": "-----BEGIN EC PRIVATE KEY-----\nMHcCAQEEIJHySQ7Dsapydvq06ismdaD38kqZXDe7TQq/0/nokUwHoAoGCCqGSM49\nAwEHoUQDQgAEUjQhpkHcHYagBompS7Lxfx9QdIwW1WWxBtZ+z6KEEh8xrQInJIaM\nFOPtIskQ6oPdKnuxMf3T1h3sVjW6pIwi3w==\n-----END EC PRIVATE KEY-----\n",
+	"scalar.dl.client.tls.enabled": false,
+	"scalar.dl.client.auditor.enabled": true,
+	"scalar.dl.client.auditor.host": "localhost",
+	"scalar.dl.client.auditor.port": 40051,
+	"scalar.dl.client.auditor.privileged_port": 40052
+}
