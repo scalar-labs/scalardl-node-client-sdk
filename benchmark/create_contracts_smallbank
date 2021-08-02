@@ -1,0 +1,49 @@
+#!/usr/bin/env node --trace-warnings
+
+const fs = require('fs');
+const properties = JSON.parse(
+    fs.readFileSync('client_properties.json', 'utf8'),
+);
+
+const {ClientService} = require('../');
+const clientService = new ClientService(properties);
+
+(async () => {
+  await clientService.registerCertificate();
+  await clientService.registerContract(
+      'amalgamate',
+      'com.example.contract.smallbank.Amalgamate',
+      fs.readFileSync('contracts/Amalgamate.class'),
+      {properties: ''},
+  );
+  await clientService.registerContract(
+      'create_account',
+      'com.example.contract.smallbank.CreateAccount',
+      fs.readFileSync('contracts/CreateAccount.class'),
+      {properties: ''},
+  );
+  await clientService.registerContract(
+      'deposit_checking',
+      'com.example.contract.smallbank.DepositChecking',
+      fs.readFileSync('contracts/DepositChecking.class'),
+      {properties: ''},
+  );
+  await clientService.registerContract(
+      'send_payment',
+      'com.example.contract.smallbank.SendPayment',
+      fs.readFileSync('contracts/SendPayment.class'),
+      {properties: ''},
+  );
+  await clientService.registerContract(
+      'transact_savings',
+      'com.example.contract.smallbank.TransactSavings',
+      fs.readFileSync('contracts/TransactSavings.class'),
+      {properties: ''},
+  );
+  await clientService.registerContract(
+      'write_check',
+      'com.example.contract.smallbank.WriteCheck',
+      fs.readFileSync('contracts/WriteCheck.class'),
+      {properties: ''},
+  );
+})();
