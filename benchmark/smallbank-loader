@@ -1,0 +1,135 @@
+#!/usr/bin/env node
+/* eslint-disable require-jsdoc */
+
+const {ClientService} = require('../');
+
+(async () => {
+  const [properties, numberOfAccount, numberOfThread] = parseArgv();
+  const clientService = new ClientService(properties);
+  const accountsList = createAccountListForThread(
+      numberOfAccount,
+      numberOfThread,
+  ); // [[0, ...], [1, ...], ...]
+
+  const promises = accountsList.map((accounts) =>
+    createAccount(accounts, clientService),
+  );
+
+  await Promise.all(promises);
+})();
+
+function usage() {
+  const path = require('path');
+  console.log(
+      'Usage: ' +
+      `${path.basename(process.argv[1])} ` +
+      '[--properties properties, --config properties] ' +
+      '[--num-accounts accounts] ' +
+      '[--num-threads threads] ' +
+      '[-h, --help]',
+  );
+}
+
+function createAccountListForThread(numberOfAccount, numberOfThread) {
+  if (numberOfThread > numberOfAccount) {
+    numberOfThread = numberOfAccount;
+  }
+
+  const reminder = numberOfAccount % numberOfThread;
+  const chunkSize = (numberOfAccount - reminder) / numberOfThread;
+
+  const accountsList = [];
+  let accounts = [];
+  for (let account = 0; account < numberOfAccount; account++) {
+    accounts.push(account);
+
+    if (accounts.length >= chunkSize) {
+      accountsList.push(accounts);
+      accounts = [];
+    }
+  }
+
+  let i = 0;
+  for (const account of accounts) {
+    accountsList[i].push(account);
+    i = i++ % numberOfThread;
+  }
+
+  return accountsList; // [[0, ...], [1, ...], ...]
+}
+
+function parseArgv() {
+  const fs = require('fs');
+  let properties = JSON.parse(
+      fs.readFileSync('client_properties.json', 'utf8'),
+  );
+  let numberOfAccount = 10000;
+  let numberOfThread = 1;
+
+  const argv = process.argv.slice(2);
+
+  for (let i = 0; i < argv.length; i++) {
+    switch (argv[i]) {
+      case '--properties':
+      case '--config':
+        if (argv[i + 1] && fs.existsSync(argv[i + 1])) {
+          properties = JSON.parse(fs.readFileSync(argv[i + 1], 'utf-8'));
+          i++;
+        } else {
+          usage();
+          process.exit(1);
+        }
+        break;
+
+      case '--num-accounts':
+        if (argv[i + 1] && !isNaN(argv[i + 1]) && parseInt(argv[i + 1]) > 0) {
+          numberOfAccount = parseInt(argv[i + 1]);
+          i++;
+        } else {
+          usage();
+          process.exit(1);
+        }
+        break;
+
+      case '--num-threads':
+        if (argv[i + 1] && !isNaN(argv[i + 1]) && parseInt(argv[i + 1]) > 0) {
+          numberOfThread = parseInt(argv[i + 1]);
+          i++;
+        } else {
+          usage();
+          process.exit(1);
+        }
+        break;
+
+      case '-h':
+      case '--help':
+        usage();
+        process.exit(0);
+    }
+  }
+
+  return [properties, numberOfAccount, numberOfThread];
+}
+
+let created = 0;
+
+async function createAccount(accounts, clientService) {
+  const DEFAULT_BALANCE = 100000;
+  const contractId = 'create_account';
+
+  for (const account of accounts) {
+    const argument = {
+      customer_id: account,
+      customer_name: `Name ${account}`,
+      initial_checking_balance: DEFAULT_BALANCE,
+      initial_savings_balance: DEFAULT_BALANCE,
+    };
+
+    try {
+      await clientService.executeContract(contractId, argument);
+      console.log(`${++created} assets are loaded.`);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+}
