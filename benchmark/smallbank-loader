@@ -127,7 +127,7 @@ async function createAccounts(accounts, clientService) {
 
     try {
       await clientService.executeContract(contractId, argument);
-      console.log(`${Atomics.add(created, 0, 1)} assets are loaded.`);
+      console.log(`${Atomics.add(created, 0, 1) + 1} assets are loaded.`);
     } catch (e) {
       console.log(`${e.code} ${e.message}`);
     }
