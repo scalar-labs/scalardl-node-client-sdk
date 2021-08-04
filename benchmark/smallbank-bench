@@ -1,0 +1,239 @@
+#!/usr/bin/env node
+/* eslint-disable require-jsdoc */
+
+const {ClientService} = require('../');
+
+(async () => {
+  const [
+    properties,
+    numberOfAccount,
+    numberOfThread,
+    duration,
+    rampUpTime,
+    operations,
+  ] = parseArgv();
+  const clientService = new ClientService(properties);
+  const accounts = Array.from(Array(numberOfAccount).keys());
+  const durationMillis = duration * 1000;
+  const rampUpTimeMillis = rampUpTime * 1000;
+
+  let errorCount = 0;
+  let counter = 0;
+  let totalCounter = 0;
+  let latencyTotal = 0;
+  let isRunning = true;
+
+  const start = Date.now();
+  let from = start;
+  for (let i = 0; i < numberOfThread; i++) {
+    (async () => {
+      while (isRunning) {
+        const [operation, argument] = createExecution(operations, accounts);
+        try {
+          const eachStart = Date.now();
+          await clientService.executeContract(operation, argument);
+          const eachEnd = Date.now();
+          counter++;
+
+          if (Date.now() >= start + rampUpTimeMillis) {
+            totalCounter++;
+            latencyTotal += eachEnd - eachStart;
+          }
+        } catch (e) {
+          console.log(e.message);
+          errorCount++;
+        }
+      }
+    })();
+  }
+  const end = start + durationMillis + rampUpTimeMillis;
+
+  while (true) {
+    const to = Date.now();
+    if (to >= end) {
+      isRunning = false;
+      break;
+    }
+    console.log(`${(counter * 1000) / (to - from)} tps`);
+    counter = 0;
+    from = Date.now();
+    await sleep(1000);
+  }
+
+  console.log(
+      `TPS: ${(totalCounter * 1000) / (end - start - rampUpTimeMillis)}`,
+  );
+  console.log(`Average-Latency(ms): ${latencyTotal / totalCounter}`);
+  console.log(`Error-Counts: ${errorCount}`);
+})();
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function createExecution(operations, accounts) {
+  const operation = operations[getRandomInt(operations.length)];
+  const account1 = accounts[getRandomInt(accounts.length)];
+  let account2 = accounts[getRandomInt(accounts.length)];
+  if (account2 === account1) {
+    account2 = (account2 + 1) % accounts.length;
+  }
+  const amount = getRandomInt(100) + 1;
+  let argument = {};
+
+  switch (operation) {
+    case 'transact_savings':
+    case 'deposit_checking':
+    case 'write_check':
+      argument = {
+        customer_id: account1,
+        amount: amount,
+      };
+      break;
+
+    case 'send_payment':
+      argument = {
+        source_customer_id: account1,
+        dest_customer_id: account2,
+        amount: amount,
+      };
+      break;
+
+    case 'amalgamate':
+      argument = {
+        source_customer_id: account1,
+        dest_customer_id: account2,
+      };
+      break;
+  }
+
+  return [operation, argument];
+}
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
+function parseArgv() {
+  const fs = require('fs');
+  let properties = JSON.parse(
+      fs.readFileSync('client_properties.json', 'utf8'),
+  );
+  let numberOfAccount = 10000;
+  let numberOfThread = 1;
+  let duration = 200;
+  let rampUpTime = 60;
+  let operations = [
+    'transact_savings',
+    'deposit_checking',
+    'send_payment',
+    'write_check',
+    'amalgamate',
+  ];
+
+  const argv = process.argv.slice(2);
+
+  for (let i = 0; i < argv.length; i++) {
+    switch (argv[i]) {
+      case '--properties':
+      case '--config':
+        if (argv[i + 1] && fs.existsSync(argv[i + 1])) {
+          properties = JSON.parse(fs.readFileSync(argv[i + 1], 'utf-8'));
+          i++;
+        } else {
+          usage();
+          process.exit(1);
+        }
+        break;
+
+      case '--num-accounts':
+        if (argv[i + 1] && !isNaN(argv[i + 1]) && parseInt(argv[i + 1]) > 0) {
+          numberOfAccount = parseInt(argv[i + 1]);
+          i++;
+        } else {
+          usage();
+          process.exit(1);
+        }
+        break;
+
+      case '--num-threads':
+        if (argv[i + 1] && !isNaN(argv[i + 1]) && parseInt(argv[i + 1]) > 0) {
+          numberOfThread = parseInt(argv[i + 1]);
+          i++;
+        } else {
+          usage();
+          process.exit(1);
+        }
+        break;
+
+      case '--duration':
+        if (argv[i + 1] && !isNaN(argv[i + 1]) && parseInt(argv[i + 1]) > 0) {
+          duration = parseInt(argv[i + 1]);
+          i++;
+        } else {
+          usage();
+          process.exit(1);
+        }
+        break;
+
+      case '--ramp-up-time':
+        if (argv[i + 1] && !isNaN(argv[i + 1]) && parseInt(argv[i + 1]) > 0) {
+          rampUpTime = parseInt(argv[i + 1]);
+          i++;
+        } else {
+          usage();
+          process.exit(1);
+        }
+        break;
+
+      case '--operation':
+        if (argv[i + 1] && argv[i + 1].split(',').length > 0) {
+          operations = argv[i + 1].split(',');
+          i++;
+        } else {
+          usage();
+          process.exit(1);
+        }
+        break;
+
+      case '-h':
+      case '--help':
+        usage();
+        process.exit(0);
+    }
+  }
+
+  return [
+    properties,
+    numberOfAccount,
+    numberOfThread,
+    duration,
+    rampUpTime,
+    operations,
+  ];
+}
+
+function usage() {
+  const path = require('path');
+  console.log(
+      'Usage: ' +
+      `${path.basename(process.argv[1])} ` +
+      '[--properties properties, --config properties] ' +
+      '[--num-accounts accounts] ' +
+      '[--num-threads threads] ' +
+      '[--duration duration] ' +
+      '[--ramp-up-time ramp-up-time] ' +
+      '[--operation operation] ' +
+      '[-h, --help]',
+  );
+
+  console.log(
+      '--properties, --config, A configuration file in properties format.\n' +
+      '  --num-accounts, The number of target accounts.\n' +
+      '  --num-threads, The number of threads to run.\n' +
+      '  --duration, The duration of benchmark in seconds\n' +
+      '  --ramp-up-time, The ramp up time in seconds.\n' +
+      '  --operation, transact_savings, ' +
+      'deposit_checking, send_payment, write_check, amalgamate',
+  );
+}
