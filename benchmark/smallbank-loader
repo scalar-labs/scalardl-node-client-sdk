@@ -129,7 +129,7 @@ async function createAccounts(accounts, clientService) {
       await clientService.executeContract(contractId, argument);
       console.log(`${++created} assets are loaded.`);
     } catch (e) {
-      console.log(e);
+      console.log(`${e.code} ${e.message}`);
     }
   }
 }
