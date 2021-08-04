@@ -18,10 +18,10 @@ const fs = require('fs');
   const durationMillis = duration * 1000;
   const rampUpTimeMillis = rampUpTime * 1000;
 
-  let errorCount = 0;
-  let counter = 0;
-  let totalCounter = 0;
-  let latencyTotal = 0;
+  const errorCount = new Uint32Array(new SharedArrayBuffer(1024));
+  const counter = new Uint32Array(new SharedArrayBuffer(1024));
+  const totalCounter = new Uint32Array(new SharedArrayBuffer(1024));
+  const latencyTotal = new BigUint64Array(new SharedArrayBuffer(1024));
   let isRunning = true;
 
   const start = Date.now();
@@ -34,15 +34,15 @@ const fs = require('fs');
           const eachStart = Date.now();
           await clientService.executeContract(operation, argument);
           const eachEnd = Date.now();
-          counter++;
+          Atomics.add(counter, 0, 1);
 
           if (Date.now() >= start + rampUpTimeMillis) {
-            totalCounter++;
-            latencyTotal += eachEnd - eachStart;
+            Atomics.add(totalCounter, 0, 1);
+            Atomics.add(latencyTotal, 0, eachEnd - eachStart);
           }
         } catch (e) {
-          console.log(e.message);
-          errorCount++;
+          console.log(`${e.code} ${e.message}`);
+          Atomics.add(errorCount, 0, 1);
         }
       }
     })();
@@ -55,17 +55,20 @@ const fs = require('fs');
       isRunning = false;
       break;
     }
-    console.log(`${(counter * 1000) / (to - from)} tps`);
-    counter = 0;
+    console.log(`${(Atomics.load(counter, 0) * 1000) / (to - from)} tps`);
+    Atomics.store(counter, 0, 0);
     from = Date.now();
     await sleep(1000);
   }
 
-  console.log(
-      `TPS: ${(totalCounter * 1000) / (end - start - rampUpTimeMillis)}`,
-  );
-  console.log(`Average-Latency(ms): ${latencyTotal / totalCounter}`);
-  console.log(`Error-Counts: ${errorCount}`);
+  const tps =
+    (Atomics.load(totalCounter, 0) * 1000) / (end - start - rampUpTimeMillis);
+  const averageLatency =
+    Atomics.load(latencyTotal, 0) / Atomics.load(totalCounter, 0);
+
+  console.log(`TPS: ${tps}`);
+  console.log(`Average-Latency(ms): ${averageLatency}`);
+  console.log(`Error-Counts: ${errorCount[0]}`);
 })();
 
 function sleep(ms) {

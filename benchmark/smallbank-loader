@@ -111,7 +111,7 @@ function parseArgv() {
   return [properties, numberOfAccount, numberOfThread];
 }
 
-let created = 0;
+const created = new Uint32Array(new SharedArrayBuffer(1024));
 
 async function createAccounts(accounts, clientService) {
   const DEFAULT_BALANCE = 100000;
@@ -127,7 +127,7 @@ async function createAccounts(accounts, clientService) {
 
     try {
       await clientService.executeContract(contractId, argument);
-      console.log(`${++created} assets are loaded.`);
+      console.log(`${Atomics.add(created, 0, 1)} assets are loaded.`);
     } catch (e) {
       console.log(`${e.code} ${e.message}`);
     }
