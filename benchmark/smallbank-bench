@@ -2,6 +2,7 @@
 /* eslint-disable require-jsdoc */
 
 const {ClientService} = require('../');
+const fs = require('fs');
 
 (async () => {
   const [
@@ -115,7 +116,6 @@ function getRandomInt(max) {
 }
 
 function parseArgv() {
-  const fs = require('fs');
   let properties = JSON.parse(
       fs.readFileSync('client_properties.json', 'utf8'),
   );
@@ -218,22 +218,28 @@ function usage() {
   console.log(
       'Usage: ' +
       `${path.basename(process.argv[1])} ` +
-      '[--properties properties, --config properties] ' +
-      '[--num-accounts accounts] ' +
-      '[--num-threads threads] ' +
-      '[--duration duration] ' +
-      '[--ramp-up-time ramp-up-time] ' +
-      '[--operation operation] ' +
+      '[--properties PROPERTIES_FILE, --config PROPERTIES_FILE] ' +
+      '[--num-accounts NUM_ACCOUNTS] ' +
+      '[--num-threads NUM_THREADS] ' +
+      '[--duration DURATION] ' +
+      '[--ramp-up-time RAMP_UP_TIME] ' +
+      '[--operation OPERATION] ' +
       '[-h, --help]',
   );
 
   console.log(
-      '--properties, --config, A configuration file in properties format.\n' +
-      '  --num-accounts, The number of target accounts.\n' +
-      '  --num-threads, The number of threads to run.\n' +
-      '  --duration, The duration of benchmark in seconds\n' +
-      '  --ramp-up-time, The ramp up time in seconds.\n' +
-      '  --operation, transact_savings, ' +
+      '\t--properties PROPERTIES_FILE, --config PROPERTIES_FILE\n' +
+      '\t\tA configuration file in properties format.\n' +
+      '\t--num-accounts NUM_ACCOUNTS\n' +
+      '\t\tThe number of target accounts.\n' +
+      '\t--num-threads NUM_THREADS\n' +
+      '\t\tThe number of threads to run.\n' +
+      '\t--duration DURATION\n' +
+      '\t\tThe duration of benchmark in seconds\n' +
+      '\t--ramp-up-time RAMP_UP_TIME\n' +
+      '\t\tThe ramp up time in seconds.\n' +
+      '\t--operation OPERATION\n' +
+      '\t\ttransact_savings, ' +
       'deposit_checking, send_payment, write_check, amalgamate',
   );
 }

@@ -23,9 +23,9 @@ function usage() {
   console.log(
       'Usage: ' +
       `${path.basename(process.argv[1])} ` +
-      '[--properties properties, --config properties] ' +
-      '[--num-accounts accounts] ' +
-      '[--num-threads threads] ' +
+      '[--properties PROPERTIES_FILE, --config PROPERTIES_FILE] ' +
+      '[--num-accounts NUM_ACCOUNTS] ' +
+      '[--num-threads NUM_THREADS] ' +
       '[-h, --help]',
   );
 }
