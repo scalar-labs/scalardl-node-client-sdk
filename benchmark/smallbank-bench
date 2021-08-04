@@ -117,7 +117,7 @@ function getRandomInt(max) {
 
 function parseArgv() {
   let properties = JSON.parse(
-      fs.readFileSync('client_properties.json', 'utf8'),
+      fs.readFileSync('client.properties.json', 'utf8'),
   );
   let numberOfAccount = 10000;
   let numberOfThread = 1;

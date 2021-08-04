@@ -61,7 +61,7 @@ function createAccountListForThread(numberOfAccount, numberOfThread) {
 function parseArgv() {
   const fs = require('fs');
   let properties = JSON.parse(
-      fs.readFileSync('client_properties.json', 'utf8'),
+      fs.readFileSync('client.properties.json', 'utf8'),
   );
   let numberOfAccount = 10000;
   let numberOfThread = 1;
