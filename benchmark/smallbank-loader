@@ -12,7 +12,7 @@ const {ClientService} = require('../');
   ); // [[0, ...], [1, ...], ...]
 
   const promises = accountsList.map((accounts) =>
-    createAccount(accounts, clientService),
+    createAccounts(accounts, clientService),
   );
 
   await Promise.all(promises);
@@ -113,7 +113,7 @@ function parseArgv() {
 
 let created = 0;
 
-async function createAccount(accounts, clientService) {
+async function createAccounts(accounts, clientService) {
   const DEFAULT_BALANCE = 100000;
   const contractId = 'create_account';
 
