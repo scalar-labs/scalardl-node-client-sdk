@@ -232,16 +232,23 @@ function usage() {
   console.log(
       '\t--properties PROPERTIES_FILE, --config PROPERTIES_FILE\n' +
       '\t\tA configuration file in properties format.\n' +
+      '\t\tDefault: client.properties.json\n' +
       '\t--num-accounts NUM_ACCOUNTS\n' +
       '\t\tThe number of target accounts.\n' +
+      '\t\tDefault: 10000\n' +
       '\t--num-concurrencies NUM_CONCURRENCIES\n' +
       '\t\tThe number of threads to run.\n' +
+      '\t\tDefault: 1\n' +
       '\t--duration DURATION\n' +
-      '\t\tThe duration of benchmark in seconds\n' +
+      '\t\tThe duration of benchmark in seconds.\n' +
+      '\t\tDefault: 200\n' +
       '\t--ramp-up-time RAMP_UP_TIME\n' +
       '\t\tThe ramp up time in seconds.\n' +
+      '\t\tDefault: 60\n' +
       '\t--operation OPERATION\n' +
-      '\t\ttransact_savings, ' +
-      'deposit_checking, send_payment, write_check, amalgamate',
+      '\t\ttransact_savings,' +
+      'deposit_checking, send_payment, write_check, amalgamate.\n' +
+      '\t\tDefault: transact_savings,deposit_checking,' +
+      'send_payment,write_check,amalgamate',
   );
 }
