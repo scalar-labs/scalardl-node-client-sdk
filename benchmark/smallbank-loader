@@ -4,11 +4,11 @@
 const {ClientService} = require('../');
 
 (async () => {
-  const [properties, numberOfAccount, numberOfThread] = parseArgv();
+  const [properties, numberOfAccount, numberOfConcurrency] = parseArgv();
   const clientService = new ClientService(properties);
   const accountsList = createAccountListForThread(
       numberOfAccount,
-      numberOfThread,
+      numberOfConcurrency,
   ); // [[0, ...], [1, ...], ...]
 
   const promises = accountsList.map((accounts) =>
@@ -25,18 +25,18 @@ function usage() {
       `${path.basename(process.argv[1])} ` +
       '[--properties PROPERTIES_FILE, --config PROPERTIES_FILE] ' +
       '[--num-accounts NUM_ACCOUNTS] ' +
-      '[--num-threads NUM_THREADS] ' +
+      '[--num-concurrencies NUM_CONCURRENCIES] ' +
       '[-h, --help]',
   );
 }
 
-function createAccountListForThread(numberOfAccount, numberOfThread) {
-  if (numberOfThread > numberOfAccount) {
-    numberOfThread = numberOfAccount;
+function createAccountListForThread(numberOfAccount, numberOfConcurrency) {
+  if (numberOfConcurrency > numberOfAccount) {
+    numberOfConcurrency = numberOfAccount;
   }
 
-  const reminder = numberOfAccount % numberOfThread;
-  const chunkSize = (numberOfAccount - reminder) / numberOfThread;
+  const reminder = numberOfAccount % numberOfConcurrency;
+  const chunkSize = (numberOfAccount - reminder) / numberOfConcurrency;
 
   const accountsList = [];
   let accounts = [];
@@ -52,7 +52,7 @@ function createAccountListForThread(numberOfAccount, numberOfThread) {
   let i = 0;
   for (const account of accounts) {
     accountsList[i].push(account);
-    i = i++ % numberOfThread;
+    i = i++ % numberOfConcurrency;
   }
 
   return accountsList; // [[0, ...], [1, ...], ...]
@@ -64,7 +64,7 @@ function parseArgv() {
       fs.readFileSync('client.properties.json', 'utf8'),
   );
   let numberOfAccount = 10000;
-  let numberOfThread = 1;
+  let numberOfConcurrency = 1;
 
   const argv = process.argv.slice(2);
 
@@ -91,9 +91,9 @@ function parseArgv() {
         }
         break;
 
-      case '--num-threads':
+      case '--num-concurrencies':
         if (argv[i + 1] && !isNaN(argv[i + 1]) && parseInt(argv[i + 1]) > 0) {
-          numberOfThread = parseInt(argv[i + 1]);
+          numberOfConcurrency = parseInt(argv[i + 1]);
           i++;
         } else {
           usage();
@@ -108,7 +108,7 @@ function parseArgv() {
     }
   }
 
-  return [properties, numberOfAccount, numberOfThread];
+  return [properties, numberOfAccount, numberOfConcurrency];
 }
 
 const created = new Uint32Array(new SharedArrayBuffer(1024));
