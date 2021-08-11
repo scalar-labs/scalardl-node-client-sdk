@@ -1,128 +1,94 @@
 #!/usr/bin/env node
 /* eslint-disable require-jsdoc */
 
-const {ClientService} = require('../');
 const fs = require('fs');
+const {fork} = require('child_process');
 
-(async () => {
-  const [
+const [
+  properties,
+  numberOfAccount,
+  numberOfConcurrencies,
+  duration,
+  rampUpTime,
+  operations,
+] = parseArgv();
+
+let counter = 0;
+let errorCount = 0;
+let totalCounter = 0;
+let latencyTotal = 0;
+
+const start = Date.now();
+const end = start + duration * 1000 + rampUpTime * 1000;
+
+const workers = [];
+const concurrenciesPerProcess = divideConcurrencies(numberOfConcurrencies);
+
+for (let i = 0; i < concurrenciesPerProcess.length; i++) {
+  const worker = fork('./smallbank-bench-worker', [
+    concurrenciesPerProcess[i].toString(),
+    start.toString(),
     properties,
-    numberOfAccount,
-    numberOfConcurrency,
-    duration,
-    rampUpTime,
-    operations,
-  ] = parseArgv();
-  const clientService = new ClientService(properties);
-  const accounts = Array.from(Array(numberOfAccount).keys());
-  const durationMillis = duration * 1000;
-  const rampUpTimeMillis = rampUpTime * 1000;
+    numberOfAccount.toString(),
+    rampUpTime.toString(),
+    operations.join(','),
+  ]);
 
-  const errorCount = new Uint32Array(new SharedArrayBuffer(1024));
-  const counter = new Uint32Array(new SharedArrayBuffer(1024));
-  const totalCounter = new BigUint64Array(new SharedArrayBuffer(1024));
-  const latencyTotal = new BigUint64Array(new SharedArrayBuffer(1024));
-  let isRunning = true;
+  worker.on('message', (m) => {
+    if (m.counter) {
+      counter++;
+    }
 
-  const start = Date.now();
-  let from = start;
-  for (let i = 0; i < numberOfConcurrency; i++) {
-    (async () => {
-      while (isRunning) {
-        const [operation, argument] = createExecution(operations, accounts);
-        try {
-          const eachStart = Date.now();
-          await clientService.executeContract(operation, argument);
-          const eachEnd = Date.now();
-          Atomics.add(counter, 0, 1);
+    if (m.error) {
+      errorCount++;
+    }
 
-          if (Date.now() >= start + rampUpTimeMillis) {
-            Atomics.add(totalCounter, 0, BigInt(1));
-            Atomics.add(latencyTotal, 0, BigInt(eachEnd - eachStart));
-          }
-        } catch (e) {
-          Atomics.add(errorCount, 0, 1);
-        }
-      }
-    })();
-  }
-  const end = start + durationMillis + rampUpTimeMillis;
+    if (m.totalCounter) {
+      totalCounter += m.totalCounter;
+    }
 
+    if (m.latencyTotal) {
+      latencyTotal += m.latencyTotal;
+    }
+  });
+
+  workers.push(worker);
+}
+
+let from = start;
+(async () => {
   while (true) {
     const to = Date.now();
     if (to >= end) {
-      isRunning = false;
+      for (const w of workers) {
+        w.kill();
+      }
       break;
     }
-    console.log(`${(Atomics.load(counter, 0) * 1000) / (to - from)} tps`);
-    Atomics.store(counter, 0, 0);
+
+    console.log(`${(counter * 1000) / (to - from)} tps`);
+    counter = 0;
     from = Date.now();
     await sleep(1000);
   }
-
-  const tps =
-    (Atomics.load(totalCounter, 0) * BigInt(1000)) / BigInt(durationMillis);
-  const averageLatency =
-    Atomics.load(latencyTotal, 0) / Atomics.load(totalCounter, 0);
+})().then(() => {
+  const tps = (totalCounter * 1000) / (duration * 1000);
+  const averageLatency = latencyTotal / totalCounter;
 
   console.log(`TPS: ${tps}`);
   console.log(`Average-Latency(ms): ${averageLatency}`);
-  console.log(`Error-Counts: ${errorCount[0]}`);
-})();
+  console.log(`Error-Counts: ${errorCount}`);
+  process.exit(0);
+});
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function createExecution(operations, accounts) {
-  const operation = operations[getRandomInt(operations.length)];
-  const account1 = accounts[getRandomInt(accounts.length)];
-  let account2 = accounts[getRandomInt(accounts.length)];
-  if (account2 === account1) {
-    account2 = (account2 + 1) % accounts.length;
-  }
-  const amount = getRandomInt(100) + 1;
-  let argument = {};
-
-  switch (operation) {
-    case 'transact_savings':
-    case 'deposit_checking':
-    case 'write_check':
-      argument = {
-        customer_id: account1,
-        amount: amount,
-      };
-      break;
-
-    case 'send_payment':
-      argument = {
-        source_customer_id: account1,
-        dest_customer_id: account2,
-        amount: amount,
-      };
-      break;
-
-    case 'amalgamate':
-      argument = {
-        source_customer_id: account1,
-        dest_customer_id: account2,
-      };
-      break;
-  }
-
-  return [operation, argument];
-}
-
-function getRandomInt(max) {
-  return Math.floor(Math.random() * max);
-}
-
 function parseArgv() {
-  let properties = JSON.parse(
-      fs.readFileSync('client.properties.json', 'utf8'),
-  );
+  let properties = 'client.properties.json';
   let numberOfAccount = 10000;
-  let numberOfConcurrency = 1;
+  let numberOfConcurrencies = 1;
   let duration = 200;
   let rampUpTime = 60;
   let operations = [
@@ -140,7 +106,7 @@ function parseArgv() {
       case '--properties':
       case '--config':
         if (argv[i + 1] && fs.existsSync(argv[i + 1])) {
-          properties = JSON.parse(fs.readFileSync(argv[i + 1], 'utf-8'));
+          properties = argv[i + 1];
           i++;
         } else {
           usage();
@@ -160,7 +126,7 @@ function parseArgv() {
 
       case '--num-concurrencies':
         if (argv[i + 1] && !isNaN(argv[i + 1]) && parseInt(argv[i + 1]) > 0) {
-          numberOfConcurrency = parseInt(argv[i + 1]);
+          numberOfConcurrencies = parseInt(argv[i + 1]);
           i++;
         } else {
           usage();
@@ -208,7 +174,7 @@ function parseArgv() {
   return [
     properties,
     numberOfAccount,
-    numberOfConcurrency,
+    numberOfConcurrencies,
     duration,
     rampUpTime,
     operations,
@@ -237,7 +203,7 @@ function usage() {
       '\t\tThe number of target accounts.\n' +
       '\t\tDefault: 10000\n' +
       '\t--num-concurrencies NUM_CONCURRENCIES\n' +
-      '\t\tThe number of threads to run.\n' +
+      '\t\tThe number of concurrencies to run.\n' +
       '\t\tDefault: 1\n' +
       '\t--duration DURATION\n' +
       '\t\tThe duration of benchmark in seconds.\n' +
@@ -251,4 +217,22 @@ function usage() {
       '\t\tDefault: transact_savings,deposit_checking,' +
       'send_payment,write_check,amalgamate',
   );
+}
+
+function divideConcurrencies(numberOfConcurrencies) {
+  const numberOfCpus = require('os').cpus().length;
+  const numberOfProcesses =
+    numberOfConcurrencies < numberOfCpus ? numberOfConcurrencies : numberOfCpus;
+  const reminder = numberOfConcurrencies % numberOfProcesses;
+
+  const averageConcurrencies =
+    (numberOfConcurrencies - reminder) / numberOfProcesses;
+  const concurrenciesPerProcess =
+    Array(numberOfProcesses).fill(averageConcurrencies);
+
+  for (let i = 0; i < reminder; i++) {
+    concurrenciesPerProcess[i]++;
+  }
+
+  return concurrenciesPerProcess;
 }

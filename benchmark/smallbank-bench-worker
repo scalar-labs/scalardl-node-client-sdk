@@ -1,0 +1,95 @@
+#!/usr/bin/env node
+/* eslint-disable require-jsdoc */
+
+const argv = process.argv.slice(2);
+const [
+  concurrenciesString,
+  startString,
+  properties,
+  numberOfAccount,
+  rampUpTime,
+  operationsString,
+] = argv;
+
+const fs = require('fs');
+const {ClientService} = require('../scalardl-node-client-sdk');
+const clientService = new ClientService(
+    JSON.parse(fs.readFileSync(properties, 'utf-8')),
+);
+
+const concurrencies = parseInt(concurrenciesString);
+const accounts = Array.from(Array(parseInt(numberOfAccount)).keys());
+const rampUpTimeMillis = parseInt(rampUpTime) * 1000;
+const start = parseInt(startString);
+const operations = operationsString.split(',');
+
+const promises = [];
+for (let i = 0; i < concurrencies; i++) {
+  promises.push((
+    async () => {
+      while (true) {
+        const [operation, argument] = createExecution(operations, accounts);
+        try {
+          const eachStart = Date.now();
+          await clientService.executeContract(operation, argument);
+          const eachEnd = Date.now();
+          process.send({counter: 1});
+
+          if (Date.now() >= start + rampUpTimeMillis) {
+            process.send({
+              totalCounter: 1,
+              latencyTotal: eachEnd - eachStart,
+            });
+          }
+        } catch (e) {
+          process.send({errorCount: 1});
+        }
+      }
+    }
+  )());
+}
+
+Promise.all(promises);
+
+function createExecution(operations, accounts) {
+  const operation = operations[getRandomInt(operations.length)];
+  const account1 = accounts[getRandomInt(accounts.length)];
+  let account2 = accounts[getRandomInt(accounts.length)];
+  if (account2 === account1) {
+    account2 = (account2 + 1) % accounts.length;
+  }
+  const amount = getRandomInt(100) + 1;
+  let argument = {};
+
+  switch (operation) {
+    case 'transact_savings':
+    case 'deposit_checking':
+    case 'write_check':
+      argument = {
+        customer_id: account1,
+        amount: amount,
+      };
+      break;
+
+    case 'send_payment':
+      argument = {
+        source_customer_id: account1,
+        dest_customer_id: account2,
+        amount: amount,
+      };
+      break;
+
+    case 'amalgamate':
+      argument = {
+        source_customer_id: account1,
+        dest_customer_id: account2,
+      };
+      break;
+  }
+
+  return [operation, argument];
+}
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
