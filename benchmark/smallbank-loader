@@ -9,7 +9,6 @@ const accountsList = createAccountList(
     numberOfConcurrency,
 ); // [[0, ...], [1, ...], ...]
 
-const workers = [];
 let created = 0;
 for (const accounts of accountsList) {
   const worker = fork('./smallbank-loader-worker', [
@@ -24,8 +23,6 @@ for (const accounts of accountsList) {
       console.log(`${created} assets are loaded.`);
     }
   });
-
-  workers.push(worker);
 }
 
 function usage() {
