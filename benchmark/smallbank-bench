@@ -7,7 +7,7 @@ const {fork} = require('child_process');
 const [
   properties,
   numberOfAccount,
-  numberOfConcurrencies,
+  numberOfConcurrency,
   duration,
   rampUpTime,
   operations,
@@ -22,7 +22,7 @@ const start = Date.now();
 const end = start + duration * 1000 + rampUpTime * 1000;
 
 const workers = [];
-const concurrenciesPerProcess = divideConcurrencies(numberOfConcurrencies);
+const concurrenciesPerProcess = divideConcurrency(numberOfConcurrency);
 
 for (let i = 0; i < concurrenciesPerProcess.length; i++) {
   const worker = fork('./smallbank-bench-worker', [
@@ -88,7 +88,7 @@ function sleep(ms) {
 function parseArgv() {
   let properties = 'client.properties.json';
   let numberOfAccount = 10000;
-  let numberOfConcurrencies = 1;
+  let numberOfConcurrency = 1;
   let duration = 200;
   let rampUpTime = 60;
   let operations = [
@@ -126,7 +126,7 @@ function parseArgv() {
 
       case '--num-concurrencies':
         if (argv[i + 1] && !isNaN(argv[i + 1]) && parseInt(argv[i + 1]) > 0) {
-          numberOfConcurrencies = parseInt(argv[i + 1]);
+          numberOfConcurrency = parseInt(argv[i + 1]);
           i++;
         } else {
           usage();
@@ -174,7 +174,7 @@ function parseArgv() {
   return [
     properties,
     numberOfAccount,
-    numberOfConcurrencies,
+    numberOfConcurrency,
     duration,
     rampUpTime,
     operations,
@@ -219,16 +219,16 @@ function usage() {
   );
 }
 
-function divideConcurrencies(numberOfConcurrencies) {
-  const numberOfCpus = require('os').cpus().length;
-  const numberOfProcesses =
-    numberOfConcurrencies < numberOfCpus ? numberOfConcurrencies : numberOfCpus;
-  const reminder = numberOfConcurrencies % numberOfProcesses;
+function divideConcurrency(numberOfConcurrency) {
+  const numberOfCpu = require('os').cpus().length;
+  const numberOfProcess =
+    numberOfConcurrency < numberOfCpu ? numberOfConcurrency : numberOfCpu;
+  const reminder = numberOfConcurrency % numberOfProcess;
 
-  const averageConcurrencies =
-    (numberOfConcurrencies - reminder) / numberOfProcesses;
+  const averageConcurrency =
+    (numberOfConcurrency - reminder) / numberOfProcess;
   const concurrenciesPerProcess =
-    Array(numberOfProcesses).fill(averageConcurrencies);
+    Array(numberOfProcess).fill(averageConcurrency);
 
   for (let i = 0; i < reminder; i++) {
     concurrenciesPerProcess[i]++;
