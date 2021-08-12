@@ -1,22 +1,32 @@
 #!/usr/bin/env node
 /* eslint-disable require-jsdoc */
 
-const {ClientService} = require('../');
+const {fork} = require('child_process');
 
-(async () => {
-  const [properties, numberOfAccount, numberOfConcurrency] = parseArgv();
-  const clientService = new ClientService(properties);
-  const accountsList = createAccountList(
-      numberOfAccount,
-      numberOfConcurrency,
-  ); // [[0, ...], [1, ...], ...]
+const [properties, numberOfAccount, numberOfConcurrency] = parseArgv();
+const accountsList = createAccountList(
+    numberOfAccount,
+    numberOfConcurrency,
+); // [[0, ...], [1, ...], ...]
 
-  const promises = accountsList.map((accounts) =>
-    createAccounts(accounts, clientService),
-  );
+const workers = [];
+let created = 0;
+for (const accounts of accountsList) {
+  const worker = fork('./smallbank-loader-worker', [
+    properties,
+    accounts[0],
+    accounts[accounts.length - 1],
+  ]);
 
-  await Promise.all(promises);
-})();
+  worker.on('message', (m) => {
+    if (m.created) {
+      created += m.created;
+      console.log(`${created} assets are loaded.`);
+    }
+  });
+
+  workers.push(worker);
+}
 
 function usage() {
   const path = require('path');
@@ -60,9 +70,7 @@ function createAccountList(numberOfAccount, numberOfConcurrency) {
 
 function parseArgv() {
   const fs = require('fs');
-  let properties = JSON.parse(
-      fs.readFileSync('client.properties.json', 'utf8'),
-  );
+  let properties = 'client.properties.json';
   let numberOfAccount = 10000;
   let numberOfConcurrency = 1;
 
@@ -73,7 +81,7 @@ function parseArgv() {
       case '--properties':
       case '--config':
         if (argv[i + 1] && fs.existsSync(argv[i + 1])) {
-          properties = JSON.parse(fs.readFileSync(argv[i + 1], 'utf-8'));
+          properties = argv[i + 1];
           i++;
         } else {
           usage();
@@ -109,27 +117,4 @@ function parseArgv() {
   }
 
   return [properties, numberOfAccount, numberOfConcurrency];
-}
-
-const created = new Uint32Array(new SharedArrayBuffer(1024));
-
-async function createAccounts(accounts, clientService) {
-  const DEFAULT_BALANCE = 100000;
-  const contractId = 'create_account';
-
-  for (const account of accounts) {
-    const argument = {
-      customer_id: account,
-      customer_name: `Name ${account}`,
-      initial_checking_balance: DEFAULT_BALANCE,
-      initial_savings_balance: DEFAULT_BALANCE,
-    };
-
-    try {
-      await clientService.executeContract(contractId, argument);
-      console.log(`${Atomics.add(created, 0, 1) + 1} assets are loaded.`);
-    } catch (e) {
-      console.log(`${e.code} ${e.message}`);
-    }
-  }
 }

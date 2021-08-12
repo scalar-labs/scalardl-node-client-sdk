@@ -1,0 +1,37 @@
+#!/usr/bin/env node
+/* eslint-disable require-jsdoc */
+
+(async () => {
+  const argv = process.argv.slice(2);
+  const [properties, accountFrom, accountTo] = argv;
+
+  const fs = require('fs');
+  const {ClientService} = require('../scalardl-node-client-sdk');
+  const clientService = new ClientService(
+      JSON.parse(fs.readFileSync(properties, 'utf-8')),
+  );
+
+  const DEFAULT_BALANCE = 100000;
+  const contractId = 'create_account';
+
+  for (
+    let account = parseInt(accountFrom);
+    account <= parseInt(accountTo);
+    account++
+  ) {
+    const argument = {
+      customer_id: account,
+      customer_name: `Name ${account}`,
+      initial_checking_balance: DEFAULT_BALANCE,
+      initial_savings_balance: DEFAULT_BALANCE,
+    };
+
+    try {
+      await clientService.executeContract(contractId, argument);
+      //   console.log(`${Atomics.add(created, 0, 1) + 1} assets are loaded.`);
+      process.send({created: 1});
+    } catch (e) {
+      console.log(`${e.code} ${e.message}`);
+    }
+  }
+})();
