@@ -28,7 +28,6 @@
 
     try {
       await clientService.executeContract(contractId, argument);
-      //   console.log(`${Atomics.add(created, 0, 1) + 1} assets are loaded.`);
       process.send({created: 1});
     } catch (e) {
       console.log(`${e.code} ${e.message}`);
