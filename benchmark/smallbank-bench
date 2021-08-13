@@ -2,6 +2,7 @@
 /* eslint-disable require-jsdoc */
 
 const fs = require('fs');
+const path = require('path');
 const {fork} = require('child_process');
 
 const [
@@ -25,7 +26,7 @@ const workers = [];
 const concurrenciesPerProcess = divideConcurrency(numberOfConcurrency);
 
 for (let i = 0; i < concurrenciesPerProcess.length; i++) {
-  const worker = fork('./smallbank-bench-worker', [
+  const worker = fork(path.join(__dirname, 'smallbank-bench-worker'), [
     concurrenciesPerProcess[i].toString(),
     start.toString(),
     properties,
@@ -182,7 +183,6 @@ function parseArgv() {
 }
 
 function usage() {
-  const path = require('path');
   console.log(
       'Usage: ' +
       `${path.basename(process.argv[1])} ` +
