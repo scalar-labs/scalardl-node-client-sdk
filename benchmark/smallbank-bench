@@ -146,7 +146,7 @@ function parseArgv() {
         break;
 
       case '--ramp-up-time':
-        if (argv[i + 1] && !isNaN(argv[i + 1]) && parseInt(argv[i + 1]) > 0) {
+        if (argv[i + 1] && !isNaN(argv[i + 1]) && parseInt(argv[i + 1]) >= 0) {
           rampUpTime = parseInt(argv[i + 1]);
           i++;
         } else {
