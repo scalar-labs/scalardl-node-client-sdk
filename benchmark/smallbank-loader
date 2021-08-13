@@ -68,7 +68,7 @@ function createAccountList(numberOfAccount, numberOfConcurrency) {
 }
 
 function parseArgv() {
-  let properties = 'client.properties.json';
+  let properties = '';
   let numberOfAccount = 10000;
   let numberOfConcurrency = 1;
 
@@ -112,6 +112,11 @@ function parseArgv() {
         usage();
         process.exit(0);
     }
+  }
+
+  if (properties === '') {
+    usage();
+    process.exit(1);
   }
 
   return [properties, numberOfAccount, numberOfConcurrency];
