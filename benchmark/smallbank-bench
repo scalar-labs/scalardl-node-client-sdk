@@ -37,11 +37,11 @@ for (let i = 0; i < concurrenciesPerProcess.length; i++) {
 
   worker.on('message', (m) => {
     if (m.counter) {
-      counter++;
+      counter += m.counter;
     }
 
-    if (m.error) {
-      errorCount++;
+    if (m.errorCount) {
+      errorCount += m.errorCount;
     }
 
     if (m.totalCounter) {
