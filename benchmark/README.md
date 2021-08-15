@@ -1,8 +1,8 @@
 Smallbank is a simple application used for benchmark.
 
 ## Requirement
-Before running smallbank, we need a Scalar DL network and configure correctly in `client.properties.json`.
-The default `client.properties.json` file points to a local Scalar DL network.
+Before running smallbank, we need a Scalar DL network and configure correctly in `client.properties`.
+The default `client.properties` file points to a local Scalar DL network.
 
 ## Step
 
