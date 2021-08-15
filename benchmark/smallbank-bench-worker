@@ -11,11 +11,18 @@ const [
   operationsString,
 ] = argv;
 
+
 const fs = require('fs');
 const {ClientService} = require('../scalardl-node-client-sdk');
-const clientService = new ClientService(
-    JSON.parse(fs.readFileSync(properties, 'utf-8')),
-);
+const {parse} = require('./properties_parser');
+
+let parsed = {};
+if (properties.endsWith('.json')) {
+  parsed = JSON.parse(fs.readFileSync(properties, 'utf-8'));
+} else {
+  parsed = parse(fs.readFileSync(properties, 'utf-8'));
+}
+const clientService = new ClientService(parsed);
 
 const concurrencies = parseInt(numberOfConcurrency);
 const accounts = Array.from(Array(parseInt(numberOfAccount)).keys());
@@ -25,28 +32,28 @@ const operations = operationsString.split(',');
 
 const promises = [];
 for (let i = 0; i < concurrencies; i++) {
-  promises.push((
-    async () => {
-      while (true) {
-        const [operation, argument] = createExecution(operations, accounts);
-        try {
-          const eachStart = Date.now();
-          await clientService.executeContract(operation, argument);
-          const eachEnd = Date.now();
-          process.send({counter: 1});
+  promises.push(
+      (async () => {
+        while (true) {
+          const [operation, argument] = createExecution(operations, accounts);
+          try {
+            const eachStart = Date.now();
+            await clientService.executeContract(operation, argument);
+            const eachEnd = Date.now();
+            process.send({counter: 1});
 
-          if (Date.now() >= start + rampUpTimeMillis) {
-            process.send({
-              totalCounter: 1,
-              latencyTotal: eachEnd - eachStart,
-            });
+            if (Date.now() >= start + rampUpTimeMillis) {
+              process.send({
+                totalCounter: 1,
+                latencyTotal: eachEnd - eachStart,
+              });
+            }
+          } catch (e) {
+            process.send({errorCount: 1});
           }
-        } catch (e) {
-          process.send({errorCount: 1});
         }
-      }
-    }
-  )());
+      })(),
+  );
 }
 
 Promise.all(promises);

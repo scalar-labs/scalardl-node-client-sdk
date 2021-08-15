@@ -7,9 +7,15 @@
 
   const fs = require('fs');
   const {ClientService} = require('../scalardl-node-client-sdk');
-  const clientService = new ClientService(
-      JSON.parse(fs.readFileSync(properties, 'utf-8')),
-  );
+  const {parse} = require('./properties_parser');
+
+  let parsed = {};
+  if (properties.endsWith('.json')) {
+    parsed = JSON.parse(fs.readFileSync(properties, 'utf-8'));
+  } else {
+    parsed = parse(fs.readFileSync(properties, 'utf-8'));
+  }
+  const clientService = new ClientService(parsed);
 
   const DEFAULT_BALANCE = 100000;
   const contractId = 'create_account';
