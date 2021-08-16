@@ -1,0 +1,123 @@
+#!/usr/bin/env node
+/* eslint-disable require-jsdoc */
+
+const fs = require('fs');
+const path = require('path');
+const {fork} = require('child_process');
+
+const [properties, numberOfAccount, numberOfConcurrency] = parseArgv();
+const accountsList = createAccountList(
+    numberOfAccount,
+    numberOfConcurrency,
+); // [[0, ...], [1, ...], ...]
+
+let created = 0;
+for (const accounts of accountsList) {
+  const worker = fork(path.join(__dirname, 'smallbank-loader-worker'), [
+    properties,
+    accounts[0],
+    accounts[accounts.length - 1],
+  ]);
+
+  worker.on('message', (m) => {
+    if (m.created) {
+      created += m.created;
+      console.log(`${created} assets are loaded.`);
+    }
+  });
+}
+
+function usage() {
+  const path = require('path');
+  console.log(
+      'Usage: ' +
+      `${path.basename(process.argv[1])} ` +
+      '[--properties PROPERTIES_FILE, --config PROPERTIES_FILE] ' +
+      '[--num-accounts NUM_ACCOUNTS] ' +
+      '[--num-concurrencies NUM_CONCURRENCIES] ' +
+      '[-h, --help]',
+  );
+}
+
+function createAccountList(numberOfAccount, numberOfConcurrency) {
+  if (numberOfConcurrency > numberOfAccount) {
+    numberOfConcurrency = numberOfAccount;
+  }
+
+  const reminder = numberOfAccount % numberOfConcurrency;
+  const chunkSize = (numberOfAccount - reminder) / numberOfConcurrency;
+
+  const accountsList = [];
+  let accounts = [];
+  for (let account = 0; account < numberOfAccount; account++) {
+    accounts.push(account);
+
+    if (accounts.length >= chunkSize) {
+      accountsList.push(accounts);
+      accounts = [];
+    }
+  }
+
+  let i = 0;
+  for (const account of accounts) {
+    accountsList[i].push(account);
+    i = i++ % numberOfConcurrency;
+  }
+
+  return accountsList; // [[0, ...], [1, ...], ...]
+}
+
+function parseArgv() {
+  let properties = '';
+  let numberOfAccount = 10000;
+  let numberOfConcurrency = 1;
+
+  const argv = process.argv.slice(2);
+
+  for (let i = 0; i < argv.length; i++) {
+    switch (argv[i]) {
+      case '--properties':
+      case '--config':
+        if (argv[i + 1] && fs.existsSync(argv[i + 1])) {
+          properties = argv[i + 1];
+          i++;
+        } else {
+          usage();
+          process.exit(1);
+        }
+        break;
+
+      case '--num-accounts':
+        if (argv[i + 1] && !isNaN(argv[i + 1]) && parseInt(argv[i + 1]) > 0) {
+          numberOfAccount = parseInt(argv[i + 1]);
+          i++;
+        } else {
+          usage();
+          process.exit(1);
+        }
+        break;
+
+      case '--num-concurrencies':
+        if (argv[i + 1] && !isNaN(argv[i + 1]) && parseInt(argv[i + 1]) > 0) {
+          numberOfConcurrency = parseInt(argv[i + 1]);
+          i++;
+        } else {
+          usage();
+          process.exit(1);
+        }
+        break;
+
+      case '-h':
+      case '--help':
+        usage();
+        process.exit(0);
+    }
+  }
+
+  if (properties === '') {
+    usage();
+    process.exit(1);
+  }
+
+  return [properties, numberOfAccount, numberOfConcurrency];
+}

@@ -1,0 +1,58 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+const {parse} = require('./properties_parser');
+
+const properties = parse(
+    fs.readFileSync(path.join(__dirname, 'client.properties'), 'utf8'),
+);
+
+const {ClientService} = require('..');
+const clientService = new ClientService(properties);
+
+(async () => {
+  await clientService.registerCertificate();
+  await clientService.registerContract(
+      'amalgamate',
+      'com.example.contract.smallbank.Amalgamate',
+      fs.readFileSync(path.join(__dirname, 'contracts', 'Amalgamate.class')),
+      {properties: ''},
+  );
+  await clientService.registerContract(
+      'create_account',
+      'com.example.contract.smallbank.CreateAccount',
+      fs.readFileSync(path.join(__dirname, 'contracts', 'CreateAccount.class')),
+      {properties: ''},
+  );
+  await clientService.registerContract(
+      'deposit_checking',
+      'com.example.contract.smallbank.DepositChecking',
+      fs.readFileSync(
+          path.join(__dirname, 'contracts', 'DepositChecking.class'),
+      ),
+      {properties: ''},
+  );
+  await clientService.registerContract(
+      'send_payment',
+      'com.example.contract.smallbank.SendPayment',
+      fs.readFileSync(
+          path.join(__dirname, 'contracts', 'SendPayment.class'),
+      ),
+      {properties: ''},
+  );
+  await clientService.registerContract(
+      'transact_savings',
+      'com.example.contract.smallbank.TransactSavings',
+      fs.readFileSync(
+          path.join(__dirname, 'contracts', 'TransactSavings.class'),
+      ),
+      {properties: ''},
+  );
+  await clientService.registerContract(
+      'write_check',
+      'com.example.contract.smallbank.WriteCheck',
+      fs.readFileSync(path.join(__dirname, 'contracts', 'WriteCheck.class')),
+      {properties: ''},
+  );
+})();
