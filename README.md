@@ -46,11 +46,17 @@ This is a properties example that a user `foo@example.com` would use to try to c
     'scalar.dl.client.server.port': 50051,
     'scalar.dl.client.server.privileged_port': 50052,
     'scalar.dl.client.cert_holder_id': 'foo@example.com',
-    'scalar.dl.client.private_key_pem': "-----BEGIN EC PRIVATE KEY-----\nMHc...",
-    'scalar.dl.client.cert_pem': "-----BEGIN CERTIFICATE-----\nMIICjTCCAj...\n",
+    'scalar.dl.client.private_key_pem': '-----BEGIN EC PRIVATE KEY-----\nMHc...',
+    // scalar.dl.client.private_key_path is applied when scalar.dl.client.private_key_pem is not given
+    'scalar.dl.client.private_key_path': 'path-to-key-file',
+    'scalar.dl.client.cert_pem': '-----BEGIN CERTIFICATE-----\nMIICjTCCAj...\n',
+    // scalar.dl.client.cert_path is applied when scalar.dl.client.cert_pem is not given
+    'scalar.dl.client.cert_path': 'path-to-certificate-file',
     'scalar.dl.client.cert_version': 1,
     'scalar.dl.client.tls.enabled': false,
     'scalar.dl.client.tls.ca_root_cert_pem': '-----BEGIN CERTIFICATE-----\n...\n',
+    // scalar.dl.client.tls.ca_root_cert_path is applied when scalar.dl.client.tls.ca_root_cert_pem is not given
+    'scalar.dl.client.tls.ca_root_cert_path': 'path-to-ca-root-certificate-file',
     'scalar.dl.client.authorization.credential': '...',
     'scalar.dl.client.proxy.server': '...',
 }
