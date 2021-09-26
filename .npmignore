@@ -2,3 +2,4 @@ example/
 .circleci/
 .eslintrc.json
 test/
+benchmark/
