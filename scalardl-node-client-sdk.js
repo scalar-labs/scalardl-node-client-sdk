@@ -125,11 +125,14 @@ function _resolveFileBasedProperties(properties) {
     properties['scalar.dl.client.private_key_pem'] ||
     fs.readFileSync(properties['scalar.dl.client.private_key_path']).toString();
 
-  properties['scalar.dl.client.tls.ca_root_cert_pem'] =
-    properties['scalar.dl.client.tls.ca_root_cert_pem'] ||
+  if (properties['scalar.dl.client.tls.ca_root_cert_path'] !== undefined &&
+  properties['scalar.dl.client.tls.ca_root_cert_pem'] === undefined
+  ) {
+    properties['scalar.dl.client.tls.ca_root_cert_pem'] =
     fs.readFileSync(
         properties['scalar.dl.client.tls.ca_root_cert_path'],
     ).toString();
+  }
 
   return properties;
 }
