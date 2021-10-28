@@ -117,21 +117,29 @@ function _createMetadata(properties) {
 function _resolveFileBasedProperties(properties) {
   const fs = require('fs');
 
-  properties['scalar.dl.client.cert_pem'] =
-    properties['scalar.dl.client.cert_pem'] ||
-    fs.readFileSync(properties['scalar.dl.client.cert_path']).toString();
+  if (properties['scalar.dl.client.cert_path'] !== undefined &&
+    properties['scalar.dl.client.cert_pem'] === undefined
+  ) {
+    properties['scalar.dl.client.cert_pem'] =
+      fs.readFileSync(properties['scalar.dl.client.cert_path']).toString();
+  }
 
-  properties['scalar.dl.client.private_key_pem'] =
-    properties['scalar.dl.client.private_key_pem'] ||
-    fs.readFileSync(properties['scalar.dl.client.private_key_path']).toString();
+  if (properties['scalar.dl.client.private_key_path'] !== undefined &&
+    properties['scalar.dl.client.private_key_pem'] === undefined
+  ) {
+    properties['scalar.dl.client.private_key_pem'] =
+      fs.readFileSync(
+          properties['scalar.dl.client.private_key_path'],
+      ).toString();
+  }
 
   if (properties['scalar.dl.client.tls.ca_root_cert_path'] !== undefined &&
-  properties['scalar.dl.client.tls.ca_root_cert_pem'] === undefined
+    properties['scalar.dl.client.tls.ca_root_cert_pem'] === undefined
   ) {
     properties['scalar.dl.client.tls.ca_root_cert_pem'] =
-    fs.readFileSync(
-        properties['scalar.dl.client.tls.ca_root_cert_path'],
-    ).toString();
+      fs.readFileSync(
+          properties['scalar.dl.client.tls.ca_root_cert_path'],
+      ).toString();
   }
 
   return properties;
