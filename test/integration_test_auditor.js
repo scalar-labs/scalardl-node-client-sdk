@@ -4,6 +4,8 @@ const {
 const fs = require('fs');
 const assert = require('assert');
 
+const validateLedgerContractId = `validate-ledger${Date.now()}`;
+
 const properties = {
   'scalar.dl.client.server.host': 'localhost',
   'scalar.dl.client.server.port': 50051,
@@ -13,6 +15,9 @@ const properties = {
   'scalar.dl.client.auditor.host': 'localhost',
   'scalar.dl.client.auditor.port': 40051,
   'scalar.dl.client.auditor.privileged_port': 40052,
+  'scalar.dl.client.auditor.linearizable_validation.enabled': true,
+  'scalar.dl.client.auditor.linearizable_validation.contract_id':
+    validateLedgerContractId,
 
   // Make the test idempotent.
   'scalar.dl.client.cert_holder_id': `foo@${Date.now()}`,
@@ -116,5 +121,20 @@ describe('Integration test on ClientService', async () => {
           assert.equal(contractResult.properties,
               contractProperty.properties);
         });
+  });
+  describe('validateLedger linearizably', () => {
+    it('should return successfully and the proofs are the same',
+        async () => {
+          await clientService.registerContract(
+              validateLedgerContractId,
+              'com.scalar.dl.client.contract.ValidateLedger',
+              fs.readFileSync(__dirname + '/ValidateLedger.class'),
+              {},
+          );
+
+          const response = await clientService.validateLedger(mockedAssetId);
+          assert.equal(response.getProof(), response.getAuditorProof());
+        },
+    );
   });
 });
