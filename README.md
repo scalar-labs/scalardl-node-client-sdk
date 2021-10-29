@@ -132,7 +132,7 @@ To use it, we can configure the properties as follows
     'scalar.dl.client.auditor.linearizable_validation.contract_id': '<choose a contract ID>',
 }
 ```
-and, register the [ValidateLedger](./test/ValidateLedger.class) contract as the contract ID we specified in the properties.
+and, register the [ValidateLedger](https://github.com/scalar-labs/scalardl-java-client-sdk/blob/master/src/main/java/com/scalar/dl/client/contract/ValidateLedger.java) contract as the contract ID we specified in the properties.
 Then, the ClientService.validateLedger function can provide linearizable ledger validation.
 
 ### Runtime error
