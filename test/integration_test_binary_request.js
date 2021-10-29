@@ -69,9 +69,14 @@ const mockedContractId = `StateUpdater${Date.now()}`;
 const mockedContractName = 'com.org1.contract.StateUpdater';
 const mockedFunctionName = 'com.org1.function.TestFunction';
 const mockedAssetId = `mockedAssetId${Date.now()}`;
+const mockedNonAsciiAssetId = `国家标准_ふーバル_情報銀行_정보은행_ƣƢƠ_ஞண${Date.now()}`;
 const mockedState = 1;
 const mockedContractArgument = {
   asset_id: mockedAssetId,
+  state: mockedState,
+};
+const nonAsciiContractArgument = {
+  asset_id: mockedNonAsciiAssetId,
   state: mockedState,
 };
 const contractProperty = {
@@ -217,6 +222,20 @@ describe('Integration test on ClientServiceWithBinary', async () => {
           assert.equal(result.properties, contractProperty.properties);
         },
     );
+    it('should work as expected when executing a registered contract with non-ascii character',
+        async () => {
+          const binary =
+              await clientService.createSerializedContractExecutionRequest(
+                  mockedContractId,
+                  nonAsciiContractArgument, {});
+
+          const response = await clientService.executeContract(binary);
+          const contractResult = response.result;
+          assert.equal(contractResult.asset_id, nonAsciiContractArgument.asset_id);
+          assert.equal(contractResult.state, mockedState);
+          assert.equal(contractResult.properties,
+              contractProperty.properties);
+        });
     it('should get error if contract id does exist',
         async () => {
           const binary =
@@ -247,6 +266,11 @@ describe('Integration test on ClientServiceWithBinary', async () => {
               state: Date.now(),
               _functions_: [mockedFunctionId],
           };
+          const contractNonAsciiArgumentWithFunction = {
+            asset_id: mockedNonAsciiAssetId,
+            state: Date.now(),
+            _functions_: [mockedFunctionId],
+          };
           const mockedFunctionArgument = {
               asset_id: mockedAssetId,
               state: mockedState,
@@ -257,8 +281,16 @@ describe('Integration test on ClientServiceWithBinary', async () => {
                 contractArgumentWithFunction,
                 mockedFunctionArgument,
             );
+          const nonAsciiBinary =
+              await clientService.createSerializedContractExecutionRequest(
+                  mockedContractId,
+                  contractNonAsciiArgumentWithFunction,
+                  mockedFunctionArgument,
+              );
           const response = await clientService.executeContract(binary);
           const result = response.getResult();
+          const nonAsciiResponse = await clientService.executeContract(nonAsciiBinary);
+          const nonAsciiResult = nonAsciiResponse.getResult();
 
           const cassandraClient = new cassandra.Client({
               contactPoints: ['127.0.0.1:9042'],
@@ -269,6 +301,7 @@ describe('Integration test on ClientServiceWithBinary', async () => {
           );
 
           assert.equal(result.state, contractArgumentWithFunction.state);
+          assert.equal(nonAsciiResult.state, contractArgumentWithFunction.state);
           assert.equal(
               cassandraResponse.rows[0].column_a,
               contractArgumentWithFunction.asset_id,
