@@ -1,7 +1,6 @@
 const express = require('express');
 const {
   ClientServiceWithBinary,
-  ClientError,
 } = require('@scalar-labs/scalardl-node-client-sdk');
 const cors = require('cors');
 const app = express();
@@ -9,9 +8,9 @@ const nodeServerPort = 3002;
 const bodyParser = require('body-parser');
 app.use(bodyParser.raw({type: 'application/octet-stream'}));
 app.use(cors());
-app.listen(nodeServerPort,
-    () => console.log(
-        `Web-server listening at http://localhost:${nodeServerPort}`));
+app.listen(nodeServerPort, () =>
+  console.log(`Web-server listening at http://localhost:${nodeServerPort}`),
+);
 
 // Node SDK configuration properties
 const binaryClientProperties = {
@@ -19,8 +18,7 @@ const binaryClientProperties = {
   'scalar.dl.client.server.port': 50051,
   'scalar.dl.client.server.privileged_port': 50052,
 };
-const binaryClientService = new ClientServiceWithBinary(
-    binaryClientProperties);
+const binaryClientService = new ClientServiceWithBinary(binaryClientProperties);
 
 app.post('/register-certificate', async (req, res) => {
   const serializedRequest = req.body;
@@ -59,6 +57,5 @@ app.post('/list-contracts', async (req, res) => {
  */
 function handleError(res, e) {
   console.error(e);
-  res.status(e.code)
-      .send({error: e.message});
+  res.status(e.code).send({error: e.message});
 }
