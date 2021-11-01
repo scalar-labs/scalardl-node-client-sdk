@@ -20,23 +20,20 @@ const grpc = require('grpc');
 
 const {SignerFactory} = require('./signer');
 
-
 /**
  * @param {Object} properties
  * @return {Object}
  */
 function _createGrpcServices(properties) {
-  const clientProperties = new ClientProperties(
-      properties,
-      [
-        ClientPropertiesField.SERVER_HOST,
-        ClientPropertiesField.SERVER_PORT,
-        ClientPropertiesField.SERVER_PRIVILEGED_PORT,
-      ],
-  );
+  const clientProperties = new ClientProperties(properties, [
+    ClientPropertiesField.SERVER_HOST,
+    ClientPropertiesField.SERVER_PORT,
+    ClientPropertiesField.SERVER_PRIVILEGED_PORT,
+  ]);
 
   const ledgerClientUrl =
-    `${clientProperties.getServerHost()}:${clientProperties.getServerPort()}`;
+    `${clientProperties.getServerHost()}:` +
+    `${clientProperties.getServerPort()}`;
   const ledgerPrivilegedClientUrl =
     `${clientProperties.getServerHost()}:` +
     `${clientProperties.getServerPrivilegedPort()}`;
@@ -54,8 +51,9 @@ function _createGrpcServices(properties) {
   if (tlsEnabled) {
     if (ca) {
       // Use custom root CA
-      grpcChannelCredentials =
-        grpc.credentials.createSsl(Buffer.from(ca, 'utf8'));
+      grpcChannelCredentials = grpc.credentials.createSsl(
+          Buffer.from(ca, 'utf8'),
+      );
     } else {
       // When no custom root CA is provided to init the SSL/TLS connection,
       // default root CA maintained by Node.js will be used
@@ -65,20 +63,19 @@ function _createGrpcServices(properties) {
     grpcChannelCredentials = grpc.credentials.createInsecure();
   }
 
-  const ledgerClient =
-    new LedgerClient(ledgerClientUrl, grpcChannelCredentials);
-  const ledgerPrivilegedClient =
-    new LedgerPrivilegedClient(
-        ledgerPrivilegedClientUrl,
-        grpcChannelCredentials);
+  const ledgerClient = new LedgerClient(
+      ledgerClientUrl,
+      grpcChannelCredentials,
+  );
+  const ledgerPrivilegedClient = new LedgerPrivilegedClient(
+      ledgerPrivilegedClientUrl,
+      grpcChannelCredentials,
+  );
 
   let auditorClient;
   let auditorPrivilegedClient;
   if (auditorEnabled) {
-    auditorClient = new AuditorClient(
-        auditorClientUrl,
-        grpcChannelCredentials,
-    );
+    auditorClient = new AuditorClient(auditorClientUrl, grpcChannelCredentials);
     auditorPrivilegedClient = new AuditorPrivilegedClient(
         auditorPrivilegedClientUrl,
         grpcChannelCredentials,
@@ -86,10 +83,10 @@ function _createGrpcServices(properties) {
   }
 
   return {
-    'ledgerClient': ledgerClient,
-    'ledgerPrivileged': ledgerPrivilegedClient,
-    'auditorClient': auditorClient,
-    'auditorPrivileged': auditorPrivilegedClient,
+    ledgerClient: ledgerClient,
+    ledgerPrivileged: ledgerPrivilegedClient,
+    auditorClient: auditorClient,
+    auditorPrivileged: auditorPrivilegedClient,
   };
 }
 
@@ -103,8 +100,10 @@ function _createMetadata(properties) {
   const clientProperties = new ClientProperties(properties);
   const metadata = new grpc.Metadata();
   if (clientProperties.getAuthorizationCredential()) {
-    metadata.set('authorization',
-        clientProperties.getAuthorizationCredential());
+    metadata.set(
+        'authorization',
+        clientProperties.getAuthorizationCredential(),
+    );
   }
   return metadata;
 }
@@ -117,29 +116,31 @@ function _createMetadata(properties) {
 function _resolveFileBasedProperties(properties) {
   const fs = require('fs');
 
-  if (properties['scalar.dl.client.cert_path'] !== undefined &&
+  if (
+    properties['scalar.dl.client.cert_path'] !== undefined &&
     properties['scalar.dl.client.cert_pem'] === undefined
   ) {
-    properties['scalar.dl.client.cert_pem'] =
-      fs.readFileSync(properties['scalar.dl.client.cert_path']).toString();
+    properties['scalar.dl.client.cert_pem'] = fs
+        .readFileSync(properties['scalar.dl.client.cert_path'])
+        .toString();
   }
 
-  if (properties['scalar.dl.client.private_key_path'] !== undefined &&
+  if (
+    properties['scalar.dl.client.private_key_path'] !== undefined &&
     properties['scalar.dl.client.private_key_pem'] === undefined
   ) {
-    properties['scalar.dl.client.private_key_pem'] =
-      fs.readFileSync(
-          properties['scalar.dl.client.private_key_path'],
-      ).toString();
+    properties['scalar.dl.client.private_key_pem'] = fs
+        .readFileSync(properties['scalar.dl.client.private_key_path'])
+        .toString();
   }
 
-  if (properties['scalar.dl.client.tls.ca_root_cert_path'] !== undefined &&
+  if (
+    properties['scalar.dl.client.tls.ca_root_cert_path'] !== undefined &&
     properties['scalar.dl.client.tls.ca_root_cert_pem'] === undefined
   ) {
-    properties['scalar.dl.client.tls.ca_root_cert_pem'] =
-      fs.readFileSync(
-          properties['scalar.dl.client.tls.ca_root_cert_path'],
-      ).toString();
+    properties['scalar.dl.client.tls.ca_root_cert_pem'] = fs
+        .readFileSync(properties['scalar.dl.client.tls.ca_root_cert_path'])
+        .toString();
   }
 
   return properties;
@@ -172,9 +173,8 @@ class ClientServiceWithBinary extends ClientServiceBase {
    * @return {Promise<!proto.google.protobuf.Empty>}
    */
   async registerCertificate(serializedBinary) {
-    const request = this.ledgerPrivileged.registerCert.requestDeserialize(
-        serializedBinary,
-    );
+    const request =
+      this.ledgerPrivileged.registerCert.requestDeserialize(serializedBinary);
 
     return super._registerCertificate(request);
   }
@@ -199,9 +199,8 @@ class ClientServiceWithBinary extends ClientServiceBase {
    * @return {Promise<!proto.google.protobuf.Empty>}
    */
   async registerContract(serializedBinary) {
-    const request = this.ledgerClient.registerContract.requestDeserialize(
-        serializedBinary,
-    );
+    const request =
+      this.ledgerClient.registerContract.requestDeserialize(serializedBinary);
 
     return super._registerContract(request);
   }
@@ -224,9 +223,8 @@ class ClientServiceWithBinary extends ClientServiceBase {
    * @return {Promise<!proto.google.protobuf.LedgerValidationResponse>}
    */
   async validateLedger(serializedBinary) {
-    const request = this.ledgerClient.validateLedger.requestDeserialize(
-        serializedBinary,
-    );
+    const request =
+      this.ledgerClient.validateLedger.requestDeserialize(serializedBinary);
 
     return super._validateLedger(request);
   }
@@ -237,9 +235,8 @@ class ClientServiceWithBinary extends ClientServiceBase {
    * @return {Promise<!proto.google.protobuf.ContractExecutionResponse>}
    */
   async executeContract(serializedBinary) {
-    const request = this.ledgerClient.executeContract.requestDeserialize(
-        serializedBinary,
-    );
+    const request =
+      this.ledgerClient.executeContract.requestDeserialize(serializedBinary);
 
     return super._executeContract(request);
   }

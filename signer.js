@@ -20,11 +20,15 @@ class EllipticSigner {
    */
   async sign(content) {
     try {
-      const base64 = this.pem.replace('-----BEGIN EC PRIVATE KEY-----', '').
-          replace('-----END EC PRIVATE KEY-----', '').
-          replace(/\n/g, '');
+      const base64 = this.pem
+          .replace('-----BEGIN EC PRIVATE KEY-----', '')
+          .replace('-----END EC PRIVATE KEY-----', '')
+          .replace(/\n/g, '');
       const {prvKeyHex} = jsrsasign.KEYUTIL.getKey(
-          jsrsasign.b64utohex(base64), null, 'pkcs5prv');
+          jsrsasign.b64utohex(base64),
+          null,
+          'pkcs5prv',
+      );
       const EC = elliptic.ec;
       const ecdsaCurve = elliptic.curves['p256'];
       const ecdsa = new EC(ecdsaCurve);

@@ -42,7 +42,7 @@ describe('Integration test with File-based Properties', async () => {
     properties: 'bar',
   };
   const mockedByteContract = fs.readFileSync(
-      path.join( __dirname, 'StateUpdater.class'),
+      path.join(__dirname, 'StateUpdater.class'),
   );
   const mockedByteFunction = fs.readFileSync(
       path.join(__dirname, 'TestFunction.class'),
