@@ -12,17 +12,17 @@
   "dependencies": {
     "@scalar-labs/scalardl-javascript-sdk-base": "^3.4.0",
     "elliptic": "^6.5.4",
-    "google-protobuf": "^3.13.0",
+    "google-protobuf": "^3.19.1",
     "grpc": "^1.24.3",
-    "jsrsasign": "^10.3.0"
+    "jsrsasign": "^10.4.1"
   },
   "scripts": {
     "test": "mocha --reporter mochawesome --exclude 'test/*auditor*' test/",
     "test-auditor": "mocha --reporter mochawesome test/*auditor*"
   },
   "devDependencies": {
-    "cassandra-driver": "^4.6.0",
-    "chai": "4.2.0",
+    "cassandra-driver": "^4.6.3",
+    "chai": "^4.3.4",
     "eslint": "^8.1.0",
     "eslint-config-google": "^0.14.0",
     "mocha": "^9.1.3",
