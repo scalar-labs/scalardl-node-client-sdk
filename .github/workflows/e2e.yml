@@ -1,0 +1,113 @@
+name: End-to-end Test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  without-auditor:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version:
+          - 16.x
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: npm
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.CR_PAT }}
+
+    - name: Start up a Local Scalar DL Network
+      working-directory: .github
+      run: |
+        git init
+        git pull https://${{ github.repository_owner }}:${{ secrets.CR_PAT }}@github.com/scalar-labs/scalardl-samples.git 3.3
+        docker-compose -f docker-compose.yml -f expose-cassandra-port.yml up -d cassandra
+        echo -n "Wait for C* "
+        until docker exec scalardl-samples-cassandra-1 cqlsh 2> /dev/null ; do
+          sleep 0.5
+          echo -n "#"
+        done
+        echo ""
+        docker cp function_schema.cql scalardl-samples-cassandra-1:function_schema.cql
+        docker exec scalardl-samples-cassandra-1 cqlsh -f function_schema.cql
+        docker-compose -f docker-compose.yml -f expose-cassandra-port.yml up scalardl-ledger-schema-loader-cassandra
+        docker-compose -f docker-compose.yml -f expose-cassandra-port.yml up -d scalar-ledger ledger-envoy
+        sleep 5
+
+    - name: NPM Install
+      run: npm install
+
+    - name: NPM Test
+      run: npm test
+
+  with-auditor:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version:
+          - 16.x
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: npm
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.CR_PAT }}
+
+    - name: Start up a Local Scalar DL Network with Auditor
+      working-directory: .github
+      run: |
+        git init
+        git pull https://${{ github.repository_owner }}:${{ secrets.CR_PAT }}@github.com/scalar-labs/scalardl-samples.git 3.3
+        docker-compose -f docker-compose.yml -f docker-compose-auditor.yml up -d cassandra
+        echo -n "Wait for C* "
+        until docker exec scalardl-samples-cassandra-1 cqlsh 2> /dev/null ; do
+          sleep 0.5
+          echo -n "#"
+        done
+        echo ""
+        docker-compose -f docker-compose.yml -f docker-compose-auditor.yml up scalardl-ledger-schema-loader-cassandra
+        docker-compose -f docker-compose.yml -f docker-compose-auditor.yml up scalardl-auditor-schema-loader-cassandra
+        docker-compose -f docker-compose.yml -f docker-compose-auditor.yml up -d scalar-ledger
+        docker-compose -f docker-compose.yml -f docker-compose-auditor.yml up -d scalar-auditor
+        docker-compose -f docker-compose.yml -f docker-compose-auditor.yml up -d ledger-envoy
+        docker-compose -f docker-compose.yml -f docker-compose-auditor.yml up -d auditor-envoy
+        docker-compose -f docker-compose.yml -f docker-compose-auditor.yml up -d scalar-ledger-as-client
+        docker-compose -f docker-compose.yml -f docker-compose-auditor.yml up -d scalar-audior-as-client
+        sleep 5
+        docker restart scalardl-samples-scalar-ledger-1 # just in case
+        docker restart scalardl-samples-scalar-auditor-1 # just in case
+        sleep 5
+
+    - name: NPM Install
+      run: npm install
+
+    - name: NPM Test
+      run: npm run test-auditor
