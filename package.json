@@ -1,6 +1,6 @@
 {
   "name": "@scalar-labs/scalardl-node-client-sdk",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "description": "The Node.js client SDK for Scalar DL",
   "author": "Scalar, Inc.",
   "main": "scalardl-node-client-sdk.js",
@@ -13,7 +13,7 @@
     "url": "git@github.com:scalar-labs/scalardl-node-client-sdk.git"
   },
   "dependencies": {
-    "@scalar-labs/scalardl-javascript-sdk-base": "^3.4.0",
+    "@scalar-labs/scalardl-javascript-sdk-base": "^3.4.1",
     "elliptic": "^6.5.4",
     "google-protobuf": "^3.19.1",
     "grpc": "^1.24.3",
