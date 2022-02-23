@@ -37,7 +37,7 @@ jobs:
       working-directory: .github
       run: |
         git init
-        git pull https://${{ github.repository_owner }}:${{ secrets.CR_PAT }}@github.com/scalar-labs/scalardl-samples.git 3.3
+        git pull https://${{ github.repository_owner }}:${{ secrets.CR_PAT }}@github.com/scalar-labs/scalardl-samples.git 3.1
         docker-compose -f docker-compose.yml -f expose-cassandra-port.yml up -d cassandra
         echo -n "Wait for C* "
         until docker exec scalardl-samples-cassandra-1 cqlsh 2> /dev/null ; do
@@ -85,7 +85,7 @@ jobs:
       working-directory: .github
       run: |
         git init
-        git pull https://${{ github.repository_owner }}:${{ secrets.CR_PAT }}@github.com/scalar-labs/scalardl-samples.git 3.3
+        git pull https://${{ github.repository_owner }}:${{ secrets.CR_PAT }}@github.com/scalar-labs/scalardl-samples.git 3.1
         docker-compose -f docker-compose.yml -f docker-compose-auditor.yml up -d cassandra
         echo -n "Wait for C* "
         until docker exec scalardl-samples-cassandra-1 cqlsh 2> /dev/null ; do
