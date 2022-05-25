@@ -6,7 +6,8 @@
   "main": "scalardl-node-client-sdk.js",
   "license": "AGPL-3.0-or-later",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=14 <17",
+    "npm": ">=7"
   },
   "repository": {
     "type": "git",
