@@ -16,7 +16,7 @@ const {
   AuditorClient,
   AuditorPrivilegedClient,
 } = require('./scalar_grpc_pb');
-const grpc = require('grpc');
+const grpc = require('@grpc/grpc-js');
 
 const {SignerFactory} = require('./signer');
 
