@@ -1734,8 +1734,9 @@ proto.rpc.ContractExecutionRequest.toObject = function(includeInstance, msg) {
     functionArgument: jspb.Message.getFieldWithDefault(msg, 5, ""),
     signature: msg.getSignature_asB64(),
     auditorSignature: msg.getAuditorSignature_asB64(),
-    preExecution: jspb.Message.getBooleanFieldWithDefault(msg, 8, false),
-    orderingKeysList: (f = jspb.Message.getRepeatedField(msg, 9)) == null ? undefined : f
+    useFunctionIds: jspb.Message.getBooleanFieldWithDefault(msg, 8, false),
+    functionIdsList: (f = jspb.Message.getRepeatedField(msg, 9)) == null ? undefined : f,
+    nonce: jspb.Message.getFieldWithDefault(msg, 10, "")
   };
 
   if (includeInstance) {
@@ -1802,11 +1803,15 @@ proto.rpc.ContractExecutionRequest.deserializeBinaryFromReader = function(msg, r
       break;
     case 8:
       var value = /** @type {boolean} */ (reader.readBool());
-      msg.setPreExecution(value);
+      msg.setUseFunctionIds(value);
       break;
     case 9:
       var value = /** @type {string} */ (reader.readString());
-      msg.addOrderingKeys(value);
+      msg.addFunctionIds(value);
+      break;
+    case 10:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setNonce(value);
       break;
     default:
       reader.skipField();
@@ -1886,17 +1891,24 @@ proto.rpc.ContractExecutionRequest.serializeBinaryToWriter = function(message, w
       f
     );
   }
-  f = message.getPreExecution();
+  f = message.getUseFunctionIds();
   if (f) {
     writer.writeBool(
       8,
       f
     );
   }
-  f = message.getOrderingKeysList();
+  f = message.getFunctionIdsList();
   if (f.length > 0) {
     writer.writeRepeatedString(
       9,
+      f
+    );
+  }
+  f = message.getNonce();
+  if (f.length > 0) {
+    writer.writeString(
+      10,
       f
     );
   }
@@ -2078,10 +2090,10 @@ proto.rpc.ContractExecutionRequest.prototype.setAuditorSignature = function(valu
 
 
 /**
- * optional bool pre_execution = 8;
+ * optional bool use_function_ids = 8;
  * @return {boolean}
  */
-proto.rpc.ContractExecutionRequest.prototype.getPreExecution = function() {
+proto.rpc.ContractExecutionRequest.prototype.getUseFunctionIds = function() {
   return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 8, false));
 };
 
@@ -2090,16 +2102,16 @@ proto.rpc.ContractExecutionRequest.prototype.getPreExecution = function() {
  * @param {boolean} value
  * @return {!proto.rpc.ContractExecutionRequest} returns this
  */
-proto.rpc.ContractExecutionRequest.prototype.setPreExecution = function(value) {
+proto.rpc.ContractExecutionRequest.prototype.setUseFunctionIds = function(value) {
   return jspb.Message.setProto3BooleanField(this, 8, value);
 };
 
 
 /**
- * repeated string ordering_keys = 9;
+ * repeated string function_ids = 9;
  * @return {!Array<string>}
  */
-proto.rpc.ContractExecutionRequest.prototype.getOrderingKeysList = function() {
+proto.rpc.ContractExecutionRequest.prototype.getFunctionIdsList = function() {
   return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 9));
 };
 
@@ -2108,7 +2120,7 @@ proto.rpc.ContractExecutionRequest.prototype.getOrderingKeysList = function() {
  * @param {!Array<string>} value
  * @return {!proto.rpc.ContractExecutionRequest} returns this
  */
-proto.rpc.ContractExecutionRequest.prototype.setOrderingKeysList = function(value) {
+proto.rpc.ContractExecutionRequest.prototype.setFunctionIdsList = function(value) {
   return jspb.Message.setField(this, 9, value || []);
 };
 
@@ -2118,7 +2130,7 @@ proto.rpc.ContractExecutionRequest.prototype.setOrderingKeysList = function(valu
  * @param {number=} opt_index
  * @return {!proto.rpc.ContractExecutionRequest} returns this
  */
-proto.rpc.ContractExecutionRequest.prototype.addOrderingKeys = function(value, opt_index) {
+proto.rpc.ContractExecutionRequest.prototype.addFunctionIds = function(value, opt_index) {
   return jspb.Message.addToRepeatedField(this, 9, value, opt_index);
 };
 
@@ -2127,8 +2139,26 @@ proto.rpc.ContractExecutionRequest.prototype.addOrderingKeys = function(value, o
  * Clears the list making it empty but non-null.
  * @return {!proto.rpc.ContractExecutionRequest} returns this
  */
-proto.rpc.ContractExecutionRequest.prototype.clearOrderingKeysList = function() {
-  return this.setOrderingKeysList([]);
+proto.rpc.ContractExecutionRequest.prototype.clearFunctionIdsList = function() {
+  return this.setFunctionIdsList([]);
+};
+
+
+/**
+ * optional string nonce = 10;
+ * @return {string}
+ */
+proto.rpc.ContractExecutionRequest.prototype.getNonce = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 10, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.rpc.ContractExecutionRequest} returns this
+ */
+proto.rpc.ContractExecutionRequest.prototype.setNonce = function(value) {
+  return jspb.Message.setProto3StringField(this, 10, value);
 };
 
 
@@ -3464,9 +3494,10 @@ proto.rpc.ContractExecutionResponse.prototype.toObject = function(opt_includeIns
  */
 proto.rpc.ContractExecutionResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    result: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    contractresult: jspb.Message.getFieldWithDefault(msg, 1, ""),
     proofsList: jspb.Message.toObjectList(msg.getProofsList(),
-    proto.rpc.AssetProof.toObject, includeInstance)
+    proto.rpc.AssetProof.toObject, includeInstance),
+    functionresult: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -3505,12 +3536,16 @@ proto.rpc.ContractExecutionResponse.deserializeBinaryFromReader = function(msg, 
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setResult(value);
+      msg.setContractresult(value);
       break;
     case 2:
       var value = new proto.rpc.AssetProof;
       reader.readMessage(value,proto.rpc.AssetProof.deserializeBinaryFromReader);
       msg.addProofs(value);
+      break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setFunctionresult(value);
       break;
     default:
       reader.skipField();
@@ -3541,7 +3576,7 @@ proto.rpc.ContractExecutionResponse.prototype.serializeBinary = function() {
  */
 proto.rpc.ContractExecutionResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getResult();
+  f = message.getContractresult();
   if (f.length > 0) {
     writer.writeString(
       1,
@@ -3556,14 +3591,21 @@ proto.rpc.ContractExecutionResponse.serializeBinaryToWriter = function(message, 
       proto.rpc.AssetProof.serializeBinaryToWriter
     );
   }
+  f = message.getFunctionresult();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
 };
 
 
 /**
- * optional string result = 1;
+ * optional string contractResult = 1;
  * @return {string}
  */
-proto.rpc.ContractExecutionResponse.prototype.getResult = function() {
+proto.rpc.ContractExecutionResponse.prototype.getContractresult = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
@@ -3572,7 +3614,7 @@ proto.rpc.ContractExecutionResponse.prototype.getResult = function() {
  * @param {string} value
  * @return {!proto.rpc.ContractExecutionResponse} returns this
  */
-proto.rpc.ContractExecutionResponse.prototype.setResult = function(value) {
+proto.rpc.ContractExecutionResponse.prototype.setContractresult = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
 };
 
@@ -3612,6 +3654,24 @@ proto.rpc.ContractExecutionResponse.prototype.addProofs = function(opt_value, op
  */
 proto.rpc.ContractExecutionResponse.prototype.clearProofsList = function() {
   return this.setProofsList([]);
+};
+
+
+/**
+ * optional string functionResult = 3;
+ * @return {string}
+ */
+proto.rpc.ContractExecutionResponse.prototype.getFunctionresult = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.rpc.ContractExecutionResponse} returns this
+ */
+proto.rpc.ContractExecutionResponse.prototype.setFunctionresult = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
