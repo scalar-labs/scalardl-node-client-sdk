@@ -97,7 +97,7 @@ describe('Integration test with File-based Properties', async () => {
               {},
           );
 
-          const contractResult = response.result;
+          const contractResult = response.getResult();
           assert.equal(contractResult.asset_id, mockedAssetId);
           assert.equal(contractResult.state, mockedState);
           assert.equal(contractResult.properties, contractProperty.properties);

@@ -3494,10 +3494,10 @@ proto.rpc.ContractExecutionResponse.prototype.toObject = function(opt_includeIns
  */
 proto.rpc.ContractExecutionResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    contractresult: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    contractResult: jspb.Message.getFieldWithDefault(msg, 1, ""),
     proofsList: jspb.Message.toObjectList(msg.getProofsList(),
     proto.rpc.AssetProof.toObject, includeInstance),
-    functionresult: jspb.Message.getFieldWithDefault(msg, 3, "")
+    functionResult: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -3536,7 +3536,7 @@ proto.rpc.ContractExecutionResponse.deserializeBinaryFromReader = function(msg, 
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setContractresult(value);
+      msg.setContractResult(value);
       break;
     case 2:
       var value = new proto.rpc.AssetProof;
@@ -3545,7 +3545,7 @@ proto.rpc.ContractExecutionResponse.deserializeBinaryFromReader = function(msg, 
       break;
     case 3:
       var value = /** @type {string} */ (reader.readString());
-      msg.setFunctionresult(value);
+      msg.setFunctionResult(value);
       break;
     default:
       reader.skipField();
@@ -3576,7 +3576,7 @@ proto.rpc.ContractExecutionResponse.prototype.serializeBinary = function() {
  */
 proto.rpc.ContractExecutionResponse.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getContractresult();
+  f = message.getContractResult();
   if (f.length > 0) {
     writer.writeString(
       1,
@@ -3591,7 +3591,7 @@ proto.rpc.ContractExecutionResponse.serializeBinaryToWriter = function(message, 
       proto.rpc.AssetProof.serializeBinaryToWriter
     );
   }
-  f = message.getFunctionresult();
+  f = message.getFunctionResult();
   if (f.length > 0) {
     writer.writeString(
       3,
@@ -3602,10 +3602,10 @@ proto.rpc.ContractExecutionResponse.serializeBinaryToWriter = function(message, 
 
 
 /**
- * optional string contractResult = 1;
+ * optional string contract_result = 1;
  * @return {string}
  */
-proto.rpc.ContractExecutionResponse.prototype.getContractresult = function() {
+proto.rpc.ContractExecutionResponse.prototype.getContractResult = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
@@ -3614,7 +3614,7 @@ proto.rpc.ContractExecutionResponse.prototype.getContractresult = function() {
  * @param {string} value
  * @return {!proto.rpc.ContractExecutionResponse} returns this
  */
-proto.rpc.ContractExecutionResponse.prototype.setContractresult = function(value) {
+proto.rpc.ContractExecutionResponse.prototype.setContractResult = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
 };
 
@@ -3658,10 +3658,10 @@ proto.rpc.ContractExecutionResponse.prototype.clearProofsList = function() {
 
 
 /**
- * optional string functionResult = 3;
+ * optional string function_result = 3;
  * @return {string}
  */
-proto.rpc.ContractExecutionResponse.prototype.getFunctionresult = function() {
+proto.rpc.ContractExecutionResponse.prototype.getFunctionResult = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
@@ -3670,7 +3670,7 @@ proto.rpc.ContractExecutionResponse.prototype.getFunctionresult = function() {
  * @param {string} value
  * @return {!proto.rpc.ContractExecutionResponse} returns this
  */
-proto.rpc.ContractExecutionResponse.prototype.setFunctionresult = function(value) {
+proto.rpc.ContractExecutionResponse.prototype.setFunctionResult = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
 };
 

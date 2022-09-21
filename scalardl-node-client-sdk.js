@@ -226,7 +226,25 @@ class ClientServiceWithBinary extends ClientServiceBase {
     const request =
       this.ledgerClient.validateLedger.requestDeserialize(serializedBinary);
 
-    return super._validateLedger(request);
+    const promise = new Promise((resolve, reject) => {
+      this.ledgerClient.validateLedger(
+          request,
+          this.metadata,
+          (err, response) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(
+                  LedgerValidationResult.fromGrpcLedgerValidationResponse(
+                      response,
+                  ),
+              );
+            }
+          },
+      );
+    });
+
+    return this._executePromise(promise);
   }
 
   /**

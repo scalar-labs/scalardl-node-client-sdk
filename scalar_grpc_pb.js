@@ -423,17 +423,6 @@ var AuditorService = exports.AuditorService = {
     responseSerialize: serialize_rpc_ContractExecutionResponse,
     responseDeserialize: deserialize_rpc_ContractExecutionResponse,
   },
-  validateLedger: {
-    path: '/rpc.Auditor/ValidateLedger',
-    requestStream: false,
-    responseStream: false,
-    requestType: scalar_pb.LedgerValidationRequest,
-    responseType: scalar_pb.LedgerValidationResponse,
-    requestSerialize: serialize_rpc_LedgerValidationRequest,
-    requestDeserialize: deserialize_rpc_LedgerValidationRequest,
-    responseSerialize: serialize_rpc_LedgerValidationResponse,
-    responseDeserialize: deserialize_rpc_LedgerValidationResponse,
-  },
 };
 
 exports.AuditorClient = grpc.makeGenericClientConstructor(AuditorService);
