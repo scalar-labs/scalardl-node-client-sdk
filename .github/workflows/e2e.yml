@@ -46,7 +46,7 @@ jobs:
           echo -n "#"
         done
         echo ""
-        docker run --rm --network scalar-network -v "${PWD}/scalardb-schema-loader.properties":/scalardb.properties -v "${PWD}/schema.json":/schema.json ghcr.io/scalar-labs/scalardb-schema-loader:3.7.0 -c /scalardb.properties -f /schema.json
+        docker run --rm --network scalar-network -v "${PWD}/scalardb-schema-loader.properties":/scalardb.properties -v "${PWD}/schema.json":/schema.json ghcr.io/scalar-labs/scalardb-schema-loader:3.6.0 -c /scalardb.properties -f /schema.json
         docker-compose -f docker-compose.yml -f expose-cassandra-port.yml up scalardl-ledger-schema-loader-cassandra
         docker-compose -f docker-compose.yml -f expose-cassandra-port.yml up -d scalar-ledger ledger-envoy
         sleep 5
