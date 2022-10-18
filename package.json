@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.6.7",
-    "@scalar-labs/scalardl-javascript-sdk-base": "^3.4.1",
+    "@scalar-labs/scalardl-javascript-sdk-base": "^3.5.1",
     "elliptic": "^6.5.4",
     "google-protobuf": "^3.19.1",
     "jsrsasign": "^10.4.1"
