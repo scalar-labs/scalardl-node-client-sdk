@@ -120,20 +120,22 @@ const statusCode = response.getCode();
 const proof = response.getProof();
 ```
 
-#### Validate an asset linearizably
-The default ledger validation in a Auditor-enabled Scalar DL network is non-linearizable; i.e., there might be cases where Ledger and Auditor look inconsistent temporarily.
-Scalar DL supports linearizable ledger validation.
-To use it, we can configure the properties as follows
+#### Ledger validation when Auditor is used
+Ledger validation in an Auditor-enabled Scalar DL network works differently.
+It will execute the [ValidateLedger](https://github.com/scalar-labs/scalardl-java-client-sdk/blob/master/src/main/java/com/scalar/dl/client/contract/ValidateLedger.java) contract.
+
+A contract execution can reference linearizable states in Ledger and Auditor,
+and then it can validate whether the specified asset is consistent or not.
+
+Therefore, you need to register the ValidateLedger contract before requesting the ledger validation when Auditor is used.
+You can set the contract ID of the ValidateLedger contract in the properties or the default contract ID `validate-ledger` will be used.
+
 ```javascript
 {
     'scalar.dl.client.auditor.enabled': true,
-    ...
-    'scalar.dl.client.auditor.linearizable_validation.enabled': true,
     'scalar.dl.client.auditor.linearizable_validation.contract_id': '<choose a contract ID>',
 }
 ```
-and, register the [ValidateLedger](https://github.com/scalar-labs/scalardl-java-client-sdk/blob/master/src/main/java/com/scalar/dl/client/contract/ValidateLedger.java) contract as the contract ID we specified in the properties.
-Then, the ClientService.validateLedger function can provide linearizable ledger validation.
 
 ### Runtime error
 Error thrown by the client present a status code.
