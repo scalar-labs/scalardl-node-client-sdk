@@ -318,4 +318,39 @@ describe('Integration test on ClientServiceWithBinary', async () => {
       );
     });
   });
+
+  describe('validateLedger in the auditor mode', () => {
+    it('should return error when the auditor mode is enabled', async () => {
+      const anotherProperties = {
+        ...properties,
+        ...{
+          'scalar.dl.client.auditor.enabled': true,
+        },
+      };
+      const anotherClientService = new ClientServiceWithBinary(
+          anotherProperties,
+      );
+
+      const binary =
+        await anotherClientService.createSerializedLedgerValidationRequest(
+            mockedAssetId,
+            0,
+            1,
+        );
+
+      await assert.rejects(
+          anotherClientService.validateLedger(binary),
+          (err) => {
+            assert.equal(
+                err.message,
+                'validateLedger with Auditor ' +
+              'is not supported in the intermediary mode. ' +
+              'Please execute ValidateLedger contract ' +
+              'simply for validating assets.',
+            );
+            return true;
+          },
+      );
+    });
+  });
 });

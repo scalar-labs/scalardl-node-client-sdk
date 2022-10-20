@@ -223,6 +223,16 @@ class ClientServiceWithBinary extends ClientServiceBase {
    * @return {Promise<!proto.google.protobuf.LedgerValidationResponse>}
    */
   async validateLedger(serializedBinary) {
+    const properties = new ClientProperties(this.properties, [], []);
+    if (properties.getAuditorEnabled()) {
+      throw new Error(
+          'validateLedger with Auditor ' +
+          'is not supported in the intermediary mode. ' +
+          'Please execute ValidateLedger contract ' +
+          'simply for validating assets.',
+      );
+    }
+
     const request =
       this.ledgerClient.validateLedger.requestDeserialize(serializedBinary);
 
