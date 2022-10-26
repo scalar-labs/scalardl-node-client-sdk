@@ -121,7 +121,7 @@ const proof = response.getProof();
 ```
 
 #### Ledger validation when Auditor is used
-See [here](https://github.com/scalar-labs/scalardl/blob/master/docs/getting-started-auditor.md#validate-the-states-of-ledger-and-auditor) to validate the states of Ledger and Auditor. You can set the contract ID of [ValidateLedger](https://github.com/scalar-labs/scalardl-java-client-sdk/blob/master/src/main/java/com/scalar/dl/client/contract/ValidateLedger.java) to `scalar.dl.client.auditor.linearizable_validation.contract_id` property, otherwise the default ID `validate-ledger` will be used.
+See [here](https://github.com/scalar-labs/scalardl/blob/master/docs/getting-started-auditor.md#validate-the-states-of-ledger-and-auditor) and use the above Node SDK interfaces (`registerContract` and `validateLedger`) in the same manner to validate the states of Ledger and Auditor. You can set the contract ID of [ValidateLedger](https://github.com/scalar-labs/scalardl-java-client-sdk/blob/master/src/main/java/com/scalar/dl/client/contract/ValidateLedger.java) to `scalar.dl.client.auditor.linearizable_validation.contract_id` property, otherwise the default ID `validate-ledger` will be used.
 
 ```javascript
 {
