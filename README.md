@@ -108,9 +108,14 @@ const proofsList = response.getProofs();
 ```
 
 ```javascript
-const response = await clientService.execute('contractId', { 'arg1': 'a' }, 'functionId', { 'arg2': 'b' });
+const response = await clientService.execute(
+    'contractId',
+    { 'arg1': 'a' },
+    'functionId',
+    { 'arg2': 'b' }
+);
 ```
-`{ 'arg1': 'a', ` will be passed via [contractArgument](https://github.com/scalarindetail/scalardl-node-client-sdk/blob/3e531b4c62fb14702a873b07f44cb37212f04be4/test/TestFunction.java#L14), while `{ 'arg2': 'b' }` will be passed via [functionArgument](https://github.com/scalarindetail/scalardl-node-client-sdk/blob/3e531b4c62fb14702a873b07f44cb37212f04be4/test/TestFunction.java#L15).
+`{ 'arg1': 'a' }` will be passed via [contractArgument](https://github.com/scalarindetail/scalardl-node-client-sdk/blob/3e531b4c62fb14702a873b07f44cb37212f04be4/test/TestFunction.java#L14), while `{ 'arg2': 'b' }` will be passed via [functionArgument](https://github.com/scalarindetail/scalardl-node-client-sdk/blob/3e531b4c62fb14702a873b07f44cb37212f04be4/test/TestFunction.java#L15).
 
 ### Validate an asset
 Use the `validateLedger` function to validate an asset in the Scalar DL network.
