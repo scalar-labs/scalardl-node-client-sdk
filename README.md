@@ -25,7 +25,7 @@ It provides following functions to request Scalar DL network.
 |registerCertificate|To register a client's certificate on a Scalar DL network|
 |registerContract|To register a contract (of a registered client) on the Scalar DL network|
 |listContracts|To list the client's registered contracts|
-|executeContract|To execute a client's registered contract|
+|execute and executeContract (deprecated in the feature)|To execute a client's registered contract|
 |validateLedger|To validate an asset on the Scalar DL network to determine if it has been tampered|
 
 If an error occurs when executing one of the above methods, a `ClientError` will be thrown. The
