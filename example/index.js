@@ -93,7 +93,7 @@ const path = require('path');
     console.log(r);
 
     console.log('Execute contract');
-    r = await clientService.executeContract(contractId, {
+    r = await clientService.execute(contractId, {
       asset_id: 'foo',
       state: 1,
     });

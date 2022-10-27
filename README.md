@@ -25,7 +25,7 @@ It provides following functions to request Scalar DL network.
 |registerCertificate|To register a client's certificate on a Scalar DL network|
 |registerContract|To register a contract (of a registered client) on the Scalar DL network|
 |listContracts|To list the client's registered contracts|
-|executeContract|To execute a client's registered contract|
+|execute and executeContract (deprecated in the feature)|To execute a client's registered contract|
 |validateLedger|To validate an asset on the Scalar DL network to determine if it has been tampered|
 
 If an error occurs when executing one of the above methods, a `ClientError` will be thrown. The
@@ -100,17 +100,22 @@ const constracts = await clientService.listContracts();
 ```
 
 ### Execute a contract
-Use `executeContract` function to execute a registered contract. It will also execute a function if `_functions_` is given in the argument.
+Use `execute` function to execute a registered contract and function (optionally).
 ```javascript
-const response = await clientService.executeContract('contractId', argumentObject);
+const response = await clientService.execute('contractId', argumentObject);
 const executionResult = response.getResult();
 const proofsList = response.getProofs();
 ```
 
 ```javascript
-const response = await clientService.executeContract('contractId', { 'arg1': 'a', '_functions_': [functionId] }, { 'arg2': 'b' });
+const response = await clientService.execute(
+    'contractId',
+    { 'arg1': 'a' },
+    'functionId',
+    { 'arg2': 'b' }
+);
 ```
-`{ 'arg1': 'a', ` will be passed via [contractArgument](https://github.com/scalarindetail/scalardl-node-client-sdk/blob/3e531b4c62fb14702a873b07f44cb37212f04be4/test/TestFunction.java#L14), while `{ 'arg2': 'b' }` will be passed via [functionArgument](https://github.com/scalarindetail/scalardl-node-client-sdk/blob/3e531b4c62fb14702a873b07f44cb37212f04be4/test/TestFunction.java#L15).
+`{ 'arg1': 'a' }` will be passed via [contractArgument](https://github.com/scalarindetail/scalardl-node-client-sdk/blob/3e531b4c62fb14702a873b07f44cb37212f04be4/test/TestFunction.java#L14), while `{ 'arg2': 'b' }` will be passed via [functionArgument](https://github.com/scalarindetail/scalardl-node-client-sdk/blob/3e531b4c62fb14702a873b07f44cb37212f04be4/test/TestFunction.java#L15).
 
 ### Validate an asset
 Use the `validateLedger` function to validate an asset in the Scalar DL network.
