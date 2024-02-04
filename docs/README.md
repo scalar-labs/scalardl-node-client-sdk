@@ -1,3 +1,9 @@
+> [!CAUTION]
+> 
+> The `docs` folder has been moved to the centralized documentation repository, [docs-internal](https://github.com/scalar-labs/docs-internal). Please update this documentation in that repository instead.
+> 
+> To view the ScalarDL documentation, visit [ScalarDL Documentation](https://scalardl.scalar-labs.com/docs/).
+
 # Scalar DL Node Client SDK
 
 This is a library for Node.js applications by which the applications can interact with a [Scalar DL](https://github.com/scalar-labs/scalardl) network.
